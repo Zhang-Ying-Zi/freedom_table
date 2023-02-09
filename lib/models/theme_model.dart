@@ -5,8 +5,8 @@ class ThemeModel extends ChangeNotifier {
 
   ThemeModel(this.theme);
 
-  void changeTheme(ThemeData init) {
-    theme = init;
+  void changeTheme(ThemeData changedTheme) {
+    theme = changedTheme;
     notifyListeners();
   }
 }

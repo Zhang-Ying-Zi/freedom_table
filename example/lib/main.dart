@@ -64,30 +64,108 @@ class _MyHomePageState extends State<MyHomePage> {
     return FreedomTable(
       headers: [
         FreedomTableHeaderCell(
+          // 宽度比例
           flex: 1,
-          child: headCell('test1'),
+          child: headerCell('header', Alignment.centerLeft),
         ),
         FreedomTableHeaderCell(
-          flex: 1,
-          child: headCell('longtestlongtestlongtesttest2'),
+          // 宽度比例
+          flex: 2,
+          child: headerCell(
+              'headerheaderheaderheaderheaderheaderheaderheaderheaderheaderheaderheaderheaderheader'),
         ),
         FreedomTableHeaderCell(
+          // 宽度比例
           flex: 3,
-          child: headCell('test3'),
+          child: headerCell('header'),
         ),
         FreedomTableHeaderCell(
+          // 固定宽度
           fixedWidth: 300,
-          child: headCell('中文测试'),
+          child: headerCell('header中文'),
         ),
+      ],
+      bodys: [
+        [
+          FreedomTableBodyCell(
+            child: bodyCell('1', Alignment.centerLeft),
+          ),
+          FreedomTableBodyCell(
+            child: bodyCell('1'),
+          ),
+          FreedomTableBodyCell(
+            child: bodyCell(
+                '111111111111111111111111111111111111111111111111111111111111111111111111'),
+          ),
+          FreedomTableBodyCell(
+            child: bodyCell('1'),
+          ),
+        ],
+        [
+          FreedomTableBodyCell(
+            child: bodyCell('2', Alignment.centerLeft),
+          ),
+          FreedomTableBodyCell(
+            colspan: 2,
+            child: bodyCell('2'),
+          ),
+          FreedomTableBodyCell(
+            child: bodyCell('2'),
+          ),
+        ],
+        [
+          FreedomTableBodyCell(
+            child: bodyCell('3', Alignment.centerLeft),
+          ),
+          FreedomTableBodyCell(
+            rowspan: 2,
+            child: bodyCell('3'),
+          ),
+          FreedomTableBodyCell(
+            child: bodyCell('3'),
+          ),
+          FreedomTableBodyCell(
+            child: bodyCell('3'),
+          ),
+        ],
+        [
+          FreedomTableBodyCell(
+            child: bodyCell('4', Alignment.centerLeft),
+          ),
+          FreedomTableBodyCell(
+            child: bodyCell('4', Alignment.centerLeft),
+          ),
+          FreedomTableBodyCell(
+            child: bodyCell(
+                '44444444444444444444444444444444444444444444444444444444444444444444'),
+          ),
+        ],
       ],
     );
   }
 
-  Widget headCell(String name) {
+  // header单元格
+  Widget headerCell(String name, [Alignment? align]) {
     return Container(
       // decoration: BoxDecoration(border: Border.all(color: Colors.black)),
       padding: const EdgeInsets.all(10),
-      alignment: Alignment.center,
+      alignment: align ?? Alignment.center,
+      child: Text(
+        name,
+      ),
+    );
+  }
+
+  // bady单元格
+  Widget bodyCell(String name, [Alignment? align]) {
+    return Container(
+      // decoration: BoxDecoration(
+      //     // border: Border.all(
+      //     //   color: Colors.black,
+      //     // ),
+      //     ),
+      padding: const EdgeInsets.all(10),
+      alignment: align ?? Alignment.center,
       child: Text(
         name,
       ),

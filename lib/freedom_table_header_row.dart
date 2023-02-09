@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import './models/theme_model.dart';
+import './models/table_model.dart';
 import 'package:flutter/scheduler.dart';
 import "types.dart";
 import 'cell.dart';
@@ -47,6 +48,8 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
     finalRowWidth = 0;
 
     List<Widget> cellWidgets = [];
+    List<double> cellWidths = [];
+
     for (var cell in widget.headerCells) {
       if (cell.widthType == CellWidthType.flex) {
         totalFlex += cell.flex ?? 1;
@@ -71,6 +74,7 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
         cellWidth =
             ((finalRowWidth - totalFixedWidth) / totalFlex) * cell.flex!;
       }
+      cellWidths.add(cellWidth);
       // print("** cellWidth **");
       // print(cellWidth);
 
@@ -97,6 +101,8 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
     // WidgetsBinding.instance.addPostFrameCallback((_) {
     //   print("** done **");
     // });
+
+    Provider.of<TableModel>(context, listen: false).initCellWidths(cellWidths);
 
     return cellWidgets;
   }

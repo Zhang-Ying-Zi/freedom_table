@@ -26,20 +26,12 @@ class FreedomTableHeaderCell {
 }
 
 class FreedomTableBodyCell {
-  late CellWidthType widthType;
-  int? flex;
-  double? fixedWidth;
-  String name;
+  final int colspan;
+  final int rowspan;
+  Widget child;
   FreedomTableBodyCell({
-    this.flex,
-    this.fixedWidth,
-    required this.name,
-  }) {
-    if (fixedWidth != null) {
-      widthType = CellWidthType.fixed;
-    } else {
-      widthType = CellWidthType.flex;
-      flex ??= 1;
-    }
-  }
+    required this.child,
+    this.colspan = 1,
+    this.rowspan = 1,
+  });
 }
