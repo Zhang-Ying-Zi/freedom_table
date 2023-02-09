@@ -6,7 +6,7 @@ import './models/theme_model.dart';
 import './models/table_model.dart';
 import "types.dart";
 import 'freedom_table_header_row.dart';
-import 'freedom_table_body_row.dart';
+import 'freedom_table_body_cells.dart';
 export "types.dart";
 
 class FreedomTable extends StatefulWidget {
@@ -55,23 +55,16 @@ class _FreedomTableState extends State<FreedomTable> {
                   headerCells: widget.headers,
                   constrains: constrains,
                 ),
-                ...getBodyRow(),
+                Expanded(
+                  child: FreedomTableBodyCells(
+                    bodys: widget.bodys,
+                  ),
+                ),
               ],
             ),
           );
         },
       ),
     );
-  }
-
-  List<FreedomTableBodyRow> getBodyRow() {
-    List<FreedomTableBodyRow> bodyRows = [];
-    for (var bodyRowCells in widget.bodys) {
-      bodyRows.add(FreedomTableBodyRow(
-        bodyCells: bodyRowCells,
-        rownumber: widget.bodys.indexOf(bodyRowCells),
-      ));
-    }
-    return bodyRows;
   }
 }

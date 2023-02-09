@@ -66,6 +66,7 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
     }
 
     for (var cell in widget.headerCells) {
+      int colnumber = widget.headerCells.indexOf(cell);
       double cellWidth = 0;
       if (cell.widthType == CellWidthType.fixed) {
         cellWidth = cell.fixedWidth ?? minCellWidth;
@@ -91,8 +92,9 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
         child: FreedomTableCell(
           width: cellWidth,
           height: maxCellHeight,
+          row: 0,
+          column: colnumber,
           type: CellType.header,
-          leftSibling: cellWidgets.isNotEmpty ? cellWidgets.last : null,
           child: cell.child,
         ),
       ));

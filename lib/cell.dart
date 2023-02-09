@@ -7,10 +7,11 @@ class FreedomTableCell extends StatefulWidget {
   final double width;
   final double? height;
   final CellType type;
+  final int row;
+  final int column;
   final int colspan;
   final int rowspan;
   final Widget? child;
-  final Widget? leftSibling;
 
   const FreedomTableCell({
     super.key,
@@ -18,9 +19,10 @@ class FreedomTableCell extends StatefulWidget {
     this.type = CellType.body,
     this.width = minCellWidth,
     this.height,
+    required this.row,
+    required this.column,
     this.colspan = 1,
     this.rowspan = 1,
-    this.leftSibling,
   });
 
   @override
@@ -34,23 +36,23 @@ class _FreedomTableCellState extends State<FreedomTableCell> {
   Widget build(BuildContext context) {
     return Consumer<ThemeModel>(
       builder: (context, themeModel, child) {
-        return MouseRegion(
-          cursor: widget.type == CellType.header
-              ? SystemMouseCursors.basic
-              : SystemMouseCursors.click,
-          onEnter: (event) {
-            setState(() {
-              isCellHovering = true;
-            });
-          },
-          onExit: (event) {
-            setState(() {
-              isCellHovering = false;
-            });
-          },
-          child: SizedBox(
-            width: widget.width,
-            height: widget.height,
+        return SizedBox(
+          width: widget.width,
+          height: widget.height,
+          child: MouseRegion(
+            cursor: widget.type == CellType.header
+                ? SystemMouseCursors.basic
+                : SystemMouseCursors.click,
+            onEnter: (event) {
+              setState(() {
+                isCellHovering = true;
+              });
+            },
+            onExit: (event) {
+              setState(() {
+                isCellHovering = false;
+              });
+            },
             child: Container(
               decoration: BoxDecoration(
                 border: Border(
@@ -58,9 +60,10 @@ class _FreedomTableCellState extends State<FreedomTableCell> {
                       ? BorderSide(color: themeModel.theme.dividerColor)
                       : BorderSide.none,
                   bottom: BorderSide(color: themeModel.theme.dividerColor),
-                  left: widget.leftSibling == null
-                      ? BorderSide(color: themeModel.theme.dividerColor)
-                      : BorderSide.none,
+                  // left: widget.leftSibling == null
+                  //     ? BorderSide(color: themeModel.theme.dividerColor)
+                  //     : BorderSide.none,
+                  left: BorderSide(color: themeModel.theme.dividerColor),
                   right: BorderSide(color: themeModel.theme.dividerColor),
                 ),
                 color: widget.type == CellType.header

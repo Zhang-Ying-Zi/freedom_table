@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 class TableModel extends ChangeNotifier {
   // 非合并每行cell宽度
   List<double> cellWidths = [];
-  // body每行最大高度，行号从0开始
+  // body每行最大高度，行号从1开始, row=0为header
   Map<int, double> rowMaxHeights = {};
-  // rowspan记录，竖号从0开始, Map<colnumber, List<List<...rownumber>>>
+  // rowspan记录，列号从0开始, Map<colnumber, List<List<...rownumber>>>
   Map<int, List<List<int>>> colSpans = {};
 
   void initCellWidths(List<double> cellWidths) {

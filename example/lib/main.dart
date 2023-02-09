@@ -95,7 +95,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           FreedomTableBodyCell(
             child: bodyCell(
-                '111111111111111111111111111111111111111111111111111111111111111111111111'),
+                '11111111111111111111111111111111111111111111111111111111111111111111'),
           ),
           FreedomTableBodyCell(
             child: bodyCell('1'),
@@ -137,7 +137,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           FreedomTableBodyCell(
             child: bodyCell(
-                '44444444444444444444444444444444444444444444444444444444444444444444'),
+                '4444444444444444444444444444444444444444444444444444444444444444444'),
           ),
         ],
       ],
