@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 enum CellWidthType { flex, fixed }
 
+enum CellType { header, body }
+
 const double minCellWidth = 40;
 
 class FreedomTableHeaderCell {

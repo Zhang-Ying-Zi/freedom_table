@@ -21,39 +21,45 @@ class FreedomTableHeaderRow extends StatefulWidget {
 }
 
 class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
-  double constrainWidth = 0;
-  double totalFixedWidth = 0;
-  int totalFlex = 0;
-  int flexCellCount = 0;
+  // 原始总宽度
+  double constrainRowWidth = 0;
+  // 最终总宽度
   double finalRowWidth = 0;
+  // cells总固定宽度
+  double totalFixedWidth = 0;
+  // cells总flex比例之和
+  int totalFlex = 0;
+  // cells为flex的个数
+  int cellFlexCount = 0;
+  // cells最高高度
   double? maxCellHeight;
 
   @override
   void initState() {
     super.initState();
-    constrainWidth = widget.constrains.maxWidth;
+    constrainRowWidth = widget.constrains.maxWidth;
   }
 
   List<Widget> getCells() {
     totalFixedWidth = 0;
     totalFlex = 0;
-    flexCellCount = 0;
+    cellFlexCount = 0;
     finalRowWidth = 0;
 
     List<Widget> cellWidgets = [];
     for (var cell in widget.headerCells) {
       if (cell.widthType == CellWidthType.flex) {
         totalFlex += cell.flex ?? 1;
-        flexCellCount++;
+        cellFlexCount++;
       } else {
         totalFixedWidth += cell.fixedWidth ?? 0;
       }
     }
-    if (totalFixedWidth + flexCellCount * minCellWidth >= constrainWidth) {
+    if (totalFixedWidth + cellFlexCount * minCellWidth >= constrainRowWidth) {
       // 超过限制，需要滚动
-      finalRowWidth = totalFixedWidth + flexCellCount * minCellWidth;
+      finalRowWidth = totalFixedWidth + cellFlexCount * minCellWidth;
     } else {
-      finalRowWidth = constrainWidth;
+      finalRowWidth = constrainRowWidth;
     }
 
     for (var cell in widget.headerCells) {
@@ -61,6 +67,7 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
       if (cell.widthType == CellWidthType.fixed) {
         cellWidth = cell.fixedWidth ?? minCellWidth;
       } else {
+        cell.flex ??= 1;
         cellWidth =
             ((finalRowWidth - totalFixedWidth) / totalFlex) * cell.flex!;
       }
@@ -80,6 +87,8 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
         child: FreedomTableCell(
           width: cellWidth,
           height: maxCellHeight,
+          type: CellType.header,
+          leftSibling: cellWidgets.isNotEmpty ? cellWidgets.last : null,
           child: cell.child,
         ),
       ));

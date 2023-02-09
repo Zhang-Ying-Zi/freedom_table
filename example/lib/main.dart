@@ -85,7 +85,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget headCell(String name) {
     return Container(
+      // decoration: BoxDecoration(border: Border.all(color: Colors.black)),
       padding: const EdgeInsets.all(10),
+      alignment: Alignment.center,
       child: Text(
         name,
       ),

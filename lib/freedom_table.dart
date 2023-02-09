@@ -25,6 +25,7 @@ class _FreedomTableState extends State<FreedomTable> {
     theme = widget.theme ?? ThemeData();
     theme = theme.copyWith(
       dividerColor: const Color(0xffe6e6e6),
+      backgroundColor: const Color(0xfff2f2f2),
     );
   }
 
@@ -32,7 +33,7 @@ class _FreedomTableState extends State<FreedomTable> {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => ThemeModel()),
+        ChangeNotifierProvider(create: (context) => ThemeModel(theme)),
       ],
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constrains) {
