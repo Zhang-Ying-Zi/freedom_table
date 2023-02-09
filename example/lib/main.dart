@@ -110,6 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: bodyCell('2'),
           ),
           FreedomTableBodyCell(
+            rowspan: 2,
             child: bodyCell('2'),
           ),
         ],
@@ -118,28 +119,29 @@ class _MyHomePageState extends State<MyHomePage> {
             child: bodyCell('3', Alignment.centerLeft),
           ),
           FreedomTableBodyCell(
-            rowspan: 2,
-            child: bodyCell('3'),
-          ),
-          FreedomTableBodyCell(
-            child: bodyCell('3'),
-          ),
-          FreedomTableBodyCell(
-            child: bodyCell('3'),
-          ),
-        ],
-        [
-          FreedomTableBodyCell(
-            child: bodyCell('4', Alignment.centerLeft),
-          ),
-          FreedomTableBodyCell(
-            child: bodyCell('4', Alignment.centerLeft),
-          ),
-          FreedomTableBodyCell(
+            // rowspan: 2,
             child: bodyCell(
-                '4444444444444444444444444444444444444444444444444444444444444444444'),
+                '33333333333333333333333333333333333333333333333333333333333333333333333333333'),
+          ),
+          FreedomTableBodyCell(
+            child: bodyCell('3'),
+          ),
+          FreedomTableBodyCell(
+            child: bodyCell('3'),
           ),
         ],
+        // [
+        //   FreedomTableBodyCell(
+        //     child: bodyCell('4', Alignment.centerLeft),
+        //   ),
+        //   FreedomTableBodyCell(
+        //     child: bodyCell('4', Alignment.centerLeft),
+        //   ),
+        //   FreedomTableBodyCell(
+        //     child: bodyCell(
+        //         '4444444444444444444444444444444444444444444444444444444444444444444'),
+        //   ),
+        // ],
       ],
     );
   }

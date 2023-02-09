@@ -16,7 +16,7 @@ class TableModel extends ChangeNotifier {
   void addRowMaxHeight(int linenumber, double rowMaxHeight) {
     rowMaxHeights.addAll({linenumber: rowMaxHeight});
     print(rowMaxHeights);
-    // notifyListeners();
+    notifyListeners();
   }
 
   void addColSpan(int colnumber, List<int> rownumbers) {
