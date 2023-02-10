@@ -98,7 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           FreedomTableBodyCell(
             child: rowCell(
-                '1-3 555555555555555555555555555555555555555555555555555555555'),
+                '1-3 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'),
           ),
           FreedomTableBodyCell(
             child: rowCell('1-4'),
@@ -127,13 +127,14 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           FreedomTableBodyCell(
             rowspan: 2,
-            child: rowCell('3-2 长文字长文字长文字长文字长文字长文字长文字长文字长文字长文'),
+            child: rowCell('3-2'),
           ),
           FreedomTableBodyCell(
             child: rowCell('3-3'),
           ),
           FreedomTableBodyCell(
-            child: rowCell('3-4'),
+            child: rowCell(
+                '3-4 长文字长文字长文字长文字长文字长文字长文字长文字长文字长文长文字长文字长文字长文字长文字长文字长文字长文字长文字长文字长文字长文字长文字长文长文字长文字长文字长文字'),
           ),
         ],
         [
@@ -241,6 +242,13 @@ class _MyHomePageState extends State<MyHomePage> {
       alignment: align ?? Alignment.center,
       child: Text(
         name,
+        style: const TextStyle(
+          fontFamily: "Noto_Sans_SC",
+        ),
+        // strutStyle: const StrutStyle(
+        //   fontSize: 16.0,
+        //   height: 1.3,
+        // ),
       ),
     );
   }

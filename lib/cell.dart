@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import './models/theme_model.dart';
 import "types.dart";
+import './utils.dart';
 
 class FreedomTableCell extends StatefulWidget {
   final double width;
@@ -30,6 +31,14 @@ class FreedomTableCell extends StatefulWidget {
 class _FreedomTableCellState extends State<FreedomTableCell> {
   bool isCellHovering = false;
 
+  GlobalKey cellKey = GlobalKey();
+
+  @override
+  void didUpdateWidget(covariant FreedomTableCell oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    WidgetPosition.getSizes(cellKey);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<ThemeModel>(
@@ -52,6 +61,7 @@ class _FreedomTableCellState extends State<FreedomTableCell> {
               });
             },
             child: Container(
+              key: cellKey,
               decoration: BoxDecoration(
                 border: Border(
                   top: widget.type == CellType.header
@@ -69,9 +79,10 @@ class _FreedomTableCellState extends State<FreedomTableCell> {
                         ? themeModel.theme.hoverColor
                         : null,
               ),
-              child: IntrinsicHeight(
-                child: widget.child,
-              ),
+              // child: IntrinsicHeight(
+              //   child: widget.child,
+              // ),
+              child: widget.child,
             ),
           ),
         );
