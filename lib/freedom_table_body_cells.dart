@@ -128,7 +128,7 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
   }
 
   Widget getCellWidget(FreedomTableBodyCell cell, double top, double left,
-      double cellWidth, double? cellHeight,
+      double cellWidth, double? cellHeight, int currentColnumber,
       [void Function(Size)? onChange]) {
     return Positioned(
       top: top,
@@ -138,6 +138,7 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
         child: FreedomTableCell(
           width: cellWidth,
           height: cellHeight,
+          colnumber: currentColnumber,
           child: cell.child,
         ),
       ),
@@ -203,6 +204,7 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
           left,
           cellWidth,
           cellSpanHeight == 0 ? rowMaxHeights[rownumber] : cellSpanHeight,
+          currentColnumber,
           cellSpanHeight == 0
               ? (size) {
                   // print("** size **");
