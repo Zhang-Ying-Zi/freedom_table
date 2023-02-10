@@ -88,62 +88,131 @@ class _MyHomePageState extends State<MyHomePage> {
       rows: [
         [
           FreedomTableBodyCell(
-            child: rowCell('1', Alignment.centerLeft),
+            // colspan: 3,
+            child: rowCell('1-1', Alignment.centerLeft),
           ),
           FreedomTableBodyCell(
-            child: rowCell('1'),
+            // colspan: 2,
+            // rowspan: 2,
+            child: rowCell('1-2'),
           ),
           FreedomTableBodyCell(
             child: rowCell(
-                '11111111111111111111111111111111111111111111111111111111111111111111'),
+                '1-3 555555555555555555555555555555555555555555555555555555555'),
           ),
           FreedomTableBodyCell(
-            child: rowCell('1'),
+            child: rowCell('1-4'),
           ),
         ],
         [
           FreedomTableBodyCell(
-            child: rowCell('2', Alignment.centerLeft),
+            child: rowCell('2-1', Alignment.centerLeft),
           ),
           FreedomTableBodyCell(
-            // 跨行
+            child: rowCell('2-2'),
+          ),
+          FreedomTableBodyCell(
             colspan: 2,
-            child: rowCell('2'),
-          ),
-          FreedomTableBodyCell(
-            // 跨列
-            rowspan: 2,
-            child: rowCell('2'),
-          ),
-        ],
-        [
-          FreedomTableBodyCell(
-            child: rowCell('3', Alignment.centerLeft),
+            child: rowCell('2-3'),
           ),
           FreedomTableBodyCell(
             // rowspan: 2,
-            child: rowCell(
-                '33333333333333333333333333333333333333333333333333333333333333333333333333333'),
-          ),
-          FreedomTableBodyCell(
-            child: rowCell('3'),
-          ),
-          FreedomTableBodyCell(
-            child: rowCell('3'),
+            child: rowCell('2-4'),
           ),
         ],
-        // [
-        //   FreedomTableBodyCell(
-        //     child: rowCell('4', Alignment.centerLeft),
-        //   ),
-        //   FreedomTableBodyCell(
-        //     child: rowCell('4', Alignment.centerLeft),
-        //   ),
-        //   FreedomTableBodyCell(
-        //     child: rowCell(
-        //         '4444444444444444444444444444444444444444444444444444444444444444444'),
-        //   ),
-        // ],
+        [
+          FreedomTableBodyCell(
+            // colspan: 3,
+            child: rowCell('3-1', Alignment.centerLeft),
+          ),
+          FreedomTableBodyCell(
+            rowspan: 2,
+            child: rowCell('3-2 长文字长文字长文字长文字长文字长文字长文字长文字长文字长文'),
+          ),
+          FreedomTableBodyCell(
+            child: rowCell('3-3'),
+          ),
+          FreedomTableBodyCell(
+            child: rowCell('3-4'),
+          ),
+        ],
+        [
+          FreedomTableBodyCell(
+            // colspan: 3,
+            child: rowCell('4-1', Alignment.centerLeft),
+          ),
+          FreedomTableBodyCell(
+            child: rowCell('4-2'),
+          ),
+          FreedomTableBodyCell(
+            child: rowCell('4-3'),
+          ),
+          FreedomTableBodyCell(
+            child: rowCell('4-4'),
+          ),
+        ],
+        [
+          FreedomTableBodyCell(
+            // colspan: 3,
+            child: rowCell('5-1', Alignment.centerLeft),
+          ),
+          FreedomTableBodyCell(
+            child: rowCell('5-2'),
+          ),
+          FreedomTableBodyCell(
+            colspan: 2,
+            rowspan: 3,
+            child: rowCell('5-3'),
+          ),
+          FreedomTableBodyCell(
+            child: rowCell('5-4'),
+          ),
+        ],
+        [
+          FreedomTableBodyCell(
+            // colspan: 3,
+            child: rowCell('6-1', Alignment.centerLeft),
+          ),
+          FreedomTableBodyCell(
+            child: rowCell('6-2'),
+          ),
+          FreedomTableBodyCell(
+            child: rowCell('6-3'),
+          ),
+          FreedomTableBodyCell(
+            child: rowCell('6-4'),
+          ),
+        ],
+        [
+          FreedomTableBodyCell(
+            // colspan: 3,
+            child: rowCell('7-1', Alignment.centerLeft),
+          ),
+          FreedomTableBodyCell(
+            child: rowCell('7-2'),
+          ),
+          FreedomTableBodyCell(
+            child: rowCell('7-3'),
+          ),
+          FreedomTableBodyCell(
+            child: rowCell('7-4'),
+          ),
+        ],
+        [
+          FreedomTableBodyCell(
+            // colspan: 3,
+            child: rowCell('8-1', Alignment.centerLeft),
+          ),
+          FreedomTableBodyCell(
+            child: rowCell('8-2'),
+          ),
+          FreedomTableBodyCell(
+            child: rowCell('8-3'),
+          ),
+          FreedomTableBodyCell(
+            child: rowCell('8-4'),
+          ),
+        ],
       ],
     );
   }

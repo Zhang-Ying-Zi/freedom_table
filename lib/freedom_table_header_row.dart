@@ -92,8 +92,6 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
         child: FreedomTableCell(
           width: cellWidth,
           height: maxCellHeight,
-          row: 0,
-          column: colnumber,
           type: CellType.header,
           child: cell.child,
         ),

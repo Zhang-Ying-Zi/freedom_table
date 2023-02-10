@@ -7,8 +7,6 @@ class FreedomTableCell extends StatefulWidget {
   final double width;
   final double? height;
   final CellType type;
-  final int row;
-  final int column;
   final int colspan;
   final int rowspan;
   final Widget? child;
@@ -19,8 +17,6 @@ class FreedomTableCell extends StatefulWidget {
     this.type = CellType.body,
     this.width = minCellWidth,
     this.height,
-    required this.row,
-    required this.column,
     this.colspan = 1,
     this.rowspan = 1,
   });

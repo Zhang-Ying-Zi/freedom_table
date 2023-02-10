@@ -1,5 +1,8 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'dart:math';
 import './models/theme_model.dart';
 import './models/table_model.dart';
 import 'package:flutter/scheduler.dart';
@@ -20,30 +23,112 @@ class FreedomTableBodyCells extends StatefulWidget {
 }
 
 class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
-  // 每行最高高度
-  List<double> maxRowHeight = [];
+  // 列号
+  int currentColnumber = 0;
 
   @override
   void initState() {
     super.initState();
+    generateColspan();
+    generateRowspan();
+  }
+
+  void generateColspan() {
+    TableModel tableModel = Provider.of<TableModel>(context, listen: false);
+    List<double> headerCellWidths = tableModel.headerCellWidths;
+
+    // ** 每行 **
+    for (var bodyRow in widget.rows) {
+      // 行号
+      int rownumber = widget.rows.indexOf(bodyRow);
+      // 列号
+      int colnumber = 0;
+
+      Map<int, bool> updatedOccupiedRow = {};
+      // init
+      for (var headerWidth in headerCellWidths) {
+        int index = headerCellWidths.indexOf(headerWidth);
+        updatedOccupiedRow.addEntries({index: false}.entries);
+      }
+
+      // ** 每列 **
+      for (var cell in bodyRow) {
+        // 记录跨列
+        int currentColnumber = colnumber;
+        for (int i = 1; i < cell.colspan; i++) {
+          updatedOccupiedRow[currentColnumber + i] = true;
+          colnumber++;
+        }
+        colnumber++;
+        // print(updatedOccupiedRow);
+      }
+      tableModel.updateOccupiedTable(rownumber, updatedOccupiedRow);
+    }
+  }
+
+  void generateRowspan() {
+    TableModel tableModel = Provider.of<TableModel>(context, listen: false);
+
+    // ** 每行 **
+    for (var bodyRow in widget.rows) {
+      // 行号
+      int rownumber = widget.rows.indexOf(bodyRow);
+      // 列号
+      int colnumber = 0;
+
+      // ** 每列 **
+      for (var cell in bodyRow) {
+        // 记录跨行
+        for (int i = 1; i < cell.rowspan; i++) {
+          tableModel.updateOccupiedTable(rownumber + i, {colnumber: true});
+          for (int j = 1; j < cell.colspan; j++) {
+            tableModel
+                .updateOccupiedTable(rownumber + i, {colnumber + j: true});
+          }
+        }
+
+        colnumber++;
+      }
+    }
+  }
+
+  double getCellTop(Map<int, double?> rowMaxHeights, int rownumber) {
+    double top = 0;
+    rowMaxHeights.forEach((key, value) {
+      if (key < rownumber) {
+        top += value ?? 0;
+      }
+    });
+    return top;
+  }
+
+  double getCellLeft(Map<int, bool> occupiedTableRow,
+      List<double> headerCellWidths, int colnumber) {
+    double left = 0;
+    for (var element in headerCellWidths) {
+      if (headerCellWidths.indexOf(element) < colnumber) {
+        left += element;
+      }
+    }
+    return left;
   }
 
   // 计算 body cell 宽度
-  List getCellWidthAndCountedColnumber(
-    FreedomTableBodyCell cell,
-    List<double> cellWidths,
-    int countedColnumber,
-  ) {
+  double getCellWidth(
+      FreedomTableBodyCell cell,
+      Map<int, bool> occupiedTableRow,
+      List<double> headerCellWidths,
+      int colnumber) {
     double cellWidth = 0;
-    for (int i = 1; i <= cell.colspan; i++, countedColnumber++) {
-      if (countedColnumber > cellWidths.length - 1) break;
-      cellWidth += cellWidths[countedColnumber];
+    for (int i = 0; i < cell.colspan; i++) {
+      if (colnumber + i > headerCellWidths.length - 1) break;
+      cellWidth += headerCellWidths[colnumber + i];
     }
-    return [cellWidth, countedColnumber];
+    return cellWidth;
   }
 
   Widget getCellWidget(FreedomTableBodyCell cell, double top, double left,
-      int rownumber, int colnumber, double cellWidth, double? cellHeight,
+      double cellWidth, double? cellHeight,
       [void Function(Size)? onChange]) {
     return Positioned(
       top: top,
@@ -53,159 +138,87 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
         child: FreedomTableCell(
           width: cellWidth,
           height: cellHeight,
-          row: rownumber,
-          column: colnumber,
           child: cell.child,
         ),
       ),
     );
   }
 
-  double getCellTop(Map<int, double> rowMaxHeights, int rownumber) {
-    double top = 0;
-    rowMaxHeights.forEach((key, value) {
-      if (key < rownumber) {
-        top += value;
+  void setCurrenColnumber(Map<int, bool> occupiedTableRow) {
+    bool isMatch = false;
+    occupiedTableRow.forEach((key, value) {
+      if (key == currentColnumber && value) {
+        isMatch = true;
+      }
+      if (isMatch && value) {
+        currentColnumber++;
       }
     });
-    return top;
-  }
-
-  double getCellLeft(
-    List<double> cellWidths,
-    int countedColnumber,
-  ) {
-    double left = 0;
-    for (var element in cellWidths) {
-      if (cellWidths.indexOf(element) < countedColnumber) {
-        left += element;
-      }
-    }
-    return left;
   }
 
   List<Widget> getCells() {
     TableModel tableModel = Provider.of<TableModel>(context, listen: false);
-    Map<int, List<List<int>>> rowSpans = tableModel.rowSpans;
-    List<double> cellWidths = tableModel.cellWidths;
-    Map<int, double> rowMaxHeights = tableModel.rowMaxHeights;
+    Map<int, Map<int, bool>> occupiedTable = tableModel.occupiedTable;
+    List<double> headerCellWidths = tableModel.headerCellWidths;
+    Map<int, double?> rowMaxHeights = tableModel.rowMaxHeights;
     List<Widget> widgets = [];
 
     // ** 每行 **
-    for (var rowCells in widget.rows) {
+    for (var bodyRow in widget.rows) {
       // 行号
-      int rownumber = widget.rows.indexOf(rowCells) + 1;
-      // 已遍历的列号
-      int countedColnumber = 0;
+      int rownumber = widget.rows.indexOf(bodyRow);
+      Map<int, bool> occupiedTableRow = occupiedTable[rownumber]!;
 
-      if (maxRowHeight.length < rownumber) {
-        maxRowHeight.add(0);
-      }
+      currentColnumber = 0;
 
       // ** 每列 **
-      for (var cell in rowCells) {
+      for (var cell in bodyRow) {
+        setCurrenColnumber(occupiedTableRow);
+
         // 配置span超过总个数，忽略后面的cell
-        if (countedColnumber >= cellWidths.length) break;
+        if (currentColnumber > headerCellWidths.length - 1) break;
 
-        // 列号
-        int colnumber = rowCells.indexOf(cell);
+        double top = getCellTop(rowMaxHeights, rownumber);
+        double left =
+            getCellLeft(occupiedTableRow, headerCellWidths, currentColnumber);
+        double cellWidth = getCellWidth(
+            cell, occupiedTableRow, headerCellWidths, currentColnumber);
 
-        double top = 0;
-        double left = 0;
-        double cellWidth = 0;
-
-        // 计算top
-        top = getCellTop(rowMaxHeights, rownumber);
-        // print("top : $top");
-
-        // 计算left
-        left = getCellLeft(
-          cellWidths,
-          countedColnumber,
-        );
-        // print("left : $left");
-
-        // 计算宽度
-        List result =
-            getCellWidthAndCountedColnumber(cell, cellWidths, countedColnumber);
-        cellWidth = result[0];
-        countedColnumber = result[1];
-
-        // 记录跨列
-        if (cell.rowspan > 1) {
-          // UNDO 跨行+跨列
-          List<int> rownumbers = [];
-          for (int i = 0; i < cell.rowspan; i++) {
-            rownumbers.add(rownumber + i);
-          }
-          tableModel.addRowSpan(colnumber, rownumbers);
-        }
-
-        // 检查是否跨列
+        // 计算跨行高度
         double cellSpanHeight = 0;
-        bool isAdded = false;
-        int colnumberNeededSpan = rowSpans.keys
-            .firstWhere((element) => element == colnumber, orElse: () => -1);
-        if (colnumberNeededSpan != -1) {
-          // 存在跨列
-          for (var affectRownumbers in rowSpans[colnumberNeededSpan]!) {
-            for (var affectRownumber in affectRownumbers) {
-              if (affectRownumber == rownumber &&
-                  affectRownumbers.indexOf(affectRownumber) == 0) {
-                // 要开始跨列了！
-                // 计算跨列高度
-                for (var affect in affectRownumbers) {
-                  cellSpanHeight += rowMaxHeights[affect] ?? 0;
-                }
-                // print(cellSpanHeight);
-                widgets.add(getCellWidget(
-                  cell,
-                  top,
-                  left,
-                  rownumber,
-                  colnumber,
-                  cellWidth,
-                  cellSpanHeight,
-                ));
-                isAdded = true;
-              } else if (affectRownumber == rownumber &&
-                  affectRownumbers.indexOf(affectRownumber) != 0) {
-                // 被跨的列！
-                countedColnumber++;
-                // left = getCellLeft(
-                //   cellWidths,
-                //   countedColnumber,
-                // );
+        if (cell.rowspan > 1) {
+          for (var i = rownumber + 1; i < widget.rows.length; i++) {
+            if (occupiedTable[i]![currentColnumber]!) {
+              if (i == rownumber + 1) {
+                cellSpanHeight += rowMaxHeights[rownumber] ?? 0;
               }
+              cellSpanHeight += rowMaxHeights[i] ?? 0;
             }
           }
         }
 
-        // 单个cell
-        if (!isAdded) {
-          widgets.add(getCellWidget(
-            cell,
-            top,
-            left,
-            rownumber,
-            colnumber,
-            cellWidth,
-            maxRowHeight[rownumber - 1] == 0
-                ? null
-                : maxRowHeight[rownumber - 1],
-            (size) {
-              // print("** size **");
-              // print(size);
-              int index = rownumber - 1;
-              if (maxRowHeight[index] < size.height) {
-                setState(() {
-                  maxRowHeight[index] = size.height;
-                  tableModel.addRowMaxHeight(rownumber, maxRowHeight[index]);
-                });
-              }
-            },
-          ));
-        }
+        widgets.add(getCellWidget(
+          cell,
+          top,
+          left,
+          cellWidth,
+          cellSpanHeight == 0 ? rowMaxHeights[rownumber] : cellSpanHeight,
+          cellSpanHeight == 0
+              ? (size) {
+                  // print("** size **");
+                  // print(size);
+                  if (rowMaxHeights[rownumber] == null ||
+                      rowMaxHeights[rownumber]! < size.height) {
+                    setState(() {
+                      rowMaxHeights[rownumber] = size.height;
+                      tableModel.addRowMaxHeight(rownumber, size.height);
+                    });
+                  }
+                }
+              : null,
+        ));
+
+        currentColnumber++;
       }
     }
 
@@ -220,8 +233,8 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
   Widget build(BuildContext context) {
     return Consumer<TableModel>(builder: (context, tableMode, child) {
       // print("** build **");
-      double tableWidth =
-          tableMode.cellWidths.reduce((value, element) => value + element);
+      double tableWidth = tableMode.headerCellWidths
+          .reduce((value, element) => value + element);
       return Container(
         width: tableWidth,
         // decoration: BoxDecoration(
