@@ -11,10 +11,10 @@ export "types.dart";
 
 class FreedomTable extends StatefulWidget {
   final List<FreedomTableHeaderCell> headers;
-  final List<List<FreedomTableBodyCell>> bodys;
+  final List<List<FreedomTableBodyCell>> rows;
   final ThemeData? theme;
   const FreedomTable(
-      {super.key, required this.headers, this.theme, this.bodys = const []});
+      {super.key, required this.headers, this.theme, this.rows = const []});
 
   @override
   State<FreedomTable> createState() => _FreedomTableState();
@@ -57,7 +57,7 @@ class _FreedomTableState extends State<FreedomTable> {
                 ),
                 Expanded(
                   child: FreedomTableBodyCells(
-                    bodys: widget.bodys,
+                    rows: widget.rows,
                   ),
                 ),
               ],

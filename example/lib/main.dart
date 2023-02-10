@@ -85,60 +85,62 @@ class _MyHomePageState extends State<MyHomePage> {
           child: headerCell('header中文'),
         ),
       ],
-      bodys: [
+      rows: [
         [
           FreedomTableBodyCell(
-            child: bodyCell('1', Alignment.centerLeft),
+            child: rowCell('1', Alignment.centerLeft),
           ),
           FreedomTableBodyCell(
-            child: bodyCell('1'),
+            child: rowCell('1'),
           ),
           FreedomTableBodyCell(
-            child: bodyCell(
+            child: rowCell(
                 '11111111111111111111111111111111111111111111111111111111111111111111'),
           ),
           FreedomTableBodyCell(
-            child: bodyCell('1'),
+            child: rowCell('1'),
           ),
         ],
         [
           FreedomTableBodyCell(
-            child: bodyCell('2', Alignment.centerLeft),
+            child: rowCell('2', Alignment.centerLeft),
           ),
           FreedomTableBodyCell(
+            // 跨行
             colspan: 2,
-            child: bodyCell('2'),
+            child: rowCell('2'),
           ),
           FreedomTableBodyCell(
+            // 跨列
             rowspan: 2,
-            child: bodyCell('2'),
+            child: rowCell('2'),
           ),
         ],
         [
           FreedomTableBodyCell(
-            child: bodyCell('3', Alignment.centerLeft),
+            child: rowCell('3', Alignment.centerLeft),
           ),
           FreedomTableBodyCell(
             // rowspan: 2,
-            child: bodyCell(
+            child: rowCell(
                 '33333333333333333333333333333333333333333333333333333333333333333333333333333'),
           ),
           FreedomTableBodyCell(
-            child: bodyCell('3'),
+            child: rowCell('3'),
           ),
           FreedomTableBodyCell(
-            child: bodyCell('3'),
+            child: rowCell('3'),
           ),
         ],
         // [
         //   FreedomTableBodyCell(
-        //     child: bodyCell('4', Alignment.centerLeft),
+        //     child: rowCell('4', Alignment.centerLeft),
         //   ),
         //   FreedomTableBodyCell(
-        //     child: bodyCell('4', Alignment.centerLeft),
+        //     child: rowCell('4', Alignment.centerLeft),
         //   ),
         //   FreedomTableBodyCell(
-        //     child: bodyCell(
+        //     child: rowCell(
         //         '4444444444444444444444444444444444444444444444444444444444444444444'),
         //   ),
         // ],
@@ -158,8 +160,8 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  // bady单元格
-  Widget bodyCell(String name, [Alignment? align]) {
+  // row单元格
+  Widget rowCell(String name, [Alignment? align]) {
     return Container(
       // decoration: BoxDecoration(
       //     // border: Border.all(

@@ -8,11 +8,11 @@ import 'cell.dart';
 import 'utils.dart';
 
 class FreedomTableBodyCells extends StatefulWidget {
-  final List<List<FreedomTableBodyCell>> bodys;
+  final List<List<FreedomTableBodyCell>> rows;
 
   const FreedomTableBodyCells({
     super.key,
-    required this.bodys,
+    required this.rows,
   });
 
   @override
@@ -28,19 +28,76 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
     super.initState();
   }
 
+  // 计算 body cell 宽度
+  List getCellWidthAndCountedColnumber(
+    FreedomTableBodyCell cell,
+    List<double> cellWidths,
+    int countedColnumber,
+  ) {
+    double cellWidth = 0;
+    for (int i = 1; i <= cell.colspan; i++, countedColnumber++) {
+      if (countedColnumber > cellWidths.length - 1) break;
+      cellWidth += cellWidths[countedColnumber];
+    }
+    return [cellWidth, countedColnumber];
+  }
+
+  Widget getCellWidget(FreedomTableBodyCell cell, double top, double left,
+      int rownumber, int colnumber, double cellWidth, double? cellHeight,
+      [void Function(Size)? onChange]) {
+    return Positioned(
+      top: top,
+      left: left,
+      child: MeasureSize(
+        onChange: onChange ?? (size) => {},
+        child: FreedomTableCell(
+          width: cellWidth,
+          height: cellHeight,
+          row: rownumber,
+          column: colnumber,
+          child: cell.child,
+        ),
+      ),
+    );
+  }
+
+  double getCellTop(Map<int, double> rowMaxHeights, int rownumber) {
+    double top = 0;
+    rowMaxHeights.forEach((key, value) {
+      if (key < rownumber) {
+        top += value;
+      }
+    });
+    return top;
+  }
+
+  double getCellLeft(
+    List<double> cellWidths,
+    int countedColnumber,
+  ) {
+    double left = 0;
+    for (var element in cellWidths) {
+      if (cellWidths.indexOf(element) < countedColnumber) {
+        left += element;
+      }
+    }
+    return left;
+  }
+
   List<Widget> getCells() {
     TableModel tableModel = Provider.of<TableModel>(context, listen: false);
-    Map<int, List<List<int>>> colSpans = tableModel.colSpans;
+    Map<int, List<List<int>>> rowSpans = tableModel.rowSpans;
     List<double> cellWidths = tableModel.cellWidths;
     Map<int, double> rowMaxHeights = tableModel.rowMaxHeights;
     List<Widget> widgets = [];
 
     // ** 每行 **
-    for (var rowCells in widget.bodys) {
+    for (var rowCells in widget.rows) {
       // 行号
-      int rownumber = widget.bodys.indexOf(rowCells) + 1;
+      int rownumber = widget.rows.indexOf(rowCells) + 1;
       // 已遍历的列号
       int countedColnumber = 0;
+
       if (maxRowHeight.length < rownumber) {
         maxRowHeight.add(0);
       }
@@ -49,6 +106,7 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
       for (var cell in rowCells) {
         // 配置span超过总个数，忽略后面的cell
         if (countedColnumber >= cellWidths.length) break;
+
         // 列号
         int colnumber = rowCells.indexOf(cell);
 
@@ -57,95 +115,67 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
         double cellWidth = 0;
 
         // 计算top
-        rowMaxHeights.forEach((key, value) {
-          if (key < rownumber) {
-            top += value;
-          }
-        });
+        top = getCellTop(rowMaxHeights, rownumber);
         // print("top : $top");
 
         // 计算left
-        for (var element in cellWidths) {
-          if (cellWidths.indexOf(element) < countedColnumber) {
-            left += element;
-          }
-        }
+        left = getCellLeft(
+          cellWidths,
+          countedColnumber,
+        );
         // print("left : $left");
 
         // 计算宽度
-        for (int i = 1; i <= cell.colspan; i++, countedColnumber++) {
-          if (countedColnumber > cellWidths.length - 1) break;
-          cellWidth += cellWidths[countedColnumber];
-        }
+        List result =
+            getCellWidthAndCountedColnumber(cell, cellWidths, countedColnumber);
+        cellWidth = result[0];
+        countedColnumber = result[1];
 
         // 记录跨列
         if (cell.rowspan > 1) {
+          // UNDO 跨行+跨列
           List<int> rownumbers = [];
           for (int i = 0; i < cell.rowspan; i++) {
             rownumbers.add(rownumber + i);
           }
-          tableModel.addColSpan(colnumber, rownumbers);
+          tableModel.addRowSpan(colnumber, rownumbers);
         }
 
         // 检查是否跨列
         double cellSpanHeight = 0;
         bool isAdded = false;
-        int colnumberInSpans = colSpans.keys
+        int colnumberNeededSpan = rowSpans.keys
             .firstWhere((element) => element == colnumber, orElse: () => -1);
-        if (colnumberInSpans != -1) {
+        if (colnumberNeededSpan != -1) {
           // 存在跨列
-          for (var rowsInSpansList in colSpans[colnumberInSpans]!) {
-            for (var rowsInSpan in rowsInSpansList) {
-              if (rowsInSpan == rownumber &&
-                  rowsInSpansList.indexOf(rowsInSpan) == 0) {
-                // 要跨列了！
+          for (var affectRownumbers in rowSpans[colnumberNeededSpan]!) {
+            for (var affectRownumber in affectRownumbers) {
+              if (affectRownumber == rownumber &&
+                  affectRownumbers.indexOf(affectRownumber) == 0) {
+                // 要开始跨列了！
                 // 计算跨列高度
-                rowMaxHeights.forEach((row, height) {
-                  for (var eachrow in rowsInSpansList) {
-                    if (row == eachrow) {
-                      cellSpanHeight += height;
-                    }
-                  }
-                });
-                widgets.add(
-                  Positioned(
-                    top: top,
-                    left: left,
-                    child: FreedomTableCell(
-                      width: cellWidth,
-                      height: cellSpanHeight,
-                      row: rownumber,
-                      column: colnumber,
-                      child: cell.child,
-                    ),
-                  ),
-                );
-                isAdded = true;
+                for (var affect in affectRownumbers) {
+                  cellSpanHeight += rowMaxHeights[affect] ?? 0;
+                }
                 // print(cellSpanHeight);
-              } else if (rowsInSpan == rownumber &&
-                  rowsInSpansList.indexOf(rowsInSpan) != 0) {
+                widgets.add(getCellWidget(
+                  cell,
+                  top,
+                  left,
+                  rownumber,
+                  colnumber,
+                  cellWidth,
+                  cellSpanHeight,
+                ));
+                isAdded = true;
+              } else if (affectRownumber == rownumber &&
+                  affectRownumbers.indexOf(affectRownumber) != 0) {
                 // 被跨的列！
-                // 增加空白区域
-                // widgets.add(
-                //   Positioned(
-                //     top: top,
-                //     left: left,
-                //     child: FreedomTableCell(
-                //       width: cellWidth,
-                //       height: maxRowHeight,
-                //       row: rownumber,
-                //       column: colnumber,
-                //     ),
-                //   ),
+                countedColnumber++;
+                // left = getCellLeft(
+                //   cellWidths,
+                //   countedColnumber,
                 // );
-                // // 重新计算下一个cell宽度
-                // cellWidth = 0;
-                // for (int i = 1;
-                //     i <= cell.colspan;
-                //     i++, countedColnumber++) {
-                //   if (countedColnumber > cellWidths.length - 1) break;
-                //   cellWidth += cellWidths[countedColnumber];
-                // }
               }
             }
           }
@@ -153,35 +183,28 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
 
         // 单个cell
         if (!isAdded) {
-          widgets.add(
-            Positioned(
-              top: top,
-              left: left,
-              child: MeasureSize(
-                onChange: (size) {
-                  // print("** size **");
-                  // print(size);
-                  int index = rownumber - 1;
-                  if (maxRowHeight[index] < size.height) {
-                    setState(() {
-                      maxRowHeight[index] = size.height;
-                      tableModel.addRowMaxHeight(
-                          rownumber, maxRowHeight[index]);
-                    });
-                  }
-                },
-                child: FreedomTableCell(
-                  width: cellWidth,
-                  height: maxRowHeight[rownumber - 1] == 0
-                      ? null
-                      : maxRowHeight[rownumber - 1],
-                  row: rownumber,
-                  column: colnumber,
-                  child: cell.child,
-                ),
-              ),
-            ),
-          );
+          widgets.add(getCellWidget(
+            cell,
+            top,
+            left,
+            rownumber,
+            colnumber,
+            cellWidth,
+            maxRowHeight[rownumber - 1] == 0
+                ? null
+                : maxRowHeight[rownumber - 1],
+            (size) {
+              // print("** size **");
+              // print(size);
+              int index = rownumber - 1;
+              if (maxRowHeight[index] < size.height) {
+                setState(() {
+                  maxRowHeight[index] = size.height;
+                  tableModel.addRowMaxHeight(rownumber, maxRowHeight[index]);
+                });
+              }
+            },
+          ));
         }
       }
     }
