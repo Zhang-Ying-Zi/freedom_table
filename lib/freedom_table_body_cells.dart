@@ -241,13 +241,8 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
       tableMode.rowMaxHeights.forEach(
         (key, value) => tableBodyHeight += value ?? 0,
       );
-      return Container(
+      return SizedBox(
         width: tableWidth,
-        // decoration: BoxDecoration(
-        //   border: Border.all(
-        //     color: Colors.black,
-        //   ),
-        // ),
         // a Stack widget must have at least one item which can have a static size at build time
         child: SingleChildScrollView(
           child: Stack(

@@ -1,6 +1,7 @@
 library freedom_table;
 
 import 'package:flutter/material.dart';
+import 'package:freedom_table/freedom_table_pager.dart';
 import 'package:provider/provider.dart';
 import './models/theme_model.dart';
 import './models/table_model.dart';
@@ -8,16 +9,19 @@ import "types.dart";
 import 'freedom_table_header_row.dart';
 import 'freedom_table_body_cells.dart';
 export "types.dart";
+export 'freedom_table_pager.dart';
 
 class FreedomTable extends StatefulWidget {
   final List<FreedomTableHeaderCell> headers;
   final List<List<FreedomTableBodyCell>> rows;
-  final ThemeData? theme;
+  final FreedomTablePager? pager;
+  final FreedomTableTheme? theme;
   const FreedomTable({
     super.key,
     required this.headers,
     this.theme,
     this.rows = const [],
+    this.pager,
   });
 
   @override
@@ -25,17 +29,12 @@ class FreedomTable extends StatefulWidget {
 }
 
 class _FreedomTableState extends State<FreedomTable> {
-  late ThemeData theme;
+  late FreedomTableTheme theme;
 
   @override
   void initState() {
     super.initState();
-    theme = widget.theme ?? ThemeData();
-    theme = theme.copyWith(
-      dividerColor: const Color(0xffe6e6e6),
-      backgroundColor: const Color(0xfff2f2f2),
-      hoverColor: const Color(0xfff6f6f6),
-    );
+    theme = widget.theme ?? FreedomTableTheme();
   }
 
   @override
@@ -64,6 +63,7 @@ class _FreedomTableState extends State<FreedomTable> {
                     rows: widget.rows,
                   ),
                 ),
+                if (widget.pager != null) widget.pager!,
               ],
             ),
           );

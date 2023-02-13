@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import '../types.dart';
 
 class ThemeModel extends ChangeNotifier {
-  ThemeData theme;
+  FreedomTableTheme theme;
 
   ThemeModel(this.theme);
 
-  void changeTheme(ThemeData changedTheme) {
+  void changeTheme(FreedomTableTheme changedTheme) {
     theme = changedTheme;
     notifyListeners();
   }

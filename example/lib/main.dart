@@ -62,6 +62,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget table() {
     return FreedomTable(
+      pager: FreedomTablePager(
+        totalCount: 101,
+        pageEach: 10,
+        callback: (totalPages, currentPageIndex) {
+          print("($currentPageIndex, $totalPages)");
+        },
+      ),
       headers: [
         FreedomTableHeaderCell(
           // 宽度比例
@@ -233,11 +240,6 @@ class _MyHomePageState extends State<MyHomePage> {
   // row单元格
   Widget rowCell(String name, [Alignment? align]) {
     return Container(
-      // decoration: BoxDecoration(
-      //     // border: Border.all(
-      //     //   color: Colors.black,
-      //     // ),
-      //     ),
       padding: const EdgeInsets.all(10),
       alignment: align ?? Alignment.center,
       child: Text(
