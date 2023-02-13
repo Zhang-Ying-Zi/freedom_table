@@ -49,7 +49,7 @@ class WidgetPosition {
     final RenderBox? renderBox =
         key.currentContext?.findRenderObject() as RenderBox?;
     final size = renderBox?.size;
-    print("SIZE: $size");
+    // print("SIZE: $size");
     return [size?.width, size?.height];
   }
 

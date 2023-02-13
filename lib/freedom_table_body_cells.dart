@@ -237,6 +237,10 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
       // print("** build **");
       double tableWidth = tableMode.headerCellWidths
           .reduce((value, element) => value + element);
+      double tableBodyHeight = 0;
+      tableMode.rowMaxHeights.forEach(
+        (key, value) => tableBodyHeight += value ?? 0,
+      );
       return Container(
         width: tableWidth,
         // decoration: BoxDecoration(
@@ -245,8 +249,15 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
         //   ),
         // ),
         // a Stack widget must have at least one item which can have a static size at build time
-        child: Stack(
-          children: [Container(), ...getCells()],
+        child: SingleChildScrollView(
+          child: Stack(
+            children: [
+              Container(
+                height: tableBodyHeight,
+              ),
+              ...getCells()
+            ],
+          ),
         ),
       );
     });

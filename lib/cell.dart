@@ -36,7 +36,7 @@ class _FreedomTableCellState extends State<FreedomTableCell> {
   @override
   void didUpdateWidget(covariant FreedomTableCell oldWidget) {
     super.didUpdateWidget(oldWidget);
-    WidgetPosition.getSizes(cellKey);
+    // WidgetPosition.getSizes(cellKey);
   }
 
   @override
