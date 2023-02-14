@@ -4,7 +4,7 @@ This Package is used for showing table data in web, which added support to **col
 
 ### support colspan and rowspan
 
-![colspan and rowspan](https://i.328888.xyz/2023/02/14/mV7Zq.png)
+![colspan and rowspan](https://i.328888.xyz/2023/02/14/mfjUL.png)
 
 ### table header-row and body-row is auto height
 
