@@ -64,9 +64,11 @@ class _PagerItemState extends State<PagerItem> {
           child: Text(
             itemName,
             style: TextStyle(
-                color: widget.isFocused
-                    ? themeModel.theme.pagerTextFocusedColor
-                    : themeModel.theme.pagerTextColor),
+                color: widget.index == null
+                    ? themeModel.theme.pagerTextDisabledColor
+                    : widget.isFocused
+                        ? themeModel.theme.pagerTextFocusedColor
+                        : themeModel.theme.pagerTextColor),
           ),
         ),
       ),
@@ -125,32 +127,65 @@ class _FreedomTablePagerState extends State<FreedomTablePager> {
   void generatePager() {
     pageItems = [];
     // prev
-    pageItems.add(pageItem(const PagerItem(type: PagerItemTypes.prev)));
+    pageItems.add(pageItem(PagerItem(
+      type: PagerItemTypes.prev,
+      index: currentPageIndex > 0 ? currentPageIndex - 1 : null,
+    )));
     // 首页
     pageItems.add(pageItem(PagerItem(
       type: PagerItemTypes.number,
       index: 0,
       isFocused: currentPageIndex == 0,
     )));
-    // ...
-    if (currentPageIndex >= sideDiff) {
-      pageItems.add(pageItem(const PagerItem(type: PagerItemTypes.ellipsis)));
-    }
+    // number
+    List<int> indexesBetweenEllipses = [];
+    bool isReachStart = false;
+    bool isReachEnd = false;
     int index = max(1, currentPageIndex - sideDiff);
-    int prefDiff = currentPageIndex - index;
-    for (;
-        index < currentPageIndex + pagesBetweenEllipsesCount - prefDiff;
-        index++) {
-      if (index > totalPages - 2) break;
+    // 居中模式
+    for (; index <= min(currentPageIndex + sideDiff, totalPages - 2); index++) {
+      if (index == 1) {
+        isReachStart = true;
+      }
+      if (index == totalPages - 2) {
+        isReachEnd = true;
+      }
+      indexesBetweenEllipses.add(index);
+    }
+    // 补缺
+    int lackDiff = pagesBetweenEllipsesCount - indexesBetweenEllipses.length;
+    if (lackDiff > 0) {
+      if (isReachStart) {
+        for (int i = 0; i < lackDiff; i++) {
+          if (index < totalPages - 1) {
+            if (index == totalPages - 2) {
+              isReachEnd = true;
+            }
+            indexesBetweenEllipses.add(index++);
+          }
+        }
+      }
+      if (isReachEnd) {
+        var indexStart = indexesBetweenEllipses.first;
+        for (int i = 0; i < lackDiff; i++) {
+          if (indexStart > 1) {
+            if (indexStart == 2) {
+              isReachStart = true;
+            }
+            indexesBetweenEllipses.insert(0, --indexStart);
+          }
+        }
+      }
+    }
+    // print("$isReachStart $isReachEnd");
+    // print(indexesBetweenEllipses);
+    for (var i = 0; i < indexesBetweenEllipses.length; i++) {
+      int index = indexesBetweenEllipses[i];
       pageItems.add(pageItem(PagerItem(
         type: PagerItemTypes.number,
         index: index,
         isFocused: currentPageIndex == index,
       )));
-    }
-    // ...
-    if (index < totalPages - 1) {
-      pageItems.add(pageItem(const PagerItem(type: PagerItemTypes.ellipsis)));
     }
     // 尾页
     if (totalPages > 1) {
@@ -161,7 +196,23 @@ class _FreedomTablePagerState extends State<FreedomTablePager> {
       )));
     }
     // next
-    pageItems.add(pageItem(const PagerItem(type: PagerItemTypes.next)));
+    pageItems.add(pageItem(PagerItem(
+      type: PagerItemTypes.next,
+      index: currentPageIndex < totalPages - 1 ? currentPageIndex + 1 : null,
+    )));
+    // ...
+    if (!isReachStart &&
+        indexesBetweenEllipses.length >= pagesBetweenEllipsesCount) {
+      // 前
+      pageItems.insert(
+          2, pageItem(const PagerItem(type: PagerItemTypes.ellipsis)));
+    }
+    if (!isReachEnd &&
+        indexesBetweenEllipses.length >= pagesBetweenEllipsesCount) {
+      // 后
+      pageItems.insert(pageItems.length - 2,
+          pageItem(const PagerItem(type: PagerItemTypes.ellipsis)));
+    }
   }
 
   @override

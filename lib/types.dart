@@ -4,7 +4,7 @@ enum CellWidthType { flex, fixed }
 
 enum CellType { header, body }
 
-const double minCellWidth = 40;
+const double minCellWidth = 80;
 
 class FreedomTableTheme {
   final Color dividerColor;
@@ -13,6 +13,7 @@ class FreedomTableTheme {
   final Color pagerBorderColor;
   final Color pagerTextColor;
   final Color pagerTextFocusedColor;
+  final Color pagerTextDisabledColor;
   final Color pagerFocusedBackgroundColor;
   FreedomTableTheme({
     this.dividerColor = const Color(0xffe6e6e6),
@@ -21,6 +22,7 @@ class FreedomTableTheme {
     this.pagerBorderColor = const Color(0xffcccccc),
     this.pagerTextColor = const Color(0xff666666),
     this.pagerTextFocusedColor = const Color(0xffffffff),
+    this.pagerTextDisabledColor = const Color(0xffcccccc),
     this.pagerFocusedBackgroundColor = const Color(0xff5078F0),
   });
 }

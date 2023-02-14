@@ -63,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget table() {
     return FreedomTable(
       pager: FreedomTablePager(
-        totalCount: 101,
+        totalCount: 90,
         pageEach: 10,
         callback: (totalPages, currentPageIndex) {
           print("($currentPageIndex, $totalPages)");
