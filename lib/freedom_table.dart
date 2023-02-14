@@ -11,30 +11,52 @@ import 'freedom_table_body_cells.dart';
 export "types.dart";
 export 'freedom_table_pager.dart';
 
+class FreedomTableData extends ChangeNotifier {
+  List<List<FreedomTableBodyCell>> rows = [];
+
+  void updateData(List<List<FreedomTableBodyCell>> rows) {
+    this.rows = rows;
+    notifyListeners();
+  }
+}
+
+FreedomTableData freedomTableRows = FreedomTableData();
+
 class FreedomTable extends StatefulWidget {
   final List<FreedomTableHeaderCell> headers;
   final FreedomTablePager? pager;
   final FreedomTableTheme? theme;
-  List<List<FreedomTableBodyCell>> rows = [];
-  FreedomTable({
+  const FreedomTable({
     super.key,
     required this.headers,
     this.theme,
     this.pager,
   });
 
+  updateData(List<List<FreedomTableBodyCell>> rows) {
+    freedomTableRows.updateData(rows);
+  }
 
   @override
   State<FreedomTable> createState() => _FreedomTableState();
 }
 
 class _FreedomTableState extends State<FreedomTable> {
+  List<List<FreedomTableBodyCell>> rows = [];
   late FreedomTableTheme theme;
 
   @override
   void initState() {
     super.initState();
     theme = widget.theme ?? FreedomTableTheme();
+    freedomTableRows.addListener(() {
+      // print(freedomTableRows.rows);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        setState(() {
+          rows = freedomTableRows.rows;
+        });
+      });
+    });
   }
 
   @override
@@ -60,7 +82,7 @@ class _FreedomTableState extends State<FreedomTable> {
                 ),
                 Expanded(
                   child: FreedomTableBodyCells(
-                    rows: widget.rows,
+                    rows: rows,
                   ),
                 ),
                 if (widget.pager != null) widget.pager!,

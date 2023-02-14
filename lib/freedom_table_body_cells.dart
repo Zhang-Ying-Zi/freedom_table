@@ -29,8 +29,6 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
   @override
   void initState() {
     super.initState();
-    generateColspan();
-    generateRowspan();
   }
 
   void generateColspan() {
@@ -168,6 +166,7 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
     for (var bodyRow in widget.rows) {
       // 行号
       int rownumber = widget.rows.indexOf(bodyRow);
+      tableModel.updateOccupiedTable(rownumber, {});
       Map<int, bool> occupiedTableRow = occupiedTable[rownumber]!;
 
       currentColnumber = 0;
@@ -189,7 +188,9 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
         double cellSpanHeight = 0;
         if (cell.rowspan > 1) {
           for (var i = rownumber + 1; i < widget.rows.length; i++) {
-            if (occupiedTable[i]![currentColnumber]!) {
+            if (occupiedTable.keys.contains(i) &&
+                occupiedTable[i]!.keys.contains(currentColnumber) &&
+                occupiedTable[i]![currentColnumber]!) {
               if (i == rownumber + 1) {
                 cellSpanHeight += rowMaxHeights[rownumber] ?? 0;
               }
@@ -224,37 +225,35 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
       }
     }
 
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   print("** done **");
-    // });
-
     return widgets;
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<TableModel>(builder: (context, tableMode, child) {
-      // print("** build **");
-      double tableWidth = tableMode.headerCellWidths
-          .reduce((value, element) => value + element);
-      double tableBodyHeight = 0;
-      tableMode.rowMaxHeights.forEach(
-        (key, value) => tableBodyHeight += value ?? 0,
-      );
-      return SizedBox(
-        width: tableWidth,
-        // a Stack widget must have at least one item which can have a static size at build time
-        child: SingleChildScrollView(
-          child: Stack(
-            children: [
-              Container(
-                height: tableBodyHeight,
-              ),
-              ...getCells()
-            ],
-          ),
+    generateColspan();
+    generateRowspan();
+
+    TableModel tableModel = Provider.of<TableModel>(context);
+    double tableWidth =
+        tableModel.headerCellWidths.reduce((value, element) => value + element);
+    double tableBodyHeight = 0;
+    tableModel.rowMaxHeights.forEach(
+      (key, value) => tableBodyHeight += value ?? 0,
+    );
+
+    return SizedBox(
+      width: tableWidth,
+      // a Stack widget must have at least one item which can have a static size at build time
+      child: SingleChildScrollView(
+        child: Stack(
+          children: [
+            Container(
+              height: tableBodyHeight,
+            ),
+            ...getCells()
+          ],
         ),
-      );
-    });
+      ),
+    );
   }
 }
