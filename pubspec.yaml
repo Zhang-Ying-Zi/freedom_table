@@ -1,5 +1,5 @@
 name: freedom_table
-description: A new Flutter package project.
+description: A web table which support colspan and rowspan.
 version: 0.0.1
 homepage:
 

@@ -84,7 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         FreedomTableHeaderCell(
           // 固定宽度
-          fixedWidth: 1000,
+          fixedWidth: 300,
           child: headerCell(
               'header-4 长中文测试：中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文'),
         ),
