@@ -49,12 +49,15 @@ class _PagerItemState extends State<PagerItem> {
           : SystemMouseCursors.click,
       child: Container(
         height: 32,
-        padding: const EdgeInsets.symmetric(horizontal: 12),
+        padding: EdgeInsets.symmetric(
+            horizontal: widget.type == PagerItemTypes.ellipsis ? 0 : 12),
         decoration: BoxDecoration(
-          border: Border.all(
-              color: widget.isFocused
-                  ? themeModel.theme.pagerFocusedBackgroundColor
-                  : themeModel.theme.pagerBorderColor),
+          border: widget.type == PagerItemTypes.ellipsis
+              ? null
+              : Border.all(
+                  color: widget.isFocused
+                      ? themeModel.theme.pagerFocusedBackgroundColor
+                      : themeModel.theme.pagerBorderColor),
           borderRadius: const BorderRadius.all(Radius.circular(2)),
           color: widget.isFocused
               ? themeModel.theme.pagerFocusedBackgroundColor
@@ -64,6 +67,7 @@ class _PagerItemState extends State<PagerItem> {
           child: Text(
             itemName,
             style: TextStyle(
+                fontSize: 14,
                 color: widget.index == null
                     ? themeModel.theme.pagerTextDisabledColor
                     : widget.isFocused
@@ -95,16 +99,36 @@ class _FreedomTablePagerState extends State<FreedomTablePager> {
   int pagesBetweenEllipsesCount = 5;
   late int sideDiff;
   late int totalPages;
+  int? lastTotalPages;
+  int? lastCurrentPageIndex;
+  late int pageEach;
   int currentPageIndex = 0;
 
-  List<Widget> pageItems = [];
+  TextEditingController gotoControl = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    totalPages = (widget.totalCount / widget.pageEach).ceil();
+    pageEach = widget.pageEach;
+    initData();
+  }
+
+  initData() {
+    totalPages = (widget.totalCount / pageEach).ceil();
     sideDiff = (pagesBetweenEllipsesCount / 2).floor();
-    generatePager();
+    currentPageIndex = 0;
+  }
+
+  executeCallback() {
+    if (widget.callback != null) {
+      if ((lastTotalPages == null || lastCurrentPageIndex == null) ||
+          (lastTotalPages != totalPages ||
+              lastCurrentPageIndex != currentPageIndex)) {
+        lastTotalPages = totalPages;
+        lastCurrentPageIndex = currentPageIndex;
+        widget.callback!(totalPages, currentPageIndex);
+      }
+    }
   }
 
   Widget pageItem(PagerItem item) {
@@ -113,19 +137,16 @@ class _FreedomTablePagerState extends State<FreedomTablePager> {
         if (item.index != null) {
           setState(() {
             currentPageIndex = item.index!;
-            generatePager();
           });
         }
-        if (widget.callback != null) {
-          widget.callback!(totalPages, currentPageIndex);
-        }
+        executeCallback();
       },
       child: item,
     );
   }
 
-  void generatePager() {
-    pageItems = [];
+  List<Widget> generatePager() {
+    List<Widget> pageItems = [];
     // prev
     pageItems.add(pageItem(PagerItem(
       type: PagerItemTypes.prev,
@@ -213,20 +234,121 @@ class _FreedomTablePagerState extends State<FreedomTablePager> {
       pageItems.insert(pageItems.length - 2,
           pageItem(const PagerItem(type: PagerItemTypes.ellipsis)));
     }
+    executeCallback();
+    return pageItems;
+  }
+
+  Widget text(String text) {
+    ThemeModel themeModel = Provider.of<ThemeModel>(context);
+    return Container(
+      height: 32,
+      padding: const EdgeInsets.symmetric(horizontal: 6),
+      child: Center(
+        child: Text(
+          text,
+          style:
+              TextStyle(fontSize: 14, color: themeModel.theme.pagerTextColor),
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    ThemeModel themeModel = Provider.of<ThemeModel>(context);
+    List<Widget> pageItems = generatePager();
     return Container(
       padding: const EdgeInsets.only(top: 20),
       child: Row(
-        children: pageItems.map((pageItem) {
-          int index = pageItems.indexOf(pageItem);
-          return Container(
-            margin: index == 0 ? null : const EdgeInsets.only(left: 10),
-            child: pageItem,
-          );
-        }).toList(),
+        children: [
+          ...pageItems.map((pageItem) {
+            int index = pageItems.indexOf(pageItem);
+            return Container(
+              margin: index == 0 ? null : const EdgeInsets.only(left: 10),
+              child: pageItem,
+            );
+          }).toList(),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              text("跳至"),
+              SizedBox(
+                width: 80,
+                // height: 32,
+                child: TextField(
+                  controller: gotoControl,
+                  autocorrect: false,
+                  // maxLines: null,
+                  // expands: true,
+                  style: TextStyle(
+                    fontSize: 14,
+                    height: 1,
+                    color: themeModel.theme.pagerTextColor,
+                  ),
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(gapPadding: 0),
+                    contentPadding: EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 10,
+                    ),
+                    isDense: true,
+                    // isCollapsed: true,
+                  ),
+                  onEditingComplete: () {
+                    try {
+                      int goto = int.parse(gotoControl.text);
+                      setState(() {
+                        currentPageIndex = max(0, goto - 1);
+                        currentPageIndex =
+                            min(currentPageIndex, totalPages - 1);
+                        gotoControl.text = (currentPageIndex + 1).toString();
+                        gotoControl.selection = TextSelection.fromPosition(
+                            TextPosition(offset: gotoControl.text.length));
+                      });
+                    } on FormatException catch (e) {
+                      print("unvalid number : $e");
+                    }
+                  },
+                ),
+              ),
+              text("页"),
+            ],
+          ),
+          text("共${widget.totalCount}条"),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              text("每页"),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 2),
+                child: DropdownButton<String>(
+                  value: pageEach.toString(),
+                  icon: const Icon(Icons.arrow_drop_down),
+                  elevation: 16,
+                  style: TextStyle(color: themeModel.theme.pagerTextColor),
+                  underline: Container(
+                    height: 2,
+                    color: themeModel.theme.pagerBorderColor,
+                  ),
+                  onChanged: (String? value) {
+                    setState(() {
+                      pageEach = int.parse(value!);
+                      initData();
+                    });
+                  },
+                  items: ["5", "10", "15", "20", "30"]
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+              ),
+              text("条"),
+            ],
+          ),
+        ],
       ),
     );
   }

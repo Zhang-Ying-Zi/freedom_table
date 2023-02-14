@@ -13,16 +13,16 @@ export 'freedom_table_pager.dart';
 
 class FreedomTable extends StatefulWidget {
   final List<FreedomTableHeaderCell> headers;
-  final List<List<FreedomTableBodyCell>> rows;
   final FreedomTablePager? pager;
   final FreedomTableTheme? theme;
-  const FreedomTable({
+  List<List<FreedomTableBodyCell>> rows = [];
+  FreedomTable({
     super.key,
     required this.headers,
     this.theme,
-    this.rows = const [],
     this.pager,
   });
+
 
   @override
   State<FreedomTable> createState() => _FreedomTableState();

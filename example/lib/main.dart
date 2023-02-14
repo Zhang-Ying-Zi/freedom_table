@@ -50,25 +50,22 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        padding: const EdgeInsets.all(20),
-        child: table(),
-      ),
-    );
-  }
+  late FreedomTable table;
 
-  Widget table() {
-    return FreedomTable(
+  @override
+  void initState() {
+    super.initState();
+    table = FreedomTable(
+      // 分页
       pager: FreedomTablePager(
         totalCount: 90,
         pageEach: 10,
         callback: (totalPages, currentPageIndex) {
           print("($currentPageIndex, $totalPages)");
+          table.rows = bodyRows(totalPages, currentPageIndex);
         },
       ),
+      // 表格header
       headers: [
         FreedomTableHeaderCell(
           // 宽度比例
@@ -92,140 +89,154 @@ class _MyHomePageState extends State<MyHomePage> {
               'header-4 长中文测试：中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文'),
         ),
       ],
-      rows: [
-        [
-          FreedomTableBodyCell(
-            child: rowCell('row1-column1', Alignment.centerLeft),
-          ),
-          FreedomTableBodyCell(
-            child: rowCell('row1-column2'),
-          ),
-          FreedomTableBodyCell(
-            child: rowCell(
-                'row1-column3 long-english:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'),
-          ),
-          FreedomTableBodyCell(
-            child: rowCell('row1-column4'),
-          ),
-        ],
-        [
-          FreedomTableBodyCell(
-            child: rowCell('row2-column1', Alignment.centerLeft),
-          ),
-          FreedomTableBodyCell(
-            child: rowCell('row2-column2'),
-          ),
-          FreedomTableBodyCell(
-            colspan: 2,
-            child: rowCell('row2-column3'),
-          ),
-        ],
-        [
-          FreedomTableBodyCell(
-            child: rowCell('row3-column1', Alignment.centerLeft),
-          ),
-          FreedomTableBodyCell(
-            rowspan: 2,
-            child: rowCell('row3-column2'),
-          ),
-          FreedomTableBodyCell(
-            child: rowCell('row3-column3'),
-          ),
-          FreedomTableBodyCell(
-            child: rowCell(
-                'row3-column4  长中文测试：中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文'),
-          ),
-        ],
-        [
-          FreedomTableBodyCell(
-            child: rowCell('row4-column1', Alignment.centerLeft),
-          ),
-          FreedomTableBodyCell(
-            child: rowCell('row4-column2'),
-          ),
-          FreedomTableBodyCell(
-            child: rowCell('row4-column3'),
-          ),
-        ],
-        [
-          FreedomTableBodyCell(
-            child: rowCell('row5-column1', Alignment.centerLeft),
-          ),
-          FreedomTableBodyCell(
-            child: rowCell('row5-column2'),
-          ),
-          FreedomTableBodyCell(
-            colspan: 2,
-            rowspan: 3,
-            child: rowCell('row5-column3'),
-          ),
-        ],
-        [
-          FreedomTableBodyCell(
-            child: rowCell('row6-column1', Alignment.centerLeft),
-          ),
-          FreedomTableBodyCell(
-            child: rowCell('row6-column2'),
-          ),
-        ],
-        [
-          FreedomTableBodyCell(
-            child: rowCell('row7-column1', Alignment.centerLeft),
-          ),
-          FreedomTableBodyCell(
-            child: rowCell('row7-column2'),
-          ),
-        ],
-        [
-          FreedomTableBodyCell(
-            child: rowCell('row8-column1', Alignment.centerLeft),
-          ),
-          FreedomTableBodyCell(
-            child: rowCell('row8-column2'),
-          ),
-          FreedomTableBodyCell(
-            child: rowCell('row8-column3'),
-          ),
-          FreedomTableBodyCell(
-            child: rowCell('row8-column4'),
-          ),
-        ],
-        [
-          FreedomTableBodyCell(
-            child: rowCell('row9-column1', Alignment.centerLeft),
-          ),
-          FreedomTableBodyCell(
-            child: rowCell('row9-column2'),
-          ),
-          FreedomTableBodyCell(
-            child: rowCell('row9-column3'),
-          ),
-          FreedomTableBodyCell(
-            child: rowCell('row9-column4'),
-          ),
-        ],
-        [
-          FreedomTableBodyCell(
-            child: rowCell('row10-column1', Alignment.centerLeft),
-          ),
-          FreedomTableBodyCell(
-            child: rowCell('row10-column2'),
-          ),
-          FreedomTableBodyCell(
-            child: rowCell('row10-column3'),
-          ),
-          FreedomTableBodyCell(
-            child: rowCell('row10-column4'),
-          ),
-        ],
-      ],
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    print(context);
+    return Scaffold(
+      body: Container(
+        padding: const EdgeInsets.all(20),
+        child: table,
+      ),
+    );
+  }
+
+  // 获取分页数据
+  List<List<FreedomTableBodyCell>> bodyRows(totalPages, currentPageIndex) {
+    return [
+      [
+        FreedomTableBodyCell(
+          child: rowCell('row1-column1', Alignment.centerLeft),
+        ),
+        FreedomTableBodyCell(
+          child: rowCell('row1-column2'),
+        ),
+        FreedomTableBodyCell(
+          child: rowCell(
+              'row1-column3 long-english:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'),
+        ),
+        FreedomTableBodyCell(
+          child: rowCell('row1-column4'),
+        ),
+      ],
+      [
+        FreedomTableBodyCell(
+          child: rowCell('row2-column1', Alignment.centerLeft),
+        ),
+        FreedomTableBodyCell(
+          child: rowCell('row2-column2'),
+        ),
+        FreedomTableBodyCell(
+          colspan: 2,
+          child: rowCell('row2-column3'),
+        ),
+      ],
+      [
+        FreedomTableBodyCell(
+          child: rowCell('row3-column1', Alignment.centerLeft),
+        ),
+        FreedomTableBodyCell(
+          rowspan: 2,
+          child: rowCell('row3-column2'),
+        ),
+        FreedomTableBodyCell(
+          child: rowCell('row3-column3'),
+        ),
+        FreedomTableBodyCell(
+          child: rowCell(
+              'row3-column4  长中文测试：中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文'),
+        ),
+      ],
+      [
+        FreedomTableBodyCell(
+          child: rowCell('row4-column1', Alignment.centerLeft),
+        ),
+        FreedomTableBodyCell(
+          child: rowCell('row4-column2'),
+        ),
+        FreedomTableBodyCell(
+          child: rowCell('row4-column3'),
+        ),
+      ],
+      [
+        FreedomTableBodyCell(
+          child: rowCell('row5-column1', Alignment.centerLeft),
+        ),
+        FreedomTableBodyCell(
+          child: rowCell('row5-column2'),
+        ),
+        FreedomTableBodyCell(
+          colspan: 2,
+          rowspan: 3,
+          child: rowCell('row5-column3'),
+        ),
+      ],
+      [
+        FreedomTableBodyCell(
+          child: rowCell('row6-column1', Alignment.centerLeft),
+        ),
+        FreedomTableBodyCell(
+          child: rowCell('row6-column2'),
+        ),
+      ],
+      [
+        FreedomTableBodyCell(
+          child: rowCell('row7-column1', Alignment.centerLeft),
+        ),
+        FreedomTableBodyCell(
+          child: rowCell('row7-column2'),
+        ),
+      ],
+      [
+        FreedomTableBodyCell(
+          child: rowCell('row8-column1', Alignment.centerLeft),
+        ),
+        FreedomTableBodyCell(
+          child: rowCell('row8-column2'),
+        ),
+        FreedomTableBodyCell(
+          child: rowCell('row8-column3'),
+        ),
+        FreedomTableBodyCell(
+          child: rowCell('row8-column4'),
+        ),
+      ],
+      [
+        FreedomTableBodyCell(
+          child: rowCell('row9-column1', Alignment.centerLeft),
+        ),
+        FreedomTableBodyCell(
+          child: rowCell('row9-column2'),
+        ),
+        FreedomTableBodyCell(
+          child: rowCell('row9-column3'),
+        ),
+        FreedomTableBodyCell(
+          child: rowCell('row9-column4'),
+        ),
+      ],
+      [
+        FreedomTableBodyCell(
+          child: rowCell('row10-column1', Alignment.centerLeft),
+        ),
+        FreedomTableBodyCell(
+          child: rowCell('row10-column2'),
+        ),
+        FreedomTableBodyCell(
+          child: rowCell('row10-column3'),
+        ),
+        FreedomTableBodyCell(
+          child: rowCell('row10-column4'),
+        ),
+      ],
+    ];
   }
 
   // header单元格
   Widget headerCell(String name, [Alignment? align]) {
     return Container(
-      // decoration: BoxDecoration(border: Border.all(color: Colors.black)),
       padding: const EdgeInsets.all(10),
       alignment: align ?? Alignment.center,
       child: Text(
@@ -237,7 +248,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  // row单元格
+  // body单元格
   Widget rowCell(String name, [Alignment? align]) {
     return Container(
       padding: const EdgeInsets.all(10),
@@ -247,10 +258,6 @@ class _MyHomePageState extends State<MyHomePage> {
         style: const TextStyle(
           fontFamily: "Noto_Sans_SC",
         ),
-        // strutStyle: const StrutStyle(
-        //   fontSize: 16.0,
-        //   height: 1.3,
-        // ),
       ),
     );
   }
