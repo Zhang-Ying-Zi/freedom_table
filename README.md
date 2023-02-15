@@ -229,7 +229,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ];
   }
 
-  // header单元格，请设置fontFamily
+  // header单元格，请设置fontFamily,否则中文高度显示不正确
   Widget headerCell(String name, [Alignment? align]) {
     return Container(
       padding: const EdgeInsets.all(10),
@@ -243,7 +243,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  // body单元格，请设置fontFamily
+  // body单元格，请设置fontFamily,否则中文高度显示不正确
   Widget rowCell(String name, [Alignment? align]) {
     return Container(
       padding: const EdgeInsets.all(10),
