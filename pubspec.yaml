@@ -1,6 +1,6 @@
 name: freedom_table
-description: A web table which support colspan and rowspan.
 version: 0.0.1
+description: A web table which support colspan and rowspan.
 homepage: https://github.com/Zhang-Ying-Zi/freedom_table.git
 
 environment:
