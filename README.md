@@ -2,13 +2,13 @@ This Package is used for showing table data in web, which added support to **col
 
 ## Features
 
-### support colspan and rowspan
+1. support colspan and rowspan
 
 ![colspan and rowspan](https://i.328888.xyz/2023/02/14/mfjUL.png)
 
-### table header-row and body-row is auto height
+2. table header-row and body-row is auto height
 
-### support pager
+3. support pager
 
 ## Usage
 
