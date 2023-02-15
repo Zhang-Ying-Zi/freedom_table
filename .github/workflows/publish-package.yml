@@ -13,11 +13,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    container:
-      image: google/dart:latest
+    #container:
+    #  image: google/dart:latest
 
     steps:
       - uses: actions/checkout@v2
+      - uses: dart-lang/setup-dart@v1.0
+        with:
+          sdk: 2.18.5
       - name: Install dependencies
         run: pub get
       - name: Run tests
