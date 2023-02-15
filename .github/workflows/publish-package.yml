@@ -13,8 +13,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    container:
-      image: google/dart:latest
+    #container:
+    #  image: google/dart:latest
 
     steps:
       - uses: actions/checkout@v2
@@ -22,9 +22,9 @@ jobs:
         with:
           sdk: 2.18.5
       - name: Install dependencies
-        run: pub get
+        run: dart pub get
       - name: Run tests
-        run: pub run test
+        run: dart pub run test
       - name: Setup Pub Credentials
         shell: bash
         env:
@@ -35,6 +35,6 @@ jobs:
         run: |
           sh ./pub_login.sh
       - name: Check Publish Warnings
-        run: pub publish --dry-run
+        run: dart pub publish --dry-run
       - name: Publish Package
-        run: pub publish -f
+        run: dart pub publish -f
