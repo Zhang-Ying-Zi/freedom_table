@@ -85,6 +85,17 @@ class _MyHomePageState extends State<MyHomePage> {
               'header-4 长中文测试：中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文'),
         ),
       ],
+      // 样式theme
+      theme: FreedomTableTheme(
+        dividerColor: const Color(0xffe6e6e6),
+        backgroundColor: const Color(0xfff2f2f2),
+        hoverColor: const Color(0xfff6f6f6),
+        pagerBorderColor: const Color(0xffcccccc),
+        pagerTextColor: const Color(0xff666666),
+        pagerTextFocusedColor: const Color(0xffffffff),
+        pagerTextDisabledColor: const Color(0xffcccccc),
+        pagerFocusedBackgroundColor: const Color(0xff5078F0),
+      ),
     );
   }
 

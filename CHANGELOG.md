@@ -1,3 +1,7 @@
+## 0.0.4
+
+- update Document
+
 ## 0.0.3
 
 - update example
