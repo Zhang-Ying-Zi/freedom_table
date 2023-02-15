@@ -26,7 +26,7 @@ jobs:
       # Include the flutter action
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.0.0"
+          flutter-version: "3.3.9"
           channel: "stable"
       #- uses: dart-lang/setup-dart@v1.0
       #  with:
