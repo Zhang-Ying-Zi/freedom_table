@@ -22,9 +22,9 @@ jobs:
         with:
           sdk: 2.18.5
       - name: Install dependencies
-        run: dart pub get
+        run: flutter pub get
       - name: Run tests
-        run: dart pub run test
+        run: flutter pub run test
       - name: Setup Pub Credentials
         shell: bash
         env:
@@ -35,6 +35,6 @@ jobs:
         run: |
           sh ./pub_login.sh
       - name: Check Publish Warnings
-        run: dart pub publish --dry-run
+        run: flutter pub publish --dry-run
       - name: Publish Package
-        run: dart pub publish -f
+        run: flutter pub publish -f
