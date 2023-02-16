@@ -1,3 +1,7 @@
+## 0.0.6
+
+- update no pager examle
+
 ## 0.0.5
 
 - update Document

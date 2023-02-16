@@ -49,43 +49,40 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     table = FreedomTable(
-      // 分页
+      // optional paging
       pager: FreedomTablePager(
-        // 总条数
         totalCount: 90,
-        // 每页数量
         pageEach: 10,
         callback: (totalPages, currentPageIndex) {
-          print("(当前页数（从0开始）：$currentPageIndex, 总页数：$totalPages)");
-          // 更新表格分页数据
+          print("($currentPageIndex, $totalPages)");
           table.updateData(getPageData(totalPages, currentPageIndex));
         },
       ),
-      // 表格header
+      // header
       headers: [
         FreedomTableHeaderCell(
-          // 宽度比例
+          // header width is flex
           flex: 1,
           child: headerCell('header-1', Alignment.centerLeft),
         ),
         FreedomTableHeaderCell(
-          // 宽度比例
+          // header width is flex
           flex: 2,
           child: headerCell('header-2'),
         ),
         FreedomTableHeaderCell(
-          // 宽度比例
+          // header width is flex
           flex: 3,
           child: headerCell('header-3'),
         ),
         FreedomTableHeaderCell(
-          // 固定宽度
+          // header width is fixed
           fixedWidth: 300,
           child: headerCell(
               'header-4 长中文测试：中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文'),
         ),
       ],
-      // 样式theme
+      // theme
       theme: FreedomTableTheme(
         dividerColor: const Color(0xffe6e6e6),
         backgroundColor: const Color(0xfff2f2f2),
@@ -97,6 +94,10 @@ class _MyHomePageState extends State<MyHomePage> {
         pagerFocusedBackgroundColor: const Color(0xff5078F0),
       ),
     );
+    // if not paging, calling below
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   table.updateData(getPageData(1, 0));
+    // });
   }
 
   @override
