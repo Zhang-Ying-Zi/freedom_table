@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import './models/theme_model.dart';
-import "types.dart";
 import 'dart:math';
 
 enum PagerItemTypes { prev, next, ellipsis, number }

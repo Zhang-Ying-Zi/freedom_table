@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import './models/theme_model.dart';
 import "types.dart";
-import './utils.dart';
 
 class FreedomTableCell extends StatefulWidget {
   final double width;

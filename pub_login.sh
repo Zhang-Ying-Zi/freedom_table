@@ -28,7 +28,7 @@ mkdir -p $XDG_CONFIG_HOME/dart
 
 # Create credentials.json file.
 # cat <<EOF > $HOME/.config/dart/pub-credentials.json
-#cat <<EOF > ~/.pub-cache/credentials.json
+# cat <<EOF > ~/.pub-cache/credentials.json
 cat <<EOF > $XDG_CONFIG_HOME/dart/pub-credentials.json
 {
   "accessToken":"${PUB_DEV_PUBLISH_ACCESS_TOKEN}",

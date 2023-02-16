@@ -1,11 +1,6 @@
-import 'dart:html';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'dart:math';
-import './models/theme_model.dart';
 import './models/table_model.dart';
-import 'package:flutter/scheduler.dart';
 import "types.dart";
 import 'cell.dart';
 import 'utils.dart';
