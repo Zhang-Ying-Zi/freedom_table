@@ -1,3 +1,7 @@
+## 0.0.7
+
+- add publisher
+
 ## 0.0.6
 
 - update no pager examle
