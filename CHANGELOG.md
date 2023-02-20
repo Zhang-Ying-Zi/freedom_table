@@ -1,3 +1,7 @@
+## 0.0.8
+
+- test
+
 ## 0.0.7
 
 - add publisher
