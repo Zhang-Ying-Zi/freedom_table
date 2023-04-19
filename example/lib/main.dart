@@ -78,17 +78,31 @@ class _MyHomePageState extends State<MyHomePage> {
           child: headerCell('header-2'),
         ),
         FreedomTableHeaderCell(
-          // header width is flex
-          flex: 3,
+          // header width is fixed
+          fixedWidth: 300,
           child: headerCell('header-3'),
         ),
         FreedomTableHeaderCell(
-          // header width is fixed
-          fixedWidth: 300,
+          // header width is flex
+          flex: 4,
           child: headerCell(
               'header-4 长中文测试：中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文'),
         ),
       ],
+      // headers: [
+      //   FreedomTableHeaderCell(
+      //     fixedWidth: 200,
+      //     child: headerCell('班次', Alignment.centerLeft),
+      //   ),
+      //   FreedomTableHeaderCell(
+      //     flex: 1,
+      //     child: headerCell('考勤时间', Alignment.centerLeft),
+      //   ),
+      //   FreedomTableHeaderCell(
+      //     fixedWidth: 200,
+      //     child: headerCell('是否启用', Alignment.centerLeft),
+      //   ),
+      // ],
       // theme
       theme: FreedomTableTheme(
         dividerColor: const Color(0xffe6e6e6),
@@ -102,9 +116,9 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
     // if not paging, calling below
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   table.updateData(getPageData(1, 0));
-    // });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      table.updateData(getPageData(1, 0));
+    });
   }
 
   @override
@@ -119,6 +133,19 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // 获取分页数据
   List<List<FreedomTableBodyCell>> getPageData(totalPages, currentPageIndex) {
+    // return [
+    //   [
+    //     FreedomTableBodyCell(
+    //       child: rowCell('item1', Alignment.centerLeft),
+    //     ),
+    //     FreedomTableBodyCell(
+    //       child: rowCell('item2', Alignment.centerLeft),
+    //     ),
+    //     FreedomTableBodyCell(
+    //       child: rowCell('item3', Alignment.centerLeft),
+    //     ),
+    //   ],
+    // ];
     return currentPageIndex % 2 == 0
         ? [
             [

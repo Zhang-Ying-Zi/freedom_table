@@ -98,10 +98,8 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
   double getCellLeft(Map<int, bool> occupiedTableRow,
       List<double> headerCellWidths, int colnumber) {
     double left = 0;
-    for (var element in headerCellWidths) {
-      if (headerCellWidths.indexOf(element) < colnumber) {
-        left += element;
-      }
+    for (var i = 0; i < colnumber; i++) {
+      left += headerCellWidths[i];
     }
     return left;
   }
