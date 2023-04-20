@@ -9,7 +9,7 @@ class FreedomTableCell extends StatefulWidget {
   final CellType type;
   final int colspan;
   final int rowspan;
-  final int colnumber;
+  final bool isFirstCellInRow;
   final Widget? child;
 
   const FreedomTableCell({
@@ -20,7 +20,7 @@ class FreedomTableCell extends StatefulWidget {
     this.height,
     this.colspan = 1,
     this.rowspan = 1,
-    this.colnumber = 0,
+    this.isFirstCellInRow = false,
   });
 
   @override
@@ -67,7 +67,7 @@ class _FreedomTableCellState extends State<FreedomTableCell> {
                       ? BorderSide(color: themeModel.theme.dividerColor)
                       : BorderSide.none,
                   bottom: BorderSide(color: themeModel.theme.dividerColor),
-                  left: widget.colnumber == 0
+                  left: widget.isFirstCellInRow == true
                       ? BorderSide(color: themeModel.theme.dividerColor)
                       : BorderSide.none,
                   right: BorderSide(color: themeModel.theme.dividerColor),

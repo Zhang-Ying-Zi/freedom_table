@@ -91,7 +91,7 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
           width: cellWidth,
           height: maxCellHeight,
           type: CellType.header,
-          colnumber: colnumber,
+          isFirstCellInRow: colnumber == 0,
           child: cell.child,
         ),
       ));

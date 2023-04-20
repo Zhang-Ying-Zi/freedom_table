@@ -19,7 +19,7 @@ class FreedomTableBodyCells extends StatefulWidget {
 
 class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
   // 列号
-  int currentColnumber = 0;
+  // int currentColnumber = 0;
 
   @override
   void initState() {
@@ -87,18 +87,33 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
 
   double getCellTop(Map<int, double?> rowMaxHeights, int rownumber) {
     double top = 0;
-    rowMaxHeights.forEach((key, value) {
-      if (key < rownumber) {
-        top += value ?? 0;
-      }
-    });
+    for (var i = 0; i < rownumber; i++) {
+      top += rowMaxHeights[i] ?? 0;
+    }
     return top;
   }
 
   double getCellLeft(Map<int, bool> occupiedTableRow,
       List<double> headerCellWidths, int colnumber) {
     double left = 0;
-    for (var i = 0; i < colnumber; i++) {
+    int delayIndex = 0;
+    for (var i = 0; i < occupiedTableRow.length; i++) {
+      if (occupiedTableRow[i] == true && i <= colnumber) {
+        delayIndex++;
+      }
+    }
+    if (occupiedTableRow[colnumber] == true) {
+      int nextIndex = colnumber + 1;
+      while ((nextIndex < occupiedTableRow.length &&
+          occupiedTableRow[nextIndex++] == true)) {
+        delayIndex++;
+      }
+    }
+    // if (delayIndex > 0) {
+    //   print("colnumber=$colnumber  delayIndex=$delayIndex");
+    // }
+    for (var i = 0; i < colnumber + delayIndex; i++) {
+      if (i > headerCellWidths.length - 1) break;
       left += headerCellWidths[i];
     }
     return left;
@@ -110,16 +125,33 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
       Map<int, bool> occupiedTableRow,
       List<double> headerCellWidths,
       int colnumber) {
+    int delayIndex = 0;
+    for (var i = 0; i < occupiedTableRow.length; i++) {
+      if (occupiedTableRow[i] == true && i <= colnumber) {
+        delayIndex++;
+      }
+    }
+    if (occupiedTableRow[colnumber] == true) {
+      int nextIndex = colnumber + 1;
+      while ((nextIndex < occupiedTableRow.length &&
+          occupiedTableRow[nextIndex++] == true)) {
+        delayIndex++;
+      }
+    }
     double cellWidth = 0;
     for (int i = 0; i < cell.colspan; i++) {
-      if (colnumber + i > headerCellWidths.length - 1) break;
-      cellWidth += headerCellWidths[colnumber + i];
+      if (colnumber + i + delayIndex > headerCellWidths.length - 1) break;
+      cellWidth += headerCellWidths[colnumber + i + delayIndex];
+      // if (delayIndex > 0) {
+      //   print(colnumber + i + delayIndex);
+      //   print(cellWidth);
+      // }
     }
     return cellWidth;
   }
 
   Widget getCellWidget(FreedomTableBodyCell cell, double top, double left,
-      double cellWidth, double? cellHeight, int currentColnumber,
+      double cellWidth, double? cellHeight, bool isFirstCellInRow,
       [void Function(Size)? onChange]) {
     return Positioned(
       top: top,
@@ -129,23 +161,11 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
         child: FreedomTableCell(
           width: cellWidth,
           height: cellHeight,
-          colnumber: currentColnumber,
+          isFirstCellInRow: isFirstCellInRow,
           child: cell.child,
         ),
       ),
     );
-  }
-
-  void setCurrenColnumber(Map<int, bool> occupiedTableRow) {
-    bool isMatch = false;
-    occupiedTableRow.forEach((key, value) {
-      if (key == currentColnumber && value) {
-        isMatch = true;
-      }
-      if (isMatch && value) {
-        currentColnumber++;
-      }
-    });
   }
 
   List<Widget> getCells() {
@@ -154,6 +174,13 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
     List<double> headerCellWidths = tableModel.headerCellWidths;
     Map<int, double?> rowMaxHeights = tableModel.rowMaxHeights;
     List<Widget> widgets = [];
+    // print("**********");
+    // print("headerCellWidths");
+    // print(headerCellWidths);
+    // print("rowMaxHeights");
+    // print(rowMaxHeights);
+    // print("occupiedTable");
+    // print(occupiedTable);
 
     // ** 每行 **
     for (var bodyRow in widget.rows) {
@@ -162,12 +189,10 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
       tableModel.updateOccupiedTable(rownumber, {});
       Map<int, bool> occupiedTableRow = occupiedTable[rownumber]!;
 
-      currentColnumber = 0;
+      int currentColnumber = 0;
 
       // ** 每列 **
       for (var cell in bodyRow) {
-        setCurrenColnumber(occupiedTableRow);
-
         // 配置span超过总个数，忽略后面的cell
         if (currentColnumber > headerCellWidths.length - 1) break;
 
@@ -180,14 +205,15 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
         // 计算跨行高度
         double cellSpanHeight = 0;
         if (cell.rowspan > 1) {
+          cellSpanHeight = rowMaxHeights[rownumber] ?? 0;
           for (var i = rownumber + 1; i < widget.rows.length; i++) {
             if (occupiedTable.keys.contains(i) &&
-                occupiedTable[i]!.keys.contains(currentColnumber) &&
-                occupiedTable[i]![currentColnumber]!) {
-              if (i == rownumber + 1) {
-                cellSpanHeight += rowMaxHeights[rownumber] ?? 0;
+                occupiedTable[i]!.keys.contains(currentColnumber)) {
+              if (occupiedTable[i]![currentColnumber] == false) {
+                break;
+              } else {
+                cellSpanHeight += rowMaxHeights[i] ?? 0;
               }
-              cellSpanHeight += rowMaxHeights[i] ?? 0;
             }
           }
         }
@@ -198,21 +224,25 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
           left,
           cellWidth,
           cellSpanHeight == 0 ? rowMaxHeights[rownumber] : cellSpanHeight,
-          currentColnumber,
+          occupiedTableRow[0] == false && currentColnumber == 0,
           cellSpanHeight == 0
               ? (size) {
-                  // print("** size **");
-                  // print(size);
-                  if (rowMaxHeights[rownumber] == null ||
-                      rowMaxHeights[rownumber]! < size.height) {
-                    setState(() {
-                      rowMaxHeights[rownumber] = size.height;
-                      tableModel.addRowMaxHeight(rownumber, size.height);
-                    });
+                  if (size.width > 0 && size.height > 0) {
+                    // print("** size **");
+                    // print(size);
+                    if (rowMaxHeights[rownumber] == null ||
+                        rowMaxHeights[rownumber]! < size.height) {
+                      setState(() {
+                        rowMaxHeights[rownumber] = size.height;
+                        tableModel.addRowMaxHeight(rownumber, size.height);
+                      });
+                    }
                   }
                 }
               : null,
         ));
+
+        // print('$rownumber $currentColnumber');
 
         currentColnumber++;
       }
