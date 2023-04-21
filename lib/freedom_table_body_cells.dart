@@ -9,10 +9,10 @@ import 'dart:html' as html;
 
 class FreedomTableBodyCells extends StatefulWidget {
   final List<List<FreedomTableBodyCell>> rows;
-  final void Function(double left, double top, double width, double height)?
-      bodyCellOnTap;
-  final void Function(double left, double top, double width, double height)?
-      bodyCellOnSecondaryTap;
+  final void Function(double left, double top, double width, double height,
+      double scrollLeft, double scrollTop)? bodyCellOnTap;
+  final void Function(double left, double top, double width, double height,
+      double scrollLeft, double scrollTop)? bodyCellOnSecondaryTap;
 
   const FreedomTableBodyCells({
     super.key,
@@ -176,15 +176,27 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
           onTap: () {
             // print('左键点击');
             if (widget.bodyCellOnTap != null) {
-              widget.bodyCellOnTap!(left, tableModel.headerMaxHeight + top,
-                  cellWidth, cellHeight ?? 0);
+              widget.bodyCellOnTap!(
+                left,
+                tableModel.headerMaxHeight + top,
+                cellWidth,
+                cellHeight ?? 0,
+                tableModel.horizontalScrollController.offset,
+                tableModel.verticalScrollController.offset,
+              );
             }
           },
           onSecondaryTap: () {
             // print('右键点击');
             if (widget.bodyCellOnSecondaryTap != null) {
-              widget.bodyCellOnSecondaryTap!(left,
-                  tableModel.headerMaxHeight + top, cellWidth, cellHeight ?? 0);
+              widget.bodyCellOnSecondaryTap!(
+                left,
+                tableModel.headerMaxHeight + top,
+                cellWidth,
+                cellHeight ?? 0,
+                tableModel.horizontalScrollController.offset,
+                tableModel.verticalScrollController.offset,
+              );
             }
           },
           child: FreedomTableCell(
@@ -298,6 +310,7 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
       width: tableWidth,
       // a Stack widget must have at least one item which can have a static size at build time
       child: SingleChildScrollView(
+        controller: tableModel.verticalScrollController,
         child: Stack(
           children: [
             Container(

@@ -1,6 +1,7 @@
 library freedom_table;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:freedom_table/freedom_table_pager.dart';
 import 'package:provider/provider.dart';
 import './models/theme_model.dart';
@@ -26,10 +27,10 @@ class FreedomTable extends StatefulWidget {
   final List<FreedomTableHeaderCell> headers;
   final FreedomTablePager? pager;
   final FreedomTableTheme? theme;
-  final void Function(double left, double top, double width, double height)?
-      bodyCellOnTap;
-  final void Function(double left, double top, double width, double height)?
-      bodyCellOnSecondaryTap;
+  final void Function(double left, double top, double width, double height,
+      double scrollLeft, double scrollTop)? bodyCellOnTap;
+  final void Function(double left, double top, double width, double height,
+      double scrollLeft, double scrollTop)? bodyCellOnSecondaryTap;
   const FreedomTable({
     super.key,
     required this.headers,
@@ -74,10 +75,13 @@ class _FreedomTableState extends State<FreedomTable> {
       ],
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constrains) {
+          TableModel tableModel =
+              Provider.of<TableModel>(context, listen: false);
           // print("** constrains **");
           // print(constrains.maxWidth);
           // print(constrains.maxHeight);
           return SingleChildScrollView(
+            controller: tableModel.horizontalScrollController,
             scrollDirection: Axis.horizontal,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
