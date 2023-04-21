@@ -1,3 +1,7 @@
+## 0.1.2
+
+- fix bug
+
 ## 0.1.1
 
 - add table cell click callback action

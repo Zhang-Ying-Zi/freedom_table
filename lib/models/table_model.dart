@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 class TableModel extends ChangeNotifier {
   // header每行cell宽度
   List<double> headerCellWidths = [];
+  // header最大高度
+  double headerMaxHeight = 0;
   // body每行最大高度，行号从0开始
   Map<int, double?> rowMaxHeights = {};
   // 占用表 Map<rownumber, Map<colnumber, isOccupied>>
@@ -11,6 +13,11 @@ class TableModel extends ChangeNotifier {
 
   void initCellWidths(List<double> headerCellWidths) {
     this.headerCellWidths = headerCellWidths;
+  }
+
+  void updateHeaderMaxHeight(double headerMaxHeight) {
+    this.headerMaxHeight = headerMaxHeight;
+    // print(headerMaxHeight);
   }
 
   void addRowMaxHeight(int linenumber, double? rowMaxHeight) {

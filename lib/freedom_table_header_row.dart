@@ -40,6 +40,8 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
   }
 
   List<Widget> getCells() {
+    TableModel tableModel = Provider.of<TableModel>(context, listen: false);
+
     totalFixedWidth = 0;
     totalFlex = 0;
     cellFlexCount = 0;
@@ -84,6 +86,7 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
           if (maxCellHeight == null || maxCellHeight! < size.height) {
             setState(() {
               maxCellHeight = size.height;
+              tableModel.updateHeaderMaxHeight(maxCellHeight ?? 0);
             });
           }
         },

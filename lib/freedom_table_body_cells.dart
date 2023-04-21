@@ -166,6 +166,7 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
   Widget getCellWidget(FreedomTableBodyCell cell, double top, double left,
       double cellWidth, double? cellHeight, bool isFirstCellInRow,
       [void Function(Size)? onChange]) {
+    TableModel tableModel = Provider.of<TableModel>(context);
     return Positioned(
       top: top,
       left: left,
@@ -175,14 +176,15 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
           onTap: () {
             // print('左键点击');
             if (widget.bodyCellOnTap != null) {
-              widget.bodyCellOnTap!(left, top, cellWidth, cellHeight ?? 0);
+              widget.bodyCellOnTap!(left, tableModel.headerMaxHeight + top,
+                  cellWidth, cellHeight ?? 0);
             }
           },
           onSecondaryTap: () {
             // print('右键点击');
             if (widget.bodyCellOnSecondaryTap != null) {
-              widget.bodyCellOnSecondaryTap!(
-                  left, top, cellWidth, cellHeight ?? 0);
+              widget.bodyCellOnSecondaryTap!(left,
+                  tableModel.headerMaxHeight + top, cellWidth, cellHeight ?? 0);
             }
           },
           child: FreedomTableCell(
