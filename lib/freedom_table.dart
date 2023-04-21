@@ -26,11 +26,17 @@ class FreedomTable extends StatefulWidget {
   final List<FreedomTableHeaderCell> headers;
   final FreedomTablePager? pager;
   final FreedomTableTheme? theme;
+  final void Function(double left, double top, double width, double height)?
+      bodyCellOnTap;
+  final void Function(double left, double top, double width, double height)?
+      bodyCellOnSecondaryTap;
   const FreedomTable({
     super.key,
     required this.headers,
     this.theme,
     this.pager,
+    this.bodyCellOnTap,
+    this.bodyCellOnSecondaryTap,
   });
 
   updateData(List<List<FreedomTableBodyCell>> rows) {
@@ -83,6 +89,8 @@ class _FreedomTableState extends State<FreedomTable> {
                 Expanded(
                   child: FreedomTableBodyCells(
                     rows: rows,
+                    bodyCellOnTap: widget.bodyCellOnTap,
+                    bodyCellOnSecondaryTap: widget.bodyCellOnSecondaryTap,
                   ),
                 ),
                 if (widget.pager != null) widget.pager!,

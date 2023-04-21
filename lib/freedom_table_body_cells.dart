@@ -4,13 +4,21 @@ import './models/table_model.dart';
 import "types.dart";
 import 'cell.dart';
 import 'utils.dart';
+import 'package:flutter/foundation.dart';
+import 'dart:html' as html;
 
 class FreedomTableBodyCells extends StatefulWidget {
   final List<List<FreedomTableBodyCell>> rows;
+  final void Function(double left, double top, double width, double height)?
+      bodyCellOnTap;
+  final void Function(double left, double top, double width, double height)?
+      bodyCellOnSecondaryTap;
 
   const FreedomTableBodyCells({
     super.key,
     required this.rows,
+    this.bodyCellOnTap,
+    this.bodyCellOnSecondaryTap,
   });
 
   @override
@@ -24,6 +32,11 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
   @override
   void initState() {
     super.initState();
+
+    if (kIsWeb) {
+      html.document.body!
+          .addEventListener('contextmenu', (event) => event.preventDefault());
+    }
   }
 
   void generateColspan() {
@@ -158,11 +171,26 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
       left: left,
       child: MeasureSize(
         onChange: onChange ?? (size) => {},
-        child: FreedomTableCell(
-          width: cellWidth,
-          height: cellHeight,
-          isFirstCellInRow: isFirstCellInRow,
-          child: cell.child,
+        child: GestureDetector(
+          onTap: () {
+            // print('左键点击');
+            if (widget.bodyCellOnTap != null) {
+              widget.bodyCellOnTap!(left, top, cellWidth, cellHeight ?? 0);
+            }
+          },
+          onSecondaryTap: () {
+            // print('右键点击');
+            if (widget.bodyCellOnSecondaryTap != null) {
+              widget.bodyCellOnSecondaryTap!(
+                  left, top, cellWidth, cellHeight ?? 0);
+            }
+          },
+          child: FreedomTableCell(
+            width: cellWidth,
+            height: cellHeight,
+            isFirstCellInRow: isFirstCellInRow,
+            child: cell.child,
+          ),
         ),
       ),
     );

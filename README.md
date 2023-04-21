@@ -93,6 +93,12 @@ class _MyHomePageState extends State<MyHomePage> {
         pagerTextDisabledColor: const Color(0xffcccccc),
         pagerFocusedBackgroundColor: const Color(0xff5078F0),
       ),
+      bodyCellOnTap: (left, top, width, height) {
+        print("左键点击，在表中的位置 : $left, $top, $width, $height");
+      },
+      bodyCellOnSecondaryTap: (left, top, width, height) {
+        print("右键点击，在表中的位置 : $left, $top, $width, $height");
+      },
     );
     // if not paging, calling below
     // WidgetsBinding.instance.addPostFrameCallback((_) {
