@@ -16,7 +16,7 @@ class FreedomTableCell extends StatefulWidget {
     super.key,
     this.child,
     this.type = CellType.body,
-    this.width = minCellWidth,
+    required this.width,
     this.height,
     this.colspan = 1,
     this.rowspan = 1,

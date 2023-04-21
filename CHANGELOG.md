@@ -1,3 +1,7 @@
+## 0.1.4
+
+- add header cell minWidth when in flex mode
+
 ## 0.1.3
 
 - fix bug

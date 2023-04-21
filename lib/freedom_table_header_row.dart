@@ -8,11 +8,13 @@ import 'utils.dart';
 class FreedomTableHeaderRow extends StatefulWidget {
   final BoxConstraints constrains;
   final List<FreedomTableHeaderCell> headerCells;
+  final double? minCellWidthInFlexMode;
 
   const FreedomTableHeaderRow({
     super.key,
     required this.headerCells,
     required this.constrains,
+    this.minCellWidthInFlexMode,
   });
 
   @override
@@ -42,6 +44,9 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
   List<Widget> getCells() {
     TableModel tableModel = Provider.of<TableModel>(context, listen: false);
 
+    double minCellWidthInFlexMode =
+        widget.minCellWidthInFlexMode ?? minCellWidth;
+
     totalFixedWidth = 0;
     totalFlex = 0;
     cellFlexCount = 0;
@@ -58,9 +63,10 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
         totalFixedWidth += cell.fixedWidth ?? 0;
       }
     }
-    if (totalFixedWidth + cellFlexCount * minCellWidth >= constrainRowWidth) {
+    if (totalFixedWidth + totalFlex * minCellWidthInFlexMode >=
+        constrainRowWidth) {
       // 超过限制，需要滚动
-      finalRowWidth = totalFixedWidth + cellFlexCount * minCellWidth;
+      finalRowWidth = totalFixedWidth + totalFlex * minCellWidthInFlexMode;
     } else {
       finalRowWidth = constrainRowWidth;
     }
@@ -69,7 +75,7 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
       int colnumber = widget.headerCells.indexOf(cell);
       double cellWidth = 0;
       if (cell.widthType == CellWidthType.fixed) {
-        cellWidth = cell.fixedWidth ?? minCellWidth;
+        cellWidth = cell.fixedWidth ?? minCellWidthInFlexMode;
       } else {
         cell.flex ??= 1;
         cellWidth =

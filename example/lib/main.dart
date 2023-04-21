@@ -56,6 +56,8 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     table = FreedomTable(
+      // optional
+      minCellWidthInFlexMode: 100,
       // optional paging
       pager: FreedomTablePager(
         totalCount: 90,
@@ -69,14 +71,14 @@ class _MyHomePageState extends State<MyHomePage> {
       headers: [
         FreedomTableHeaderCell(
           // header width is flex
-          // flex: 1,
-          fixedWidth: 101,
+          flex: 1,
+          // fixedWidth: 101,
           child: headerCell('header-1', Alignment.centerLeft),
         ),
         FreedomTableHeaderCell(
           // header width is flex
-          // flex: 2,
-          fixedWidth: 203,
+          flex: 2,
+          // fixedWidth: 203,
           child: headerCell('header-2'),
         ),
         FreedomTableHeaderCell(

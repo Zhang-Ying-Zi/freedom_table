@@ -49,6 +49,8 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     table = FreedomTable(
+      // optional
+      minCellWidthInFlexMode: 100,
       // optional paging
       pager: FreedomTablePager(
         totalCount: 90,

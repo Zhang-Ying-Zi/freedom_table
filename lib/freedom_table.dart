@@ -1,7 +1,6 @@
 library freedom_table;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:freedom_table/freedom_table_pager.dart';
 import 'package:provider/provider.dart';
 import './models/theme_model.dart';
@@ -27,6 +26,7 @@ class FreedomTable extends StatefulWidget {
   final List<FreedomTableHeaderCell> headers;
   final FreedomTablePager? pager;
   final FreedomTableTheme? theme;
+  final double? minCellWidthInFlexMode;
   final void Function(double left, double top, double width, double height,
       double scrollLeft, double scrollTop)? bodyCellOnTap;
   final void Function(double left, double top, double width, double height,
@@ -38,6 +38,7 @@ class FreedomTable extends StatefulWidget {
     this.pager,
     this.bodyCellOnTap,
     this.bodyCellOnSecondaryTap,
+    this.minCellWidthInFlexMode,
   });
 
   updateData(List<List<FreedomTableBodyCell>> rows) {
@@ -89,6 +90,7 @@ class _FreedomTableState extends State<FreedomTable> {
                 FreedomTableHeaderRow(
                   headerCells: widget.headers,
                   constrains: constrains,
+                  minCellWidthInFlexMode: widget.minCellWidthInFlexMode,
                 ),
                 Expanded(
                   child: FreedomTableBodyCells(
