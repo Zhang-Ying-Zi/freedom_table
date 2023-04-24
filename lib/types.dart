@@ -54,13 +54,15 @@ class FreedomTableBodyCell {
   final int colspan;
   final int rowspan;
   Widget child;
+  dynamic data;
   FreedomTableBodyCell({
     required this.child,
     this.colspan = 1,
     this.rowspan = 1,
+    this.data,
   });
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return "(colspan: $colspan, rowspan: $rowspan, child: $child)";
+    return "(colspan: $colspan, rowspan: $rowspan, child: $child, data: $data)";
   }
 }

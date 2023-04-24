@@ -20,7 +20,7 @@ class FreedomTableData extends ChangeNotifier {
   }
 }
 
-FreedomTableData freedomTableRows = FreedomTableData();
+FreedomTableData freedomTableData = FreedomTableData();
 
 class FreedomTable extends StatefulWidget {
   final List<FreedomTableHeaderCell> headers;
@@ -54,7 +54,7 @@ class FreedomTable extends StatefulWidget {
   });
 
   updateData(List<List<FreedomTableBodyCell>> rows) {
-    freedomTableRows.updateData(rows);
+    freedomTableData.updateData(rows);
   }
 
   @override
@@ -69,11 +69,11 @@ class _FreedomTableState extends State<FreedomTable> {
   void initState() {
     super.initState();
     theme = widget.theme ?? FreedomTableTheme();
-    freedomTableRows.addListener(() {
-      // print(freedomTableRows.rows);
+    freedomTableData.addListener(() {
+      // print(freedomTableData.rows);
       WidgetsBinding.instance.addPostFrameCallback((_) {
         setState(() {
-          rows = freedomTableRows.rows;
+          rows = freedomTableData.rows;
         });
       });
     });

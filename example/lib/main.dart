@@ -121,12 +121,12 @@ class _MyHomePageState extends State<MyHomePage> {
       bodyCellOnTap:
           (childCell, left, top, width, height, scrollLeft, scrollTop) {
         print(
-            "左键点击 $childCell，在表中的位置 : left $left, top $top, width $width, height $height, bodyScrollLeft $scrollLeft, bodyScrollTop $scrollTop");
+            "左键点击的值为 ${childCell.data}，在表中的位置 : left $left, top $top, width $width, height $height, bodyScrollLeft $scrollLeft, bodyScrollTop $scrollTop");
       },
       bodyCellOnSecondaryTap:
           (childCell, left, top, width, height, scrollLeft, scrollTop) {
         print(
-            "右键点击 $childCell，在表中的位置 : left $left, top $top, width $width, height $height, bodyScrollLeft $scrollLeft, bodyScrollTop $scrollTop");
+            "右键点击的值为 ${childCell.data}，在表中的位置 : left $left, top $top, width $width, height $height, bodyScrollLeft $scrollLeft, bodyScrollTop $scrollTop");
       },
     );
     // if not paging, calling below
@@ -166,15 +166,20 @@ class _MyHomePageState extends State<MyHomePage> {
               FreedomTableBodyCell(
                 // rowspan: 2,
                 child: rowCell('row1-column1'),
+                data: "testdata",
               ),
               FreedomTableBodyCell(
                 rowspan: 2,
                 colspan: 2,
                 child: rowCell('row1-column2'),
+                data: ["testdata"],
               ),
               FreedomTableBodyCell(
                 child: rowCell(
                     'row1-column3 long-english:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'),
+                data: {
+                  ["testdata"]
+                },
               ),
               FreedomTableBodyCell(
                 child: rowCell('row1-column4'),
