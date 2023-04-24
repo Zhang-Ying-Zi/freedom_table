@@ -9,10 +9,22 @@ import 'dart:html' as html;
 
 class FreedomTableBodyCells extends StatefulWidget {
   final List<List<FreedomTableBodyCell>> rows;
-  final void Function(double left, double top, double width, double height,
-      double scrollLeft, double scrollTop)? bodyCellOnTap;
-  final void Function(double left, double top, double width, double height,
-      double scrollLeft, double scrollTop)? bodyCellOnSecondaryTap;
+  final void Function(
+      FreedomTableBodyCell childCell,
+      double left,
+      double top,
+      double width,
+      double height,
+      double scrollLeft,
+      double scrollTop)? bodyCellOnTap;
+  final void Function(
+      FreedomTableBodyCell childCell,
+      double left,
+      double top,
+      double width,
+      double height,
+      double scrollLeft,
+      double scrollTop)? bodyCellOnSecondaryTap;
 
   const FreedomTableBodyCells({
     super.key,
@@ -177,6 +189,7 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
             // print('左键点击');
             if (widget.bodyCellOnTap != null) {
               widget.bodyCellOnTap!(
+                cell,
                 left,
                 tableModel.headerMaxHeight + top,
                 cellWidth,
@@ -190,6 +203,7 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
             // print('右键点击');
             if (widget.bodyCellOnSecondaryTap != null) {
               widget.bodyCellOnSecondaryTap!(
+                cell,
                 left,
                 tableModel.headerMaxHeight + top,
                 cellWidth,

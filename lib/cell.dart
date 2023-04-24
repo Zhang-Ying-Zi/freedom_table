@@ -25,6 +25,11 @@ class FreedomTableCell extends StatefulWidget {
 
   @override
   State<FreedomTableCell> createState() => _FreedomTableCellState();
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return "(width: $width, height: $height, type: $type, colspan: $colspan, rowspan: $rowspan, isFirstCellInRow: $isFirstCellInRow, child: $child)";
+  }
 }
 
 class _FreedomTableCellState extends State<FreedomTableCell> {

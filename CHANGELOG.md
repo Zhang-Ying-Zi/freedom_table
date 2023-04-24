@@ -1,3 +1,7 @@
+## 0.1.5
+
+- add tap parameter
+
 ## 0.1.4
 
 - add header cell minWidth when in flex mode

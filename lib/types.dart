@@ -44,6 +44,10 @@ class FreedomTableHeaderCell {
       flex ??= 1;
     }
   }
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return "(widthType: $widthType, flex: $flex, fixedWidth: $fixedWidth, child: $child)";
+  }
 }
 
 class FreedomTableBodyCell {
@@ -55,4 +59,8 @@ class FreedomTableBodyCell {
     this.colspan = 1,
     this.rowspan = 1,
   });
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return "(colspan: $colspan, rowspan: $rowspan, child: $child)";
+  }
 }

@@ -27,10 +27,22 @@ class FreedomTable extends StatefulWidget {
   final FreedomTablePager? pager;
   final FreedomTableTheme? theme;
   final double? minCellWidthInFlexMode;
-  final void Function(double left, double top, double width, double height,
-      double scrollLeft, double scrollTop)? bodyCellOnTap;
-  final void Function(double left, double top, double width, double height,
-      double scrollLeft, double scrollTop)? bodyCellOnSecondaryTap;
+  final void Function(
+      FreedomTableBodyCell childCell,
+      double left,
+      double top,
+      double width,
+      double height,
+      double scrollLeft,
+      double scrollTop)? bodyCellOnTap;
+  final void Function(
+      FreedomTableBodyCell childCell,
+      double left,
+      double top,
+      double width,
+      double height,
+      double scrollLeft,
+      double scrollTop)? bodyCellOnSecondaryTap;
   const FreedomTable({
     super.key,
     required this.headers,

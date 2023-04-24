@@ -95,14 +95,15 @@ class _MyHomePageState extends State<MyHomePage> {
         pagerTextDisabledColor: const Color(0xffcccccc),
         pagerFocusedBackgroundColor: const Color(0xff5078F0),
       ),
-      bodyCellOnTap: (left, top, width, height, scrollLeft, scrollTop) {
+      bodyCellOnTap:
+          (childCell, left, top, width, height, scrollLeft, scrollTop) {
         print(
-            "左键点击，在表中的位置 : left $left, top $top, width $width, height $height, bodyScrollLeft $scrollLeft, bodyScrollTop $scrollTop");
+            "左键点击 $childCell，在表中的位置 : left $left, top $top, width $width, height $height, bodyScrollLeft $scrollLeft, bodyScrollTop $scrollTop");
       },
       bodyCellOnSecondaryTap:
-          (left, top, width, height, scrollLeft, scrollTop) {
+          (childCell, left, top, width, height, scrollLeft, scrollTop) {
         print(
-            "右键点击，在表中的位置 : left $left, top $top, width $width, height $height, bodyScrollLeft $scrollLeft, bodyScrollTop $scrollTop");
+            "右键点击 $childCell，在表中的位置 : left $left, top $top, width $width, height $height, bodyScrollLeft $scrollLeft, bodyScrollTop $scrollTop");
       },
     );
     // if not paging, calling below
