@@ -93,20 +93,6 @@ class _MyHomePageState extends State<MyHomePage> {
               'header-4 长中文测试：中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文'),
         ),
       ],
-      // headers: [
-      //   FreedomTableHeaderCell(
-      //     fixedWidth: 200,
-      //     child: headerCell('班次', Alignment.centerLeft),
-      //   ),
-      //   FreedomTableHeaderCell(
-      //     flex: 1,
-      //     child: headerCell('考勤时间', Alignment.centerLeft),
-      //   ),
-      //   FreedomTableHeaderCell(
-      //     fixedWidth: 200,
-      //     child: headerCell('是否启用', Alignment.centerLeft),
-      //   ),
-      // ],
       // theme
       theme: FreedomTableTheme(
         dividerColor: const Color(0xffe6e6e6),
@@ -147,24 +133,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // 获取分页数据
   List<List<FreedomTableBodyCell>> getPageData(totalPages, currentPageIndex) {
-    // return [
-    //   [
-    //     FreedomTableBodyCell(
-    //       child: rowCell('item1', Alignment.centerLeft),
-    //     ),
-    //     FreedomTableBodyCell(
-    //       child: rowCell('item2', Alignment.centerLeft),
-    //     ),
-    //     FreedomTableBodyCell(
-    //       child: rowCell('item3', Alignment.centerLeft),
-    //     ),
-    //   ],
-    // ];
     return currentPageIndex % 2 == 0
         ? [
             [
               FreedomTableBodyCell(
-                // rowspan: 2,
                 child: rowCell('row1-column1'),
                 data: "testdata",
               ),
@@ -191,8 +163,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: rowCell('row2-column1'),
               ),
               FreedomTableBodyCell(
-                // colspan: 2,
                 child: rowCell('row2-column2'),
+                data: 'row2-column2',
               ),
               FreedomTableBodyCell(
                 child: rowCell('row2-column3'),
@@ -203,11 +175,11 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
             [
               FreedomTableBodyCell(
+                colspan: 2,
                 // rowspan: 2,
                 child: rowCell('row3-column1'),
               ),
               FreedomTableBodyCell(
-                // rowspan: 2,
                 child: rowCell('row3-column2'),
               ),
               FreedomTableBodyCell(
@@ -221,13 +193,15 @@ class _MyHomePageState extends State<MyHomePage> {
             [
               FreedomTableBodyCell(
                 child: rowCell('row4-column1'),
+                data: 'row4-column1',
               ),
               FreedomTableBodyCell(
-                colspan: 2,
                 // rowspan: 2,
                 child: rowCell('row4-column2'),
               ),
               FreedomTableBodyCell(
+                colspan: 2,
+                rowspan: 3,
                 child: rowCell('row4-column3'),
               ),
               FreedomTableBodyCell(

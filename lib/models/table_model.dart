@@ -16,6 +16,7 @@ class TableModel extends ChangeNotifier {
 
   void initCellWidths(List<double> headerCellWidths) {
     this.headerCellWidths = headerCellWidths;
+    // print(headerCellWidths);
   }
 
   void updateHeaderMaxHeight(double headerMaxHeight) {
@@ -26,10 +27,16 @@ class TableModel extends ChangeNotifier {
   void addRowMaxHeight(int linenumber, double? rowMaxHeight) {
     rowMaxHeights.addAll({linenumber: rowMaxHeight});
     // print(rowMaxHeights);
-    notifyListeners();
+    // notifyListeners();
   }
 
-  void updateOccupiedTable(int rownumber, Map<int, bool> updatedOccupiedRow) {
+  void updateOccupiedTable(Map<int, Map<int, bool>> occupiedTable) {
+    this.occupiedTable = occupiedTable;
+    print(occupiedTable);
+    // notifyListeners();
+  }
+
+  void updateOccupiedRow(int rownumber, Map<int, bool> updatedOccupiedRow) {
     Map<int, bool> occupiedRow = occupiedTable.putIfAbsent(rownumber, () => {});
     occupiedRow.addAll(updatedOccupiedRow);
     // print(occupiedTable);
