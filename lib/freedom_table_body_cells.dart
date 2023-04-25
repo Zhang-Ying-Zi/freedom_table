@@ -38,9 +38,6 @@ class FreedomTableBodyCells extends StatefulWidget {
 }
 
 class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
-  // 列号
-  // int currentColnumber = 0;
-
   @override
   void initState() {
     super.initState();
@@ -122,22 +119,8 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
 
   double getCellLeft(FreedomTableBodyCell cell, Map<int, bool> occupiedTableRow,
       List<double> headerCellWidths, int rownumber, int colnumber) {
-    int delayIndex = 0;
-    // for (var i = 0; i < occupiedTableRow.length; i++) {
-    //   if (occupiedTableRow[i] == true && i <= colnumber) {
-    //     delayIndex++;
-    //   }
-    // }
-    // if (occupiedTableRow[colnumber] == true) {
-    //   int nextIndex = colnumber + 1;
-    //   while ((nextIndex < occupiedTableRow.length &&
-    //       occupiedTableRow[nextIndex++] == true)) {
-    //     delayIndex++;
-    //   }
-    // }
-    // print("rownumber $rownumber colnumber $colnumber delayIndex $delayIndex");
     double left = 0;
-    for (var i = 0; i < colnumber + delayIndex; i++) {
+    for (var i = 0; i < colnumber; i++) {
       if (i > headerCellWidths.length - 1) break;
       left += headerCellWidths[i];
     }
@@ -151,23 +134,9 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
       List<double> headerCellWidths,
       int rownumber,
       int colnumber) {
-    int delayIndex = 0;
-    // for (var i = 0; i < occupiedTableRow.length; i++) {
-    //   if (occupiedTableRow[i] == true && i <= colnumber) {
-    //     delayIndex++;
-    //   }
-    // }
-    // if (occupiedTableRow[colnumber] == true) {
-    //   int nextIndex = colnumber + 1;
-    //   while ((nextIndex < occupiedTableRow.length &&
-    //       occupiedTableRow[nextIndex++] == true)) {
-    //     delayIndex++;
-    //   }
-    // }
-    // print("rownumber $rownumber colnumber $colnumber delayIndex $delayIndex");
     double cellWidth = 0;
     for (int i = 0; i < cell.colspan; i++) {
-      int index = colnumber + i + delayIndex;
+      int index = colnumber + i;
       if (index > headerCellWidths.length - 1) {
         break;
       }
@@ -244,7 +213,6 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
     for (var bodyRow in widget.rows) {
       // 行号
       int rownumber = widget.rows.indexOf(bodyRow);
-      // tableModel.updateOccupiedTable(rownumber, {});
       Map<int, bool> occupiedTableRow = occupiedTable[rownumber]!;
 
       int currentColnumber = 0;

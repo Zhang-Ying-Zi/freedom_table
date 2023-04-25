@@ -142,7 +142,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               FreedomTableBodyCell(
                 rowspan: 2,
-                colspan: 2,
+                // colspan: 2,
                 child: rowCell('row1-column2'),
                 data: ["testdata"],
               ),
@@ -243,9 +243,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: rowCell('row7-column1'),
               ),
               FreedomTableBodyCell(
+                rowspan: 2,
                 child: rowCell('row7-column2'),
               ),
               FreedomTableBodyCell(
+                rowspan: 3,
                 child: rowCell('row7-column3'),
               ),
               FreedomTableBodyCell(
@@ -254,6 +256,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
             [
               FreedomTableBodyCell(
+                rowspan: 3,
                 child: rowCell('row8-column1'),
               ),
               FreedomTableBodyCell(
