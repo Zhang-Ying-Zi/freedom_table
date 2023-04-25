@@ -1,7 +1,6 @@
 ## 0.1.7
 
 - add some document
-- add support for fixed table column when scroll table
 - fix bug
 
 ## 0.1.6

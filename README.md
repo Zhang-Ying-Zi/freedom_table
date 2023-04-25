@@ -4,11 +4,15 @@ This Package is used for showing table data in web, which added support to **col
 
 1. support colspan and rowspan
 
-![colspan and rowspan](https://i.328888.xyz/2023/02/14/mfjUL.png)
+![colspan and rowspan](https://i.328888.xyz/2023/04/25/islIwL.md.png)
 
 2. table header-row and body-row is auto height
 
 3. support pager
+
+## UNDO
+
+1. add support for fixed table column when scroll table
 
 ## Usage
 

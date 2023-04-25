@@ -32,7 +32,7 @@ class TableModel extends ChangeNotifier {
 
   void updateOccupiedTable(Map<int, Map<int, bool>> occupiedTable) {
     this.occupiedTable = occupiedTable;
-    print(occupiedTable);
+    // print(occupiedTable);
     // notifyListeners();
   }
 
