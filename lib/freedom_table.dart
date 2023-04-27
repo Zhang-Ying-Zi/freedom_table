@@ -49,9 +49,6 @@ class FreedomTable extends StatefulWidget {
     this.initBodyCells = const [],
   });
 
-  // updateData(List<List<FreedomTableBodyCell>> rows) {
-  //   freedomTableData.updateData(rows);
-  // }
   updateData(List<List<FreedomTableBodyCell>> rows) {
     freedomTableData.updateData(rows);
   }
@@ -64,6 +61,10 @@ class _FreedomTableState extends State<FreedomTable> {
   List<List<FreedomTableBodyCell>> rows = [];
   late FreedomTableTheme theme;
 
+  ScrollController horizontalScrollController = ScrollController();
+  ScrollController verticalScrollController = ScrollController();
+  ScrollController fixedVerticalScrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -75,6 +76,20 @@ class _FreedomTableState extends State<FreedomTable> {
           rows = freedomTableData.rows;
         });
       });
+    });
+    verticalScrollController.addListener(() {
+      fixedVerticalScrollController.animateTo(
+        verticalScrollController.offset,
+        duration: const Duration(milliseconds: 1),
+        curve: Curves.linear,
+      );
+    });
+    fixedVerticalScrollController.addListener(() {
+      verticalScrollController.animateTo(
+        fixedVerticalScrollController.offset,
+        duration: const Duration(milliseconds: 1),
+        curve: Curves.linear,
+      );
     });
   }
 
@@ -98,32 +113,46 @@ class _FreedomTableState extends State<FreedomTable> {
                     builder: (BuildContext context, BoxConstraints constrains) {
                   TableModel tableModel =
                       Provider.of<TableModel>(context, listen: false);
-
                   double tableBodyHeight = 0;
                   tableModel.rowMaxHeights.forEach(
                     (key, value) => tableBodyHeight += value ?? 0,
                   );
-                  return Container(
-                    width: tableModel.fixedColumnWidth,
-                    height: tableBodyHeight + tableModel.headerMaxHeight,
-                    child: Stack(children: [
-                      ...tableModel.fixedHeaderCellWidgets,
-                      ...tableModel.fixedBodyCellWidgets,
-                    ]),
+                  return Column(
+                    children: [
+                      SizedBox(
+                        width: tableModel.fixedColumnWidth,
+                        height: tableModel.headerMaxHeight,
+                        child: Stack(
+                          children: tableModel.fixedHeaderCellWidgets,
+                        ),
+                      ),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          controller: fixedVerticalScrollController,
+                          scrollDirection: Axis.vertical,
+                          child: SizedBox(
+                            width: tableModel.fixedColumnWidth,
+                            height: tableBodyHeight,
+                            child: Stack(
+                              children: tableModel.fixedBodyCellWidgets,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   );
                 }),
                 Expanded(
                   child: LayoutBuilder(
                     builder: (BuildContext context, BoxConstraints constrains) {
-                      TableModel tableModel =
-                          Provider.of<TableModel>(context, listen: false);
+                      // TableModel tableModel =
+                      //     Provider.of<TableModel>(context, listen: false);
                       return SizedBox.expand(
                         child: Column(
                           children: [
                             Flexible(
                               child: SingleChildScrollView(
-                                controller:
-                                    tableModel.horizontalScrollController,
+                                controller: horizontalScrollController,
                                 scrollDirection: Axis.horizontal,
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -140,6 +169,10 @@ class _FreedomTableState extends State<FreedomTable> {
                                         bodyCellOnTap: widget.bodyCellOnTap,
                                         bodyCellOnSecondaryTap:
                                             widget.bodyCellOnSecondaryTap,
+                                        verticalScrollController:
+                                            verticalScrollController,
+                                        horizontalScrollController:
+                                            horizontalScrollController,
                                       ),
                                     ),
                                   ],

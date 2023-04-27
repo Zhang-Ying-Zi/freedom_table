@@ -9,6 +9,8 @@ import 'dart:html' as html;
 
 class FreedomTableBodyCells extends StatefulWidget {
   final List<List<FreedomTableBodyCell>> rows;
+  final ScrollController verticalScrollController;
+  final ScrollController horizontalScrollController;
   final void Function(
       FreedomTableBodyCell childCell,
       double left,
@@ -31,6 +33,8 @@ class FreedomTableBodyCells extends StatefulWidget {
     required this.rows,
     this.bodyCellOnTap,
     this.bodyCellOnSecondaryTap,
+    required this.verticalScrollController,
+    required this.horizontalScrollController,
   });
 
   @override
@@ -156,7 +160,7 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
   }
 
   Widget getCellWidget(FreedomTableBodyCell cell, double top, double left,
-      double cellWidth, double? cellHeight, bool isFirstCellInRow,
+      double cellWidth, double? cellHeight, bool isFirstCellInRow, bool isFixed,
       [void Function(Size)? onChange]) {
     TableModel tableModel = Provider.of<TableModel>(context);
     return Positioned(
@@ -167,29 +171,29 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
         child: GestureDetector(
           onTap: () {
             // print('左键点击');
-            if (widget.bodyCellOnTap != null) {
+            if (widget.bodyCellOnTap != null && !isFixed) {
               widget.bodyCellOnTap!(
                 cell,
                 left,
                 tableModel.headerMaxHeight + top,
                 cellWidth,
                 cellHeight ?? 0,
-                tableModel.horizontalScrollController.offset,
-                tableModel.verticalScrollController.offset,
+                widget.horizontalScrollController.offset,
+                widget.verticalScrollController.offset,
               );
             }
           },
           onSecondaryTap: () {
             // print('右键点击');
-            if (widget.bodyCellOnSecondaryTap != null) {
+            if (widget.bodyCellOnSecondaryTap != null && !isFixed) {
               widget.bodyCellOnSecondaryTap!(
                 cell,
                 left,
                 tableModel.headerMaxHeight + top,
                 cellWidth,
                 cellHeight ?? 0,
-                tableModel.horizontalScrollController.offset,
-                tableModel.verticalScrollController.offset,
+                widget.horizontalScrollController.offset,
+                widget.verticalScrollController.offset,
               );
             }
           },
@@ -263,7 +267,7 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
         }
 
         if (fixedColumnNumber < tableModel.fixedColumnCount) {
-          top += tableModel.headerMaxHeight;
+          // top += tableModel.headerMaxHeight;
         } else {
           left -= tableModel.fixedColumnWidth;
         }
@@ -275,6 +279,7 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
           cellWidth,
           cellSpanHeight == 0 ? rowMaxHeights[rownumber] : cellSpanHeight,
           occupiedTableRow[0] == false && currentColnumber == 0,
+          fixedColumnNumber < tableModel.fixedColumnCount,
           cellSpanHeight == 0
               ? (size) {
                   if (size.width > 0 && size.height > 0) {
@@ -327,7 +332,7 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
       width: tableWidth,
       // a Stack widget must have at least one item which can have a static size at build time
       child: SingleChildScrollView(
-        controller: tableModel.verticalScrollController,
+        controller: widget.verticalScrollController,
         child: Stack(
           children: [
             Container(

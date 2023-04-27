@@ -2,9 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class TableModel extends ChangeNotifier {
-  final horizontalScrollController = ScrollController();
-  final verticalScrollController = ScrollController();
-
   // header每行cell宽度
   List<double> headerCellWidths = [];
   // header最大高度
