@@ -22,18 +22,26 @@ class FreedomTableHeaderRow extends StatefulWidget {
 }
 
 class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
-  // 原始总宽度
+  /// 原始总宽度
   double constrainRowWidth = 0;
-  // 最终总宽度
+
+  /// 最终总宽度
   double finalRowWidth = 0;
-  // cells总固定宽度
+
+  /// cells总固定宽度
   double totalFixedWidth = 0;
-  // cells总flex比例之和
+
+  /// cells总flex比例之和
   int totalFlex = 0;
-  // cells为flex的个数
+
+  /// cells为flex的个数
   int cellFlexCount = 0;
-  // cells最高高度
+
+  /// cells最高高度
   double? maxCellHeight;
+
+  List<Widget> fixedHeaderCellWidgets = [];
+  List<Widget> scrollableHeaderCellWidgets = [];
 
   @override
   void initState() {
@@ -41,7 +49,7 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
     constrainRowWidth = widget.constrains.maxWidth;
   }
 
-  List<Widget> getCells() {
+  void setCells() {
     TableModel tableModel = Provider.of<TableModel>(context, listen: false);
 
     double minCellWidthInFlexMode =
@@ -52,7 +60,8 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
     cellFlexCount = 0;
     finalRowWidth = 0;
 
-    List<Widget> cellWidgets = [];
+    fixedHeaderCellWidgets = [];
+    scrollableHeaderCellWidgets = [];
     List<double> cellWidths = [];
 
     for (var cell in widget.headerCells) {
@@ -82,10 +91,8 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
             ((finalRowWidth - totalFixedWidth) / totalFlex) * cell.flex!;
       }
       cellWidths.add(cellWidth);
-      // print("** cellWidth **");
-      // print(cellWidth);
 
-      cellWidgets.add(MeasureSize(
+      Widget cellWidget = MeasureSize(
         onChange: (size) {
           // print("** size **");
           // print(size);
@@ -103,22 +110,22 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
           isFirstCellInRow: colnumber == 0,
           child: cell.child,
         ),
-      ));
+      );
+      if (cell.isFixed) {
+        fixedHeaderCellWidgets.add(cellWidget);
+      } else {
+        scrollableHeaderCellWidgets.add(cellWidget);
+      }
     }
 
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   print("** done **");
-    // });
-
-    Provider.of<TableModel>(context, listen: false).initCellWidths(cellWidths);
-
-    return cellWidgets;
+    tableModel.initCellWidths(cellWidths);
   }
 
   @override
   Widget build(BuildContext context) {
+    setCells();
     return Row(
-      children: getCells(),
+      children: [...fixedHeaderCellWidgets, ...scrollableHeaderCellWidgets],
     );
   }
 }

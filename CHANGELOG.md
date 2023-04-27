@@ -1,3 +1,7 @@
+## 0.1.8
+
+- add support for fixed table column when scroll table horizontal
+
 ## 0.1.7
 
 - add some document

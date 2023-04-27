@@ -72,7 +72,8 @@ class _MyHomePageState extends State<MyHomePage> {
         FreedomTableHeaderCell(
           // header width is flex
           flex: 1,
-          // fixedWidth: 101,
+          // wether the column which the header cell belong is fixed when table is horizontal scroll
+          isFixed: true,
           child: headerCell('header-1', Alignment.centerLeft),
         ),
         FreedomTableHeaderCell(
@@ -93,6 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
               'header-4 长中文测试：中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文'),
         ),
       ],
+      initBodyCells: getPageData(1, 0),
       // theme
       theme: FreedomTableTheme(
         dividerColor: const Color(0xffe6e6e6),
@@ -115,10 +117,6 @@ class _MyHomePageState extends State<MyHomePage> {
             "右键点击的值为 ${childCell.data}，在表中的位置 : left $left, top $top, width $width, height $height, bodyScrollLeft $scrollLeft, bodyScrollTop $scrollTop");
       },
     );
-    // if not paging, calling below
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      table.updateData(getPageData(1, 0));
-    });
   }
 
   @override

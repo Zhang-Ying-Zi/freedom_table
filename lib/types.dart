@@ -7,8 +7,11 @@ enum CellType { header, body }
 const double minCellWidth = 80;
 
 class FreedomTableTheme {
+  /// table divider color
   final Color dividerColor;
   final Color backgroundColor;
+
+  /// body cell hover color
   final Color hoverColor;
   final Color pagerBorderColor;
   final Color pagerTextColor;
@@ -28,14 +31,25 @@ class FreedomTableTheme {
 }
 
 class FreedomTableHeaderCell {
-  late CellWidthType widthType;
+  /// set the header cell width in flex mode
   int? flex;
+
+  /// set the header cell width in fixed width
   double? fixedWidth;
+
+  /// child widget
   Widget child;
+
+  /// wether the column which the header cell belong is fixed when table is horizontal scroll
+  bool isFixed;
+
+  /// header cell width type is flex width or fixed width
+  late CellWidthType widthType;
   FreedomTableHeaderCell({
     this.flex,
     this.fixedWidth,
     required this.child,
+    this.isFixed = false,
   }) {
     if (fixedWidth != null) {
       widthType = CellWidthType.fixed;
@@ -64,5 +78,14 @@ class FreedomTableBodyCell {
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return "(colspan: $colspan, rowspan: $rowspan, child: $child, data: $data)";
+  }
+}
+
+class FreedomTableData extends ChangeNotifier {
+  List<List<FreedomTableBodyCell>> rows = [];
+
+  void updateData(List<List<FreedomTableBodyCell>> rows) {
+    this.rows = rows;
+    notifyListeners();
   }
 }

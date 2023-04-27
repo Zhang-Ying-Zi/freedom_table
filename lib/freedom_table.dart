@@ -11,15 +11,6 @@ import 'freedom_table_body_cells.dart';
 export "types.dart";
 export 'freedom_table_pager.dart';
 
-class FreedomTableData extends ChangeNotifier {
-  List<List<FreedomTableBodyCell>> rows = [];
-
-  void updateData(List<List<FreedomTableBodyCell>> rows) {
-    this.rows = rows;
-    notifyListeners();
-  }
-}
-
 FreedomTableData freedomTableData = FreedomTableData();
 
 class FreedomTable extends StatefulWidget {
@@ -27,22 +18,26 @@ class FreedomTable extends StatefulWidget {
   final FreedomTablePager? pager;
   final FreedomTableTheme? theme;
   final double? minCellWidthInFlexMode;
+  final List<List<FreedomTableBodyCell>> initBodyCells;
   final void Function(
-      FreedomTableBodyCell childCell,
-      double left,
-      double top,
-      double width,
-      double height,
-      double scrollLeft,
-      double scrollTop)? bodyCellOnTap;
+    FreedomTableBodyCell childCell,
+    double left,
+    double top,
+    double width,
+    double height,
+    double scrollLeft,
+    double scrollTop,
+  )? bodyCellOnTap;
   final void Function(
-      FreedomTableBodyCell childCell,
-      double left,
-      double top,
-      double width,
-      double height,
-      double scrollLeft,
-      double scrollTop)? bodyCellOnSecondaryTap;
+    FreedomTableBodyCell childCell,
+    double left,
+    double top,
+    double width,
+    double height,
+    double scrollLeft,
+    double scrollTop,
+  )? bodyCellOnSecondaryTap;
+
   const FreedomTable({
     super.key,
     required this.headers,
@@ -51,8 +46,12 @@ class FreedomTable extends StatefulWidget {
     this.bodyCellOnTap,
     this.bodyCellOnSecondaryTap,
     this.minCellWidthInFlexMode,
+    this.initBodyCells = const [],
   });
 
+  // updateData(List<List<FreedomTableBodyCell>> rows) {
+  //   freedomTableData.updateData(rows);
+  // }
   updateData(List<List<FreedomTableBodyCell>> rows) {
     freedomTableData.updateData(rows);
   }
@@ -69,8 +68,8 @@ class _FreedomTableState extends State<FreedomTable> {
   void initState() {
     super.initState();
     theme = widget.theme ?? FreedomTableTheme();
+    if (rows.isEmpty) rows = widget.initBodyCells;
     freedomTableData.addListener(() {
-      // print(freedomTableData.rows);
       WidgetsBinding.instance.addPostFrameCallback((_) {
         setState(() {
           rows = freedomTableData.rows;
@@ -86,36 +85,60 @@ class _FreedomTableState extends State<FreedomTable> {
         ChangeNotifierProvider(create: (context) => ThemeModel(theme)),
         ChangeNotifierProvider(create: (context) => TableModel()),
       ],
-      child: LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constrains) {
-          TableModel tableModel =
-              Provider.of<TableModel>(context, listen: false);
-          // print("** constrains **");
-          // print(constrains.maxWidth);
-          // print(constrains.maxHeight);
-          return SingleChildScrollView(
-            controller: tableModel.horizontalScrollController,
-            scrollDirection: Axis.horizontal,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      child: Column(
+        children: [
+          Expanded(
+            child: Row(
               children: [
-                FreedomTableHeaderRow(
-                  headerCells: widget.headers,
-                  constrains: constrains,
-                  minCellWidthInFlexMode: widget.minCellWidthInFlexMode,
-                ),
+                // Container(
+                //   width: 100,
+                //   decoration: BoxDecoration(color: Colors.yellow),
+                // ),
                 Expanded(
-                  child: FreedomTableBodyCells(
-                    rows: rows,
-                    bodyCellOnTap: widget.bodyCellOnTap,
-                    bodyCellOnSecondaryTap: widget.bodyCellOnSecondaryTap,
+                  child: LayoutBuilder(
+                    builder: (BuildContext context, BoxConstraints constrains) {
+                      TableModel tableModel =
+                          Provider.of<TableModel>(context, listen: false);
+                      return SizedBox.expand(
+                        child: Column(
+                          children: [
+                            Flexible(
+                              child: SingleChildScrollView(
+                                controller:
+                                    tableModel.horizontalScrollController,
+                                scrollDirection: Axis.horizontal,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    FreedomTableHeaderRow(
+                                      headerCells: widget.headers,
+                                      constrains: constrains,
+                                      minCellWidthInFlexMode:
+                                          widget.minCellWidthInFlexMode,
+                                    ),
+                                    Expanded(
+                                      child: FreedomTableBodyCells(
+                                        rows: rows,
+                                        bodyCellOnTap: widget.bodyCellOnTap,
+                                        bodyCellOnSecondaryTap:
+                                            widget.bodyCellOnSecondaryTap,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
                   ),
                 ),
-                if (widget.pager != null) widget.pager!,
               ],
             ),
-          );
-        },
+          ),
+          if (widget.pager != null) widget.pager!,
+        ],
       ),
     );
   }

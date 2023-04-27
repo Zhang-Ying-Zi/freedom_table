@@ -257,97 +257,100 @@ class _FreedomTablePagerState extends State<FreedomTablePager> {
     ThemeModel themeModel = Provider.of<ThemeModel>(context);
     List<Widget> pageItems = generatePager();
     return Container(
-      padding: const EdgeInsets.only(top: 20),
-      child: Row(
-        children: [
-          ...pageItems.map((pageItem) {
-            int index = pageItems.indexOf(pageItem);
-            return Container(
-              margin: index == 0 ? null : const EdgeInsets.only(left: 10),
-              child: pageItem,
-            );
-          }).toList(),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              text("跳至"),
-              SizedBox(
-                width: 80,
-                // height: 32,
-                child: TextField(
-                  controller: gotoControl,
-                  autocorrect: false,
-                  // maxLines: null,
-                  // expands: true,
-                  style: TextStyle(
-                    fontSize: 14,
-                    height: 1,
-                    color: themeModel.theme.pagerTextColor,
-                  ),
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(gapPadding: 0),
-                    contentPadding: EdgeInsets.symmetric(
-                      vertical: 12,
-                      horizontal: 10,
+      padding: const EdgeInsets.only(top: 10),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: [
+            ...pageItems.map((pageItem) {
+              int index = pageItems.indexOf(pageItem);
+              return Container(
+                margin: index == 0 ? null : const EdgeInsets.only(left: 10),
+                child: pageItem,
+              );
+            }).toList(),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                text("跳至"),
+                SizedBox(
+                  width: 80,
+                  // height: 32,
+                  child: TextField(
+                    controller: gotoControl,
+                    autocorrect: false,
+                    // maxLines: null,
+                    // expands: true,
+                    style: TextStyle(
+                      fontSize: 14,
+                      height: 1,
+                      color: themeModel.theme.pagerTextColor,
                     ),
-                    isDense: true,
-                    // isCollapsed: true,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(gapPadding: 0),
+                      contentPadding: EdgeInsets.symmetric(
+                        vertical: 12,
+                        horizontal: 10,
+                      ),
+                      isDense: true,
+                      // isCollapsed: true,
+                    ),
+                    onEditingComplete: () {
+                      try {
+                        int goto = int.parse(gotoControl.text);
+                        setState(() {
+                          currentPageIndex = max(0, goto - 1);
+                          currentPageIndex =
+                              min(currentPageIndex, totalPages - 1);
+                          gotoControl.text = (currentPageIndex + 1).toString();
+                          gotoControl.selection = TextSelection.fromPosition(
+                              TextPosition(offset: gotoControl.text.length));
+                        });
+                      } on FormatException catch (e) {
+                        print("unvalid number : $e");
+                      }
+                    },
                   ),
-                  onEditingComplete: () {
-                    try {
-                      int goto = int.parse(gotoControl.text);
+                ),
+                text("页"),
+              ],
+            ),
+            text("共${widget.totalCount}条"),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                text("每页"),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 2),
+                  child: DropdownButton<String>(
+                    value: pageEach.toString(),
+                    icon: const Icon(Icons.arrow_drop_down),
+                    elevation: 16,
+                    style: TextStyle(color: themeModel.theme.pagerTextColor),
+                    underline: Container(
+                      height: 2,
+                      color: themeModel.theme.pagerBorderColor,
+                    ),
+                    onChanged: (String? value) {
                       setState(() {
-                        currentPageIndex = max(0, goto - 1);
-                        currentPageIndex =
-                            min(currentPageIndex, totalPages - 1);
-                        gotoControl.text = (currentPageIndex + 1).toString();
-                        gotoControl.selection = TextSelection.fromPosition(
-                            TextPosition(offset: gotoControl.text.length));
+                        pageEach = int.parse(value!);
+                        initData();
                       });
-                    } on FormatException catch (e) {
-                      print("unvalid number : $e");
-                    }
-                  },
-                ),
-              ),
-              text("页"),
-            ],
-          ),
-          text("共${widget.totalCount}条"),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              text("每页"),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 2),
-                child: DropdownButton<String>(
-                  value: pageEach.toString(),
-                  icon: const Icon(Icons.arrow_drop_down),
-                  elevation: 16,
-                  style: TextStyle(color: themeModel.theme.pagerTextColor),
-                  underline: Container(
-                    height: 2,
-                    color: themeModel.theme.pagerBorderColor,
+                    },
+                    items: ["5", "10", "15", "20", "30"]
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
                   ),
-                  onChanged: (String? value) {
-                    setState(() {
-                      pageEach = int.parse(value!);
-                      initData();
-                    });
-                  },
-                  items: ["5", "10", "15", "20", "30"]
-                      .map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
                 ),
-              ),
-              text("条"),
-            ],
-          ),
-        ],
+                text("条"),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
