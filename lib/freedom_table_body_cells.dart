@@ -38,8 +38,8 @@ class FreedomTableBodyCells extends StatefulWidget {
 }
 
 class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
-  List<Widget> fixedBodyCells = [];
-  List<Widget> scrollableBodyCells = [];
+  List<Widget> fixedBodyCellWidgets = [];
+  List<Widget> scrollableBodyCellWidgets = [];
 
   @override
   void initState() {
@@ -49,6 +49,12 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
       html.document.body!
           .addEventListener('contextmenu', (event) => event.preventDefault());
     }
+    // TableModel tableModel = Provider.of<TableModel>(context);
+    // tableModel.addListener(() {
+    //   // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   setCells();
+    //   // });
+    // });
   }
 
   void computeSpan() {
@@ -204,8 +210,8 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
     List<double> headerCellWidths = tableModel.headerCellWidths;
     Map<int, double?> rowMaxHeights = tableModel.rowMaxHeights;
 
-    fixedBodyCells = [];
-    scrollableBodyCells = [];
+    fixedBodyCellWidgets = [];
+    scrollableBodyCellWidgets = [];
 
     // print("**********");
     // print("headerCellWidths");
@@ -222,6 +228,7 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
       Map<int, bool> occupiedTableRow = occupiedTable[rownumber]!;
 
       int currentColnumber = 0;
+      int fixedColumnNumber = 0;
 
       // ** 每列 **
       for (var cell in bodyRow) {
@@ -254,7 +261,13 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
           }
         }
 
-        scrollableBodyCells.add(getCellWidget(
+        if (fixedColumnNumber < tableModel.fixedColumnCount) {
+          top += tableModel.headerMaxHeight;
+        } else {
+          left -= tableModel.fixedColumnWidth;
+        }
+
+        Widget cellWidget = getCellWidget(
           cell,
           top,
           left,
@@ -276,11 +289,23 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
                   }
                 }
               : null,
-        ));
+        );
+
+        if (fixedColumnNumber < tableModel.fixedColumnCount) {
+          fixedBodyCellWidgets.add(cellWidget);
+        } else {
+          scrollableBodyCellWidgets.add(cellWidget);
+        }
+
         // print('$rownumber $currentColnumber');
         currentColnumber++;
+        if (fixedColumnNumber < tableModel.fixedColumnCount) {
+          fixedColumnNumber++;
+        }
       }
     }
+
+    tableModel.updateFixedBodyCellWidgets(fixedBodyCellWidgets);
   }
 
   @override
@@ -291,6 +316,7 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
     TableModel tableModel = Provider.of<TableModel>(context);
     double tableWidth =
         tableModel.headerCellWidths.reduce((value, element) => value + element);
+    tableWidth -= tableModel.fixedColumnWidth;
     double tableBodyHeight = 0;
     tableModel.rowMaxHeights.forEach(
       (key, value) => tableBodyHeight += value ?? 0,
@@ -306,8 +332,7 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
             Container(
               height: tableBodyHeight,
             ),
-            ...fixedBodyCells,
-            ...scrollableBodyCells,
+            ...scrollableBodyCellWidgets,
           ],
         ),
       ),

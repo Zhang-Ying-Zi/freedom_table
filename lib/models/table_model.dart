@@ -14,6 +14,13 @@ class TableModel extends ChangeNotifier {
   // 占用表 Map<rownumber, Map<colnumber, isOccupied>>
   Map<int, Map<int, bool>> occupiedTable = {};
 
+  // 固定的 header cell widgets
+  List<Widget> fixedHeaderCellWidgets = [];
+  // 固定的 body cell widgets
+  List<Widget> fixedBodyCellWidgets = [];
+  int fixedColumnCount = 0;
+  double fixedColumnWidth = 0;
+
   void initCellWidths(List<double> headerCellWidths) {
     this.headerCellWidths = headerCellWidths;
     // print(headerCellWidths);
@@ -36,10 +43,30 @@ class TableModel extends ChangeNotifier {
     // notifyListeners();
   }
 
-  void updateOccupiedRow(int rownumber, Map<int, bool> updatedOccupiedRow) {
-    Map<int, bool> occupiedRow = occupiedTable.putIfAbsent(rownumber, () => {});
-    occupiedRow.addAll(updatedOccupiedRow);
-    // print(occupiedTable);
-    // notifyListeners();
+  // void updateOccupiedRow(int rownumber, Map<int, bool> updatedOccupiedRow) {
+  //   Map<int, bool> occupiedRow = occupiedTable.putIfAbsent(rownumber, () => {});
+  //   occupiedRow.addAll(updatedOccupiedRow);
+  //   // print(occupiedTable);
+  //   // notifyListeners();
+  // }
+
+  void updateFixedHeaderCellWidgets(List<Widget> fixedHeaderCellWidgets) {
+    this.fixedHeaderCellWidgets = fixedHeaderCellWidgets;
+    // print(fixedHeaderCellWidgets);
+  }
+
+  void updateFixedColumnWidth(double fixedColumnWidth) {
+    this.fixedColumnWidth = fixedColumnWidth;
+    // print(fixedColumnWidth);
+  }
+
+  void updateFixedColumnCount(int fixedColumnCount) {
+    this.fixedColumnCount = fixedColumnCount;
+    // print(fixedColumnCount);
+  }
+
+  void updateFixedBodyCellWidgets(List<Widget> fixedBodyCellWidgets) {
+    this.fixedBodyCellWidgets = fixedBodyCellWidgets;
+    // print(fixedBodyCellWidgets
   }
 }

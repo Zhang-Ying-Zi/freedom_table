@@ -42,6 +42,8 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
 
   List<Widget> fixedHeaderCellWidgets = [];
   List<Widget> scrollableHeaderCellWidgets = [];
+  double fixedColumnWidth = 0;
+  int fixedColumnCount = 0;
 
   @override
   void initState() {
@@ -62,6 +64,8 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
 
     fixedHeaderCellWidgets = [];
     scrollableHeaderCellWidgets = [];
+    fixedColumnWidth = 0;
+    fixedColumnCount = 0;
     List<double> cellWidths = [];
 
     for (var cell in widget.headerCells) {
@@ -112,20 +116,29 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
         ),
       );
       if (cell.isFixedColumn) {
-        fixedHeaderCellWidgets.add(cellWidget);
+        fixedColumnWidth += cellWidth;
+        fixedColumnCount++;
+        double left = 0;
+        for (var i = 0; i < colnumber; i++) {
+          left += cellWidths[i];
+        }
+        fixedHeaderCellWidgets.add(Positioned(left: left, child: cellWidget));
       } else {
         scrollableHeaderCellWidgets.add(cellWidget);
       }
     }
 
     tableModel.initCellWidths(cellWidths);
+    tableModel.updateFixedHeaderCellWidgets(fixedHeaderCellWidgets);
+    tableModel.updateFixedColumnWidth(fixedColumnWidth);
+    tableModel.updateFixedColumnCount(fixedColumnCount);
   }
 
   @override
   Widget build(BuildContext context) {
     setCells();
     return Row(
-      children: [...fixedHeaderCellWidgets, ...scrollableHeaderCellWidgets],
+      children: [...scrollableHeaderCellWidgets],
     );
   }
 }

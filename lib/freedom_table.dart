@@ -94,10 +94,24 @@ class _FreedomTableState extends State<FreedomTable> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Container(
-                //   width: 100,
-                //   decoration: BoxDecoration(color: Colors.yellow),
-                // ),
+                LayoutBuilder(
+                    builder: (BuildContext context, BoxConstraints constrains) {
+                  TableModel tableModel =
+                      Provider.of<TableModel>(context, listen: false);
+
+                  double tableBodyHeight = 0;
+                  tableModel.rowMaxHeights.forEach(
+                    (key, value) => tableBodyHeight += value ?? 0,
+                  );
+                  return Container(
+                    width: tableModel.fixedColumnWidth,
+                    height: tableBodyHeight + tableModel.headerMaxHeight,
+                    child: Stack(children: [
+                      ...tableModel.fixedHeaderCellWidgets,
+                      ...tableModel.fixedBodyCellWidgets,
+                    ]),
+                  );
+                }),
                 Expanded(
                   child: LayoutBuilder(
                     builder: (BuildContext context, BoxConstraints constrains) {
