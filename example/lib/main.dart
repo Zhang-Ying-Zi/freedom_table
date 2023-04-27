@@ -73,25 +73,30 @@ class _MyHomePageState extends State<MyHomePage> {
           // header width is flex
           flex: 1,
           // wether the column which the header cell belong is fixed when table is horizontal scroll
-          isFixed: true,
-          child: headerCell('header-1', Alignment.centerLeft),
+          // when the column is fixed, please ensure the column's child cell DON'T have colspan!!!
+          isFixedColumn: true,
+          child: headerCell('header-1'),
         ),
         FreedomTableHeaderCell(
-          // header width is flex
           flex: 2,
-          // fixedWidth: 203,
+          // wether the column which the header cell belong is fixed when table is horizontal scroll
+          // when the column is fixed, please ensure the column's child cell DON'T have colspan!!!
+          isFixedColumn: true,
           child: headerCell('header-2'),
         ),
         FreedomTableHeaderCell(
           // header width is fixed
-          fixedWidth: 300,
-          child: headerCell('header-3'),
+          fixedWidth: 500,
+          child: headerCell('header-3', Alignment.centerLeft),
         ),
         FreedomTableHeaderCell(
-          // header width is flex
+          flex: 2,
+          child: headerCell('header-4'),
+        ),
+        FreedomTableHeaderCell(
           flex: 4,
           child: headerCell(
-              'header-4 长中文测试：中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文'),
+              'header-5 长中文测试：中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文'),
         ),
       ],
       initBodyCells: getPageData(1, 0),
@@ -154,6 +159,9 @@ class _MyHomePageState extends State<MyHomePage> {
               FreedomTableBodyCell(
                 child: rowCell('row1-column4'),
               ),
+              FreedomTableBodyCell(
+                child: rowCell('row1-column5'),
+              ),
             ],
             [
               FreedomTableBodyCell(
@@ -169,6 +177,9 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               FreedomTableBodyCell(
                 child: rowCell('row2-column4'),
+              ),
+              FreedomTableBodyCell(
+                child: rowCell('row2-column5'),
               ),
             ],
             [
@@ -187,6 +198,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: rowCell(
                     'row3-column4  长中文测试：中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文'),
               ),
+              FreedomTableBodyCell(
+                child: rowCell('row3-column4'),
+              ),
             ],
             [
               FreedomTableBodyCell(
@@ -194,7 +208,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 data: 'row4-column1',
               ),
               FreedomTableBodyCell(
-                // rowspan: 2,
                 child: rowCell('row4-column2'),
               ),
               FreedomTableBodyCell(
@@ -205,14 +218,15 @@ class _MyHomePageState extends State<MyHomePage> {
               FreedomTableBodyCell(
                 child: rowCell('row4-column4'),
               ),
+              FreedomTableBodyCell(
+                child: rowCell('row4-column5'),
+              ),
             ],
             [
               FreedomTableBodyCell(
                 child: rowCell('row5-column1'),
               ),
               FreedomTableBodyCell(
-                // colspan: 2,
-                // rowspan: 2,
                 child: rowCell('row5-column2'),
               ),
               FreedomTableBodyCell(
@@ -220,6 +234,9 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               FreedomTableBodyCell(
                 child: rowCell('row5-column4'),
+              ),
+              FreedomTableBodyCell(
+                child: rowCell('row5-column5'),
               ),
             ],
             [
@@ -235,6 +252,9 @@ class _MyHomePageState extends State<MyHomePage> {
               FreedomTableBodyCell(
                 child: rowCell('row6-column4'),
               ),
+              FreedomTableBodyCell(
+                child: rowCell('row6-column5'),
+              ),
             ],
             [
               FreedomTableBodyCell(
@@ -245,11 +265,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: rowCell('row7-column2'),
               ),
               FreedomTableBodyCell(
-                rowspan: 3,
                 child: rowCell('row7-column3'),
               ),
               FreedomTableBodyCell(
+                rowspan: 3,
                 child: rowCell('row7-column4'),
+              ),
+              FreedomTableBodyCell(
+                child: rowCell('row7-column5'),
               ),
             ],
             [
@@ -266,6 +289,9 @@ class _MyHomePageState extends State<MyHomePage> {
               FreedomTableBodyCell(
                 child: rowCell('row8-column4'),
               ),
+              FreedomTableBodyCell(
+                child: rowCell('row8-column5'),
+              ),
             ],
             [
               FreedomTableBodyCell(
@@ -280,6 +306,9 @@ class _MyHomePageState extends State<MyHomePage> {
               FreedomTableBodyCell(
                 child: rowCell('row9-column4'),
               ),
+              FreedomTableBodyCell(
+                child: rowCell('row9-column5'),
+              ),
             ],
             [
               FreedomTableBodyCell(
@@ -293,6 +322,9 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               FreedomTableBodyCell(
                 child: rowCell('row10-column4'),
+              ),
+              FreedomTableBodyCell(
+                child: rowCell('row10-column5'),
               ),
             ]
           ]

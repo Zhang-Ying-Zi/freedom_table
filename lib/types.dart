@@ -41,7 +41,8 @@ class FreedomTableHeaderCell {
   Widget child;
 
   /// wether the column which the header cell belong is fixed when table is horizontal scroll
-  bool isFixed;
+  /// when the column is fixed, please ensure the column's child cell DON'T have colspan!!!
+  bool isFixedColumn;
 
   /// header cell width type is flex width or fixed width
   late CellWidthType widthType;
@@ -49,7 +50,7 @@ class FreedomTableHeaderCell {
     this.flex,
     this.fixedWidth,
     required this.child,
-    this.isFixed = false,
+    this.isFixedColumn = false,
   }) {
     if (fixedWidth != null) {
       widthType = CellWidthType.fixed;

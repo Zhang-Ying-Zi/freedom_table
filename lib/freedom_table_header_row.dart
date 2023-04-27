@@ -111,7 +111,7 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
           child: cell.child,
         ),
       );
-      if (cell.isFixed) {
+      if (cell.isFixedColumn) {
         fixedHeaderCellWidgets.add(cellWidget);
       } else {
         scrollableHeaderCellWidgets.add(cellWidget);

@@ -86,9 +86,13 @@ class _FreedomTableState extends State<FreedomTable> {
         ChangeNotifierProvider(create: (context) => TableModel()),
       ],
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Container(
                 //   width: 100,

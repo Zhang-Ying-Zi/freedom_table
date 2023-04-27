@@ -38,6 +38,9 @@ class FreedomTableBodyCells extends StatefulWidget {
 }
 
 class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
+  List<Widget> fixedBodyCells = [];
+  List<Widget> scrollableBodyCells = [];
+
   @override
   void initState() {
     super.initState();
@@ -71,16 +74,16 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
       int rownumber = widget.rows.indexOf(bodyRow);
       int colnumber = 0;
 
+      int columnDelayIndex = 0;
+      for (var i = 0; i < bodyRow.length; i++) {
+        if (occupiedTable[rownumber]?[colnumber + i] == true &&
+            i <= colnumber) {
+          columnDelayIndex++;
+        }
+      }
+
       // ** 每列 **
       for (var cell in bodyRow) {
-        int columnDelayIndex = 0;
-        for (var i = 0; i < bodyRow.length; i++) {
-          if (occupiedTable[rownumber]?[colnumber + i] == true &&
-              i <= colnumber) {
-            columnDelayIndex++;
-          }
-        }
-
         if (cell.colspan > 1) {
           // 跨列
           for (int i = 1; i < cell.colspan; i++) {
@@ -195,12 +198,15 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
     );
   }
 
-  List<Widget> getCells() {
+  void setCells() {
     TableModel tableModel = Provider.of<TableModel>(context, listen: false);
     Map<int, Map<int, bool>> occupiedTable = tableModel.occupiedTable;
     List<double> headerCellWidths = tableModel.headerCellWidths;
     Map<int, double?> rowMaxHeights = tableModel.rowMaxHeights;
-    List<Widget> widgets = [];
+
+    fixedBodyCells = [];
+    scrollableBodyCells = [];
+
     // print("**********");
     // print("headerCellWidths");
     // print(headerCellWidths);
@@ -220,7 +226,7 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
       // ** 每列 **
       for (var cell in bodyRow) {
         // 配置span超过总个数，忽略后面的cell
-        if (currentColnumber > headerCellWidths.length - 1) break;
+        // if (currentColnumber > headerCellWidths.length - 1) break;
 
         while (occupiedTable[rownumber]![currentColnumber] == true) {
           currentColnumber++;
@@ -248,7 +254,7 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
           }
         }
 
-        widgets.add(getCellWidget(
+        scrollableBodyCells.add(getCellWidget(
           cell,
           top,
           left,
@@ -271,19 +277,16 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
                 }
               : null,
         ));
-
         // print('$rownumber $currentColnumber');
-
         currentColnumber++;
       }
     }
-
-    return widgets;
   }
 
   @override
   Widget build(BuildContext context) {
     computeSpan();
+    setCells();
 
     TableModel tableModel = Provider.of<TableModel>(context);
     double tableWidth =
@@ -303,7 +306,8 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
             Container(
               height: tableBodyHeight,
             ),
-            ...getCells()
+            ...fixedBodyCells,
+            ...scrollableBodyCells,
           ],
         ),
       ),
