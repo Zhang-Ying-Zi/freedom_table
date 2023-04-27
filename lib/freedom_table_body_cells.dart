@@ -237,6 +237,7 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
 
         while (occupiedTable[rownumber]![currentColnumber] == true) {
           currentColnumber++;
+          fixedColumnNumber++;
         }
 
         double top = getCellTop(rowMaxHeights, rownumber);

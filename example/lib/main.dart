@@ -74,12 +74,12 @@ class _MyHomePageState extends State<MyHomePage> {
           flex: 1,
           // wether the column which the header cell belong is fixed when table is horizontal scroll
           // when the column is fixed, please ensure the column's child cell DON'T have colspan!!!
-          // isFixedColumn: true,
+          isFixedColumn: true,
           child: headerCell('header-1'),
         ),
         FreedomTableHeaderCell(
           flex: 2,
-          // isFixedColumn: true,
+          isFixedColumn: true,
           child: headerCell('header-2'),
         ),
         FreedomTableHeaderCell(
@@ -299,6 +299,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: rowCell('row9-column1'),
               ),
               FreedomTableBodyCell(
+                rowspan: 2,
                 child: rowCell('row9-column2'),
               ),
               FreedomTableBodyCell(
