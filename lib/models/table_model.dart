@@ -47,8 +47,8 @@ class TableModel extends ChangeNotifier {
 
   void updateFixedHeaderCellWidgets(List<Widget> fixedHeaderCellWidgets) {
     this.fixedHeaderCellWidgets = fixedHeaderCellWidgets;
-    // notifyListeners();
     // print(fixedHeaderCellWidgets);
+    // notifyListeners();
   }
 
   void updateFixedColumnWidth(double fixedColumnWidth) {

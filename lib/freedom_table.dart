@@ -38,7 +38,11 @@ class FreedomTable extends StatefulWidget {
     double scrollTop,
   )? bodyCellOnSecondaryTap;
 
-  const FreedomTable({
+  final ScrollController horizontalScrollController = ScrollController();
+  final ScrollController verticalScrollController = ScrollController();
+  final ScrollController fixedVerticalScrollController = ScrollController();
+
+  FreedomTable({
     super.key,
     required this.headers,
     this.theme,
@@ -53,6 +57,14 @@ class FreedomTable extends StatefulWidget {
     freedomTableData.updateData(rows);
   }
 
+  scrollToTheFarRight() {
+    horizontalScrollController.animateTo(
+      horizontalScrollController.position.maxScrollExtent,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );
+  }
+
   @override
   State<FreedomTable> createState() => _FreedomTableState();
 }
@@ -60,10 +72,6 @@ class FreedomTable extends StatefulWidget {
 class _FreedomTableState extends State<FreedomTable> {
   List<List<FreedomTableBodyCell>> rows = [];
   late FreedomTableTheme theme;
-
-  ScrollController horizontalScrollController = ScrollController();
-  ScrollController verticalScrollController = ScrollController();
-  ScrollController fixedVerticalScrollController = ScrollController();
 
   List<Widget> fixedBodyCellWidgets = [];
 
@@ -79,17 +87,17 @@ class _FreedomTableState extends State<FreedomTable> {
         });
       });
     });
-    verticalScrollController.addListener(() {
-      fixedVerticalScrollController.animateTo(
-        verticalScrollController.offset,
-        duration: const Duration(milliseconds: 1),
+    widget.verticalScrollController.addListener(() {
+      widget.fixedVerticalScrollController.animateTo(
+        widget.verticalScrollController.offset,
+        duration: const Duration(microseconds: 1),
         curve: Curves.linear,
       );
     });
-    fixedVerticalScrollController.addListener(() {
-      verticalScrollController.animateTo(
-        fixedVerticalScrollController.offset,
-        duration: const Duration(milliseconds: 1),
+    widget.fixedVerticalScrollController.addListener(() {
+      widget.verticalScrollController.animateTo(
+        widget.fixedVerticalScrollController.offset,
+        duration: const Duration(microseconds: 1),
         curve: Curves.linear,
       );
     });
@@ -130,9 +138,10 @@ class _FreedomTableState extends State<FreedomTable> {
                       ),
                       Expanded(
                         child: SingleChildScrollView(
-                          controller: fixedVerticalScrollController,
+                          controller: widget.fixedVerticalScrollController,
                           scrollDirection: Axis.vertical,
-                          child: SizedBox(
+                          child: Container(
+                            color: theme.backgroundColor,
                             width: tableModel.fixedColumnWidth,
                             height: tableBodyHeight,
                             child: Stack(
@@ -152,7 +161,7 @@ class _FreedomTableState extends State<FreedomTable> {
                           children: [
                             Flexible(
                               child: SingleChildScrollView(
-                                controller: horizontalScrollController,
+                                controller: widget.horizontalScrollController,
                                 scrollDirection: Axis.horizontal,
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -184,9 +193,9 @@ class _FreedomTableState extends State<FreedomTable> {
                                         bodyCellOnSecondaryTap:
                                             widget.bodyCellOnSecondaryTap,
                                         verticalScrollController:
-                                            verticalScrollController,
+                                            widget.verticalScrollController,
                                         horizontalScrollController:
-                                            horizontalScrollController,
+                                            widget.horizontalScrollController,
                                       ),
                                     ),
                                   ],
