@@ -27,6 +27,8 @@ class FreedomTableBodyCells extends StatefulWidget {
       double height,
       double scrollLeft,
       double scrollTop)? bodyCellOnSecondaryTap;
+  final void Function(List<Widget> fixedBodyCellWidgets)
+      getFixedBodyCellWidgets;
 
   const FreedomTableBodyCells({
     super.key,
@@ -35,6 +37,7 @@ class FreedomTableBodyCells extends StatefulWidget {
     this.bodyCellOnSecondaryTap,
     required this.verticalScrollController,
     required this.horizontalScrollController,
+    required this.getFixedBodyCellWidgets,
   });
 
   @override
@@ -44,6 +47,7 @@ class FreedomTableBodyCells extends StatefulWidget {
 class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
   List<Widget> fixedBodyCellWidgets = [];
   List<Widget> scrollableBodyCellWidgets = [];
+  Map<int, double?> rowMaxHeights = {};
 
   @override
   void initState() {
@@ -53,11 +57,10 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
       html.document.body!
           .addEventListener('contextmenu', (event) => event.preventDefault());
     }
-    // TableModel tableModel = Provider.of<TableModel>(context);
-    // tableModel.addListener(() {
-    //   // WidgetsBinding.instance.addPostFrameCallback((_) {
+
+    // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    //   computeSpan();
     //   setCells();
-    //   // });
     // });
   }
 
@@ -162,7 +165,7 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
   Widget getCellWidget(FreedomTableBodyCell cell, double top, double left,
       double cellWidth, double? cellHeight, bool isFirstCellInRow, bool isFixed,
       [void Function(Size)? onChange]) {
-    TableModel tableModel = Provider.of<TableModel>(context);
+    TableModel tableModel = Provider.of<TableModel>(context, listen: false);
     return Positioned(
       top: top,
       left: left,
@@ -212,18 +215,9 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
     TableModel tableModel = Provider.of<TableModel>(context, listen: false);
     Map<int, Map<int, bool>> occupiedTable = tableModel.occupiedTable;
     List<double> headerCellWidths = tableModel.headerCellWidths;
-    Map<int, double?> rowMaxHeights = tableModel.rowMaxHeights;
 
     fixedBodyCellWidgets = [];
     scrollableBodyCellWidgets = [];
-
-    // print("**********");
-    // print("headerCellWidths");
-    // print(headerCellWidths);
-    // print("rowMaxHeights");
-    // print(rowMaxHeights);
-    // print("occupiedTable");
-    // print(occupiedTable);
 
     // ** 每行 **
     for (var bodyRow in widget.rows) {
@@ -298,7 +292,8 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
         );
 
         if (fixedColumnNumber < tableModel.fixedColumnCount) {
-          fixedBodyCellWidgets.add(cellWidget);
+          // 目前会执行2次 setCells(), 第一次setCells()中，rowMaxHeights为空
+          if (rowMaxHeights.isNotEmpty) fixedBodyCellWidgets.add(cellWidget);
         } else {
           scrollableBodyCellWidgets.add(cellWidget);
         }
@@ -311,14 +306,13 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
       }
     }
 
-    tableModel.updateFixedBodyCellWidgets(fixedBodyCellWidgets);
+    widget.getFixedBodyCellWidgets(fixedBodyCellWidgets);
   }
 
   @override
   Widget build(BuildContext context) {
     computeSpan();
     setCells();
-
     TableModel tableModel = Provider.of<TableModel>(context);
     double tableWidth =
         tableModel.headerCellWidths.reduce((value, element) => value + element);

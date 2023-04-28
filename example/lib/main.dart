@@ -79,7 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         FreedomTableHeaderCell(
           flex: 2,
-          isFixedColumn: true,
+          // isFixedColumn: true,
           child: headerCell('header-2'),
         ),
         FreedomTableHeaderCell(

@@ -65,6 +65,8 @@ class _FreedomTableState extends State<FreedomTable> {
   ScrollController verticalScrollController = ScrollController();
   ScrollController fixedVerticalScrollController = ScrollController();
 
+  List<Widget> fixedBodyCellWidgets = [];
+
   @override
   void initState() {
     super.initState();
@@ -134,7 +136,7 @@ class _FreedomTableState extends State<FreedomTable> {
                             width: tableModel.fixedColumnWidth,
                             height: tableBodyHeight,
                             child: Stack(
-                              children: tableModel.fixedBodyCellWidgets,
+                              children: fixedBodyCellWidgets,
                             ),
                           ),
                         ),
@@ -145,8 +147,6 @@ class _FreedomTableState extends State<FreedomTable> {
                 Expanded(
                   child: LayoutBuilder(
                     builder: (BuildContext context, BoxConstraints constrains) {
-                      // TableModel tableModel =
-                      //     Provider.of<TableModel>(context, listen: false);
                       return SizedBox.expand(
                         child: Column(
                           children: [
@@ -166,6 +166,20 @@ class _FreedomTableState extends State<FreedomTable> {
                                     Expanded(
                                       child: FreedomTableBodyCells(
                                         rows: rows,
+                                        getFixedBodyCellWidgets: ((widgets) {
+                                          WidgetsBinding.instance
+                                              .addPostFrameCallback(
+                                            (timeStamp) {
+                                              if (fixedBodyCellWidgets.length !=
+                                                  widgets.length) {
+                                                setState(() {
+                                                  fixedBodyCellWidgets =
+                                                      widgets;
+                                                });
+                                              }
+                                            },
+                                          );
+                                        }),
                                         bodyCellOnTap: widget.bodyCellOnTap,
                                         bodyCellOnSecondaryTap:
                                             widget.bodyCellOnSecondaryTap,

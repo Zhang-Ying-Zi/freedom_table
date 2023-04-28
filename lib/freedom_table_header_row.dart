@@ -39,6 +39,7 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
 
   /// cells最高高度
   double? maxCellHeight;
+  List<double> cellWidths = [];
 
   List<Widget> fixedHeaderCellWidgets = [];
   List<Widget> scrollableHeaderCellWidgets = [];
@@ -49,6 +50,14 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
   void initState() {
     super.initState();
     constrainRowWidth = widget.constrains.maxWidth;
+
+    // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    //   TableModel tableModel = Provider.of<TableModel>(context, listen: false);
+    //   tableModel.initCellWidths(cellWidths);
+    //   tableModel.updateFixedHeaderCellWidgets(fixedHeaderCellWidgets);
+    //   tableModel.updateFixedColumnWidth(fixedColumnWidth);
+    //   tableModel.updateFixedColumnCount(fixedColumnCount);
+    // });
   }
 
   void setCells() {
@@ -66,7 +75,7 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
     scrollableHeaderCellWidgets = [];
     fixedColumnWidth = 0;
     fixedColumnCount = 0;
-    List<double> cellWidths = [];
+    cellWidths = [];
 
     for (var cell in widget.headerCells) {
       if (cell.widthType == CellWidthType.flex) {

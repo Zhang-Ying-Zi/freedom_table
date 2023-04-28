@@ -13,8 +13,6 @@ class TableModel extends ChangeNotifier {
 
   // 固定的 header cell widgets
   List<Widget> fixedHeaderCellWidgets = [];
-  // 固定的 body cell widgets
-  List<Widget> fixedBodyCellWidgets = [];
   int fixedColumnCount = 0;
   double fixedColumnWidth = 0;
 
@@ -49,6 +47,7 @@ class TableModel extends ChangeNotifier {
 
   void updateFixedHeaderCellWidgets(List<Widget> fixedHeaderCellWidgets) {
     this.fixedHeaderCellWidgets = fixedHeaderCellWidgets;
+    // notifyListeners();
     // print(fixedHeaderCellWidgets);
   }
 
@@ -60,10 +59,5 @@ class TableModel extends ChangeNotifier {
   void updateFixedColumnCount(int fixedColumnCount) {
     this.fixedColumnCount = fixedColumnCount;
     // print(fixedColumnCount);
-  }
-
-  void updateFixedBodyCellWidgets(List<Widget> fixedBodyCellWidgets) {
-    this.fixedBodyCellWidgets = fixedBodyCellWidgets;
-    // print(fixedBodyCellWidgets
   }
 }
