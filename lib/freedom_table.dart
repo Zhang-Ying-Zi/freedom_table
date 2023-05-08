@@ -91,19 +91,29 @@ class _FreedomTableState extends State<FreedomTable> {
         });
       });
     });
+
     widget.verticalScrollController.addListener(() {
-      widget.fixedVerticalScrollController.animateTo(
-        widget.verticalScrollController.offset,
-        duration: const Duration(microseconds: 1),
-        curve: Curves.linear,
-      );
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (widget.verticalScrollController.hasClients) {
+          widget.fixedVerticalScrollController.animateTo(
+            widget.verticalScrollController.offset,
+            duration: const Duration(microseconds: 1),
+            curve: Curves.linear,
+          );
+        }
+      });
     });
+
     widget.fixedVerticalScrollController.addListener(() {
-      widget.verticalScrollController.animateTo(
-        widget.fixedVerticalScrollController.offset,
-        duration: const Duration(microseconds: 1),
-        curve: Curves.linear,
-      );
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (widget.fixedVerticalScrollController.hasClients) {
+          widget.verticalScrollController.animateTo(
+            widget.fixedVerticalScrollController.offset,
+            duration: const Duration(microseconds: 1),
+            curve: Curves.linear,
+          );
+        }
+      });
     });
   }
 
