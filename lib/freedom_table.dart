@@ -58,11 +58,15 @@ class FreedomTable extends StatefulWidget {
   }
 
   scrollToTheFarRight() {
-    horizontalScrollController.animateTo(
-      horizontalScrollController.position.maxScrollExtent,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeOut,
-    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (horizontalScrollController.hasClients) {
+        horizontalScrollController.animateTo(
+          horizontalScrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
   }
 
   @override
@@ -87,20 +91,36 @@ class _FreedomTableState extends State<FreedomTable> {
         });
       });
     });
-    widget.verticalScrollController.addListener(() {
-      widget.fixedVerticalScrollController.animateTo(
-        widget.verticalScrollController.offset,
-        duration: const Duration(microseconds: 1),
-        curve: Curves.linear,
-      );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.verticalScrollController.hasClients) {
+        widget.verticalScrollController.addListener(() {
+          widget.fixedVerticalScrollController.animateTo(
+            widget.verticalScrollController.offset,
+            duration: const Duration(microseconds: 1),
+            curve: Curves.linear,
+          );
+        });
+      }
     });
-    widget.fixedVerticalScrollController.addListener(() {
-      widget.verticalScrollController.animateTo(
-        widget.fixedVerticalScrollController.offset,
-        duration: const Duration(microseconds: 1),
-        curve: Curves.linear,
-      );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.fixedVerticalScrollController.hasClients) {
+        widget.fixedVerticalScrollController.addListener(() {
+          widget.verticalScrollController.animateTo(
+            widget.fixedVerticalScrollController.offset,
+            duration: const Duration(microseconds: 1),
+            curve: Curves.linear,
+          );
+        });
+      }
     });
+  }
+
+  @override
+  void dispose() {
+    widget.horizontalScrollController.dispose();
+    widget.verticalScrollController.dispose();
+    widget.fixedVerticalScrollController.dispose();
+    super.dispose();
   }
 
   @override

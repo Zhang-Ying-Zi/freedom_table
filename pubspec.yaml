@@ -1,5 +1,5 @@
 name: freedom_table
-version: 0.1.9
+version: 0.2.0
 description: A web table which support colspan and rowspan. And support auto-height rows, and support optional pager.
 homepage: https://github.com/Zhang-Ying-Zi/freedom_table.git
 
