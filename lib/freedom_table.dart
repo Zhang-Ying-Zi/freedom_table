@@ -92,6 +92,10 @@ class _FreedomTableState extends State<FreedomTable> {
       });
     });
 
+    addListener();
+  }
+
+  void addListener() {
     widget.verticalScrollController.addListener(() {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (widget.verticalScrollController.hasClients) {
@@ -115,6 +119,12 @@ class _FreedomTableState extends State<FreedomTable> {
         }
       });
     });
+  }
+
+  @override
+  void didUpdateWidget(covariant FreedomTable oldWidget) {
+    addListener();
+    super.didUpdateWidget(oldWidget);
   }
 
   @override

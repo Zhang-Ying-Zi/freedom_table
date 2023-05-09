@@ -36,6 +36,10 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+    setTable();
+  }
+
+  void setTable() {
     table = FreedomTable(
       // optional
       minCellWidthInFlexMode: 100,
@@ -112,14 +116,25 @@ class _MyHomePageState extends State<MyHomePage> {
           Row(
             children: [
               Container(
-                margin: const EdgeInsets.only(bottom: 10),
+                margin: const EdgeInsets.only(bottom: 10, right: 10),
                 child: ElevatedButton(
                   child: const Text('滚动到表格最右边'),
                   onPressed: () {
                     table.scrollToTheFarRight();
                   },
                 ),
-              )
+              ),
+              Container(
+                margin: const EdgeInsets.only(bottom: 10, right: 10),
+                child: ElevatedButton(
+                  child: const Text('替换表格'),
+                  onPressed: () {
+                    setState(() {
+                      setTable();
+                    });
+                  },
+                ),
+              ),
             ],
           ),
           Expanded(
