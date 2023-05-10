@@ -32,6 +32,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   late FreedomTable table;
+  int changedTimes = 0;
 
   @override
   void initState() {
@@ -49,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
         pageEach: 10,
         callback: (totalPages, currentPageIndex) {
           print("($currentPageIndex, $totalPages)");
-          table.updateData(getPageData(totalPages, currentPageIndex));
+          table.updateBody(getPageData(totalPages, currentPageIndex));
         },
       ),
       // header
@@ -82,7 +83,7 @@ class _MyHomePageState extends State<MyHomePage> {
               'header-5 长中文测试：中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文'),
         ),
       ],
-      initBodyCells: getPageData(1, 0),
+      initBodyCells: changedTimes++ % 2 == 0 ? getPageData(1, 0) : [],
       // theme
       theme: FreedomTableTheme(
         dividerColor: const Color(0xffe6e6e6),
@@ -344,7 +345,46 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ]
           ]
-        : [];
+        : [
+            [
+              FreedomTableBodyCell(
+                child: rowCell('row1-column1'),
+              ),
+              FreedomTableBodyCell(
+                child: rowCell('row1-column2'),
+              ),
+              FreedomTableBodyCell(
+                child: rowCell('row1-column3'),
+              ),
+              FreedomTableBodyCell(
+                child: rowCell('row1-column4'),
+              ),
+              FreedomTableBodyCell(
+                child: rowCell('row1-column5'),
+              ),
+              FreedomTableBodyCell(
+                child: rowCell('row1-column6'),
+              ),
+            ],
+            [
+              FreedomTableBodyCell(
+                child: rowCell('row2-column1'),
+              ),
+              FreedomTableBodyCell(
+                child: rowCell('row2-column2'),
+              ),
+              FreedomTableBodyCell(
+                child: rowCell('row2-column3'),
+              ),
+              FreedomTableBodyCell(
+                child: rowCell(
+                    'row2-column4  long-english: long long long long long end'),
+              ),
+              FreedomTableBodyCell(
+                child: rowCell('row2-column5'),
+              ),
+            ],
+          ];
   }
 
   // header单元格，请设置fontFamily,否则中文高度显示不正确

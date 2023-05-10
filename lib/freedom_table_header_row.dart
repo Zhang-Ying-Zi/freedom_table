@@ -61,7 +61,8 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
   }
 
   void setCells() {
-    TableModel tableModel = Provider.of<TableModel>(context, listen: false);
+    // TableModel tableModel = Provider.of<TableModel>(context, listen: false);
+    TableModel tableModel = TableModel.instance;
 
     double minCellWidthInFlexMode =
         widget.minCellWidthInFlexMode ?? minCellWidth;

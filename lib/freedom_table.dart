@@ -53,8 +53,12 @@ class FreedomTable extends StatefulWidget {
     this.initBodyCells = const [],
   });
 
-  updateData(List<List<FreedomTableBodyCell>> rows) {
-    freedomTableData.updateData(rows);
+  updateBody(List<List<FreedomTableBodyCell>> rows) {
+    // 目前切换表格数据时，需要与前一次数据不同，才能获取争取的表格高度
+    freedomTableData.updateData([]);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      freedomTableData.updateData(rows);
+    });
   }
 
   scrollToTheFarRight() {
@@ -82,20 +86,44 @@ class _FreedomTableState extends State<FreedomTable> {
   @override
   void initState() {
     super.initState();
-    theme = widget.theme ?? FreedomTableTheme();
-    if (rows.isEmpty) rows = widget.initBodyCells;
+    // theme = widget.theme ?? FreedomTableTheme();
+    // if (rows.isEmpty) rows = widget.initBodyCells;
+
+    TableModel tableModel = TableModel.instance;
+
     freedomTableData.addListener(() {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         setState(() {
           rows = freedomTableData.rows;
+          tableModel.reset(rows.length);
         });
       });
     });
 
-    addListener();
+    // tableModel.addListener(() {
+    //   print("finished");
+    //   // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   //   setState(() {});
+    //   // });
+    // });
+
+    init();
   }
 
-  void addListener() {
+  @override
+  void didUpdateWidget(covariant FreedomTable oldWidget) {
+    init();
+    super.didUpdateWidget(oldWidget);
+  }
+
+  void init() {
+    setState(() {
+      TableModel tableModel = TableModel.instance;
+      theme = widget.theme ?? FreedomTableTheme();
+      rows = widget.initBodyCells;
+      tableModel.reset(rows.length);
+    });
+
     widget.verticalScrollController.addListener(() {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (widget.verticalScrollController.hasClients) {
@@ -122,12 +150,6 @@ class _FreedomTableState extends State<FreedomTable> {
   }
 
   @override
-  void didUpdateWidget(covariant FreedomTable oldWidget) {
-    addListener();
-    super.didUpdateWidget(oldWidget);
-  }
-
-  @override
   void dispose() {
     widget.horizontalScrollController.dispose();
     widget.verticalScrollController.dispose();
@@ -140,112 +162,122 @@ class _FreedomTableState extends State<FreedomTable> {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => ThemeModel(theme)),
-        ChangeNotifierProvider(create: (context) => TableModel()),
+        // ChangeNotifierProvider(create: (context) => TableModel()),
       ],
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                LayoutBuilder(
-                    builder: (BuildContext context, BoxConstraints constrains) {
-                  TableModel tableModel =
-                      Provider.of<TableModel>(context, listen: false);
-                  double tableBodyHeight = 0;
-                  tableModel.rowMaxHeights.forEach(
-                    (key, value) => tableBodyHeight += value ?? 0,
-                  );
-                  return Column(
-                    children: [
-                      SizedBox(
-                        width: tableModel.fixedColumnWidth,
-                        height: tableModel.headerMaxHeight,
-                        child: Stack(
-                          children: tableModel.fixedHeaderCellWidgets,
+      builder: (context, child) {
+        // TableModel tableModel = Provider.of<TableModel>(context, listen: false);
+        TableModel tableModel = TableModel.instance;
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 固定列
+                  LayoutBuilder(builder:
+                      (BuildContext context, BoxConstraints constrains) {
+                    double tableBodyHeight = 0;
+                    // print("table ${tableModel.rowMaxHeights}");
+                    tableModel.rowMaxHeights.forEach(
+                      (key, value) => tableBodyHeight += value ?? 0,
+                    );
+                    return Column(
+                      children: [
+                        SizedBox(
+                          width: tableModel.fixedColumnWidth,
+                          height: tableModel.headerMaxHeight,
+                          child: Stack(
+                            children: tableModel.fixedHeaderCellWidgets,
+                          ),
                         ),
-                      ),
-                      Expanded(
-                        child: SingleChildScrollView(
-                          controller: widget.fixedVerticalScrollController,
-                          scrollDirection: Axis.vertical,
-                          child: Container(
-                            color: theme.backgroundColor,
-                            width: tableModel.fixedColumnWidth,
-                            height: tableBodyHeight,
-                            child: Stack(
-                              children: fixedBodyCellWidgets,
+                        Expanded(
+                          child: SingleChildScrollView(
+                            controller: widget.fixedVerticalScrollController,
+                            scrollDirection: Axis.vertical,
+                            child: Container(
+                              color: theme.backgroundColor,
+                              width: tableModel.fixedColumnWidth,
+                              height: tableBodyHeight,
+                              child: Stack(
+                                children: fixedBodyCellWidgets,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  );
-                }),
-                Expanded(
-                  child: LayoutBuilder(
-                    builder: (BuildContext context, BoxConstraints constrains) {
-                      return SizedBox.expand(
-                        child: Column(
-                          children: [
-                            Flexible(
-                              child: SingleChildScrollView(
-                                controller: widget.horizontalScrollController,
-                                scrollDirection: Axis.horizontal,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    FreedomTableHeaderRow(
-                                      headerCells: widget.headers,
-                                      constrains: constrains,
-                                      minCellWidthInFlexMode:
-                                          widget.minCellWidthInFlexMode,
-                                    ),
-                                    Expanded(
-                                      child: FreedomTableBodyCells(
-                                        rows: rows,
-                                        getFixedBodyCellWidgets: ((widgets) {
-                                          WidgetsBinding.instance
-                                              .addPostFrameCallback(
-                                            (timeStamp) {
-                                              if (fixedBodyCellWidgets.length !=
-                                                  widgets.length) {
-                                                setState(() {
-                                                  fixedBodyCellWidgets =
-                                                      widgets;
-                                                });
-                                              }
-                                            },
-                                          );
-                                        }),
-                                        bodyCellOnTap: widget.bodyCellOnTap,
-                                        bodyCellOnSecondaryTap:
-                                            widget.bodyCellOnSecondaryTap,
-                                        verticalScrollController:
-                                            widget.verticalScrollController,
-                                        horizontalScrollController:
-                                            widget.horizontalScrollController,
+                      ],
+                    );
+                  }),
+                  // 自由表格
+                  Expanded(
+                    child: LayoutBuilder(
+                      builder:
+                          (BuildContext context, BoxConstraints constrains) {
+                        return SizedBox.expand(
+                          child: Column(
+                            children: [
+                              Flexible(
+                                child: SingleChildScrollView(
+                                  controller: widget.horizontalScrollController,
+                                  scrollDirection: Axis.horizontal,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      // 自由表格header
+                                      FreedomTableHeaderRow(
+                                        headerCells: widget.headers,
+                                        constrains: constrains,
+                                        minCellWidthInFlexMode:
+                                            widget.minCellWidthInFlexMode,
                                       ),
-                                    ),
-                                  ],
+                                      // 自由表格body
+                                      Expanded(
+                                        child: FreedomTableBodyCells(
+                                          rows: rows,
+                                          getFixedBodyCellWidgets: ((widgets) {
+                                            WidgetsBinding.instance
+                                                .addPostFrameCallback(
+                                              (timeStamp) {
+                                                if (fixedBodyCellWidgets
+                                                        .length !=
+                                                    widgets.length) {
+                                                  setState(() {
+                                                    fixedBodyCellWidgets =
+                                                        widgets;
+                                                  });
+                                                }
+                                              },
+                                            );
+                                          }),
+                                          bodyCellOnTap: widget.bodyCellOnTap,
+                                          bodyCellOnSecondaryTap:
+                                              widget.bodyCellOnSecondaryTap,
+                                          verticalScrollController:
+                                              widget.verticalScrollController,
+                                          horizontalScrollController:
+                                              widget.horizontalScrollController,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
+                            ],
+                          ),
+                        );
+                      },
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          if (widget.pager != null) widget.pager!,
-        ],
-      ),
+            if (widget.pager != null) widget.pager!,
+          ],
+        );
+      },
     );
   }
 }
