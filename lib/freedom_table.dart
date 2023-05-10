@@ -38,6 +38,9 @@ class FreedomTable extends StatefulWidget {
     double scrollTop,
   )? bodyCellOnSecondaryTap;
 
+  /// when body data is empty, this can't be called.
+  final void Function()? bodyDataUpdateFinished;
+
   final ScrollController horizontalScrollController = ScrollController();
   final ScrollController verticalScrollController = ScrollController();
   final ScrollController fixedVerticalScrollController = ScrollController();
@@ -49,16 +52,18 @@ class FreedomTable extends StatefulWidget {
     this.pager,
     this.bodyCellOnTap,
     this.bodyCellOnSecondaryTap,
+    this.bodyDataUpdateFinished,
     this.minCellWidthInFlexMode,
     this.initBodyCells = const [],
   });
 
   updateBody(List<List<FreedomTableBodyCell>> rows) {
-    // 目前切换表格数据时，需要与前一次数据不同，才能获取争取的表格高度
-    freedomTableData.updateData([]);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      freedomTableData.updateData(rows);
-    });
+    freedomTableData.updateData(rows);
+    // // 目前切换表格数据时，需要与前一次数据不同，才能获取正确的表格高度
+    // freedomTableData.updateData([]);
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   freedomTableData.updateData(rows);
+    // });
   }
 
   scrollToTheFarRight() {
@@ -100,12 +105,12 @@ class _FreedomTableState extends State<FreedomTable> {
       });
     });
 
-    // tableModel.addListener(() {
-    //   print("finished");
-    //   // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   //   setState(() {});
-    //   // });
-    // });
+    tableModel.addListener(() {
+      // print("finished");
+      if (widget.bodyDataUpdateFinished != null) {
+        widget.bodyDataUpdateFinished!();
+      }
+    });
 
     init();
   }
