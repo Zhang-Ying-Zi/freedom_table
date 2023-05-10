@@ -13,6 +13,7 @@ class FreedomTableTheme {
 
   /// body cell hover color
   final Color hoverColor;
+  final Color Function()? hoverColorGetter;
   final Color pagerBorderColor;
   final Color pagerTextColor;
   final Color pagerTextFocusedColor;
@@ -22,6 +23,7 @@ class FreedomTableTheme {
     this.dividerColor = const Color(0xffe6e6e6),
     this.backgroundColor = const Color(0xfff2f2f2),
     this.hoverColor = const Color(0xfff6f6f6),
+    this.hoverColorGetter,
     this.pagerBorderColor = const Color(0xffcccccc),
     this.pagerTextColor = const Color(0xff666666),
     this.pagerTextFocusedColor = const Color(0xffffffff),

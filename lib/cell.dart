@@ -80,7 +80,9 @@ class _FreedomTableCellState extends State<FreedomTableCell> {
                 color: widget.type == CellType.header
                     ? themeModel.theme.backgroundColor
                     : isCellHovering
-                        ? themeModel.theme.hoverColor
+                        ? themeModel.theme.hoverColorGetter != null
+                            ? themeModel.theme.hoverColorGetter!()
+                            : themeModel.theme.hoverColor
                         : null,
               ),
               // child: IntrinsicHeight(

@@ -88,6 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
         dividerColor: const Color(0xffe6e6e6),
         backgroundColor: const Color(0xfff2f2f2),
         hoverColor: const Color(0xfff6f6f6),
+        hoverColorGetter: () => const Color(0xffFA8C00),
         pagerBorderColor: const Color(0xffcccccc),
         pagerTextColor: const Color(0xff666666),
         pagerTextFocusedColor: const Color(0xffffffff),
