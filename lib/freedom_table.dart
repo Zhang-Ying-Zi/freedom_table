@@ -219,50 +219,52 @@ class _FreedomTableState extends State<FreedomTable> {
                     child: LayoutBuilder(
                       builder: (BuildContext context, BoxConstraints constrains) {
                         return SizedBox.expand(
-                          child: Column(
-                            children: [
-                              Flexible(
-                                child: SizedBox.expand(
-                                  child: SingleChildScrollView(
-                                    controller: widget.horizontalScrollController,
-                                    scrollDirection: Axis.horizontal,
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        // 自由表格header
-                                        FreedomTableHeaderRow(
-                                          headerCells: widget.headers,
-                                          constrains: constrains,
-                                          minCellWidthInFlexMode: widget.minCellWidthInFlexMode,
-                                        ),
-                                        // 自由表格body
-                                        Expanded(
-                                          child: FreedomTableBodyCells(
-                                            rows: rows,
-                                            getFixedBodyCellWidgets: ((widgets) {
-                                              WidgetsBinding.instance.addPostFrameCallback(
-                                                (timeStamp) {
-                                                  if (fixedBodyCellWidgets.length != widgets.length) {
-                                                    setState(() {
-                                                      fixedBodyCellWidgets = widgets;
-                                                    });
-                                                  }
-                                                },
-                                              );
-                                            }),
-                                            bodyCellOnTap: widget.bodyCellOnTap,
-                                            bodyCellOnSecondaryTap: widget.bodyCellOnSecondaryTap,
-                                            verticalScrollController: widget.verticalScrollController,
-                                            horizontalScrollController: widget.horizontalScrollController,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                          child:
+                              // Column(
+                              //   children: [
+                              // Flexible(
+                              //   child: SizedBox.expand(
+                              //     child:
+                              SingleChildScrollView(
+                            controller: widget.horizontalScrollController,
+                            scrollDirection: Axis.horizontal,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // 自由表格header
+                                FreedomTableHeaderRow(
+                                  headerCells: widget.headers,
+                                  constrains: constrains,
+                                  minCellWidthInFlexMode: widget.minCellWidthInFlexMode,
+                                ),
+                                // 自由表格body
+                                Expanded(
+                                  child: FreedomTableBodyCells(
+                                    rows: rows,
+                                    getFixedBodyCellWidgets: ((widgets) {
+                                      WidgetsBinding.instance.addPostFrameCallback(
+                                        (timeStamp) {
+                                          if (fixedBodyCellWidgets.length != widgets.length) {
+                                            setState(() {
+                                              fixedBodyCellWidgets = widgets;
+                                            });
+                                          }
+                                        },
+                                      );
+                                    }),
+                                    bodyCellOnTap: widget.bodyCellOnTap,
+                                    bodyCellOnSecondaryTap: widget.bodyCellOnSecondaryTap,
+                                    verticalScrollController: widget.verticalScrollController,
+                                    horizontalScrollController: widget.horizontalScrollController,
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
+                          //   ),
+                          // ),
+                          //   ],
+                          // ),
                         );
                       },
                     ),
