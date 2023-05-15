@@ -182,8 +182,7 @@ class _FreedomTableState extends State<FreedomTable> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // 固定列
-                  LayoutBuilder(builder:
-                      (BuildContext context, BoxConstraints constrains) {
+                  LayoutBuilder(builder: (BuildContext context, BoxConstraints constrains) {
                     double tableBodyHeight = 0;
                     // print("table ${tableModel.rowMaxHeights}");
                     tableModel.rowMaxHeights.forEach(
@@ -218,55 +217,47 @@ class _FreedomTableState extends State<FreedomTable> {
                   // 自由表格
                   Expanded(
                     child: LayoutBuilder(
-                      builder:
-                          (BuildContext context, BoxConstraints constrains) {
+                      builder: (BuildContext context, BoxConstraints constrains) {
                         return SizedBox.expand(
                           child: Column(
                             children: [
                               Flexible(
-                                child: SingleChildScrollView(
-                                  controller: widget.horizontalScrollController,
-                                  scrollDirection: Axis.horizontal,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      // 自由表格header
-                                      FreedomTableHeaderRow(
-                                        headerCells: widget.headers,
-                                        constrains: constrains,
-                                        minCellWidthInFlexMode:
-                                            widget.minCellWidthInFlexMode,
-                                      ),
-                                      // 自由表格body
-                                      Expanded(
-                                        child: FreedomTableBodyCells(
-                                          rows: rows,
-                                          getFixedBodyCellWidgets: ((widgets) {
-                                            WidgetsBinding.instance
-                                                .addPostFrameCallback(
-                                              (timeStamp) {
-                                                if (fixedBodyCellWidgets
-                                                        .length !=
-                                                    widgets.length) {
-                                                  setState(() {
-                                                    fixedBodyCellWidgets =
-                                                        widgets;
-                                                  });
-                                                }
-                                              },
-                                            );
-                                          }),
-                                          bodyCellOnTap: widget.bodyCellOnTap,
-                                          bodyCellOnSecondaryTap:
-                                              widget.bodyCellOnSecondaryTap,
-                                          verticalScrollController:
-                                              widget.verticalScrollController,
-                                          horizontalScrollController:
-                                              widget.horizontalScrollController,
+                                child: SizedBox.expand(
+                                  child: SingleChildScrollView(
+                                    controller: widget.horizontalScrollController,
+                                    scrollDirection: Axis.horizontal,
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        // 自由表格header
+                                        FreedomTableHeaderRow(
+                                          headerCells: widget.headers,
+                                          constrains: constrains,
+                                          minCellWidthInFlexMode: widget.minCellWidthInFlexMode,
                                         ),
-                                      ),
-                                    ],
+                                        // 自由表格body
+                                        Expanded(
+                                          child: FreedomTableBodyCells(
+                                            rows: rows,
+                                            getFixedBodyCellWidgets: ((widgets) {
+                                              WidgetsBinding.instance.addPostFrameCallback(
+                                                (timeStamp) {
+                                                  if (fixedBodyCellWidgets.length != widgets.length) {
+                                                    setState(() {
+                                                      fixedBodyCellWidgets = widgets;
+                                                    });
+                                                  }
+                                                },
+                                              );
+                                            }),
+                                            bodyCellOnTap: widget.bodyCellOnTap,
+                                            bodyCellOnSecondaryTap: widget.bodyCellOnSecondaryTap,
+                                            verticalScrollController: widget.verticalScrollController,
+                                            horizontalScrollController: widget.horizontalScrollController,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
@@ -284,5 +275,9 @@ class _FreedomTableState extends State<FreedomTable> {
         );
       },
     );
+  }
+
+  Widget outline(Widget child) {
+    return Container(decoration: BoxDecoration(border: Border.all()), child: child);
   }
 }

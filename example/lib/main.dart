@@ -43,7 +43,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void setTable() {
     table = FreedomTable(
       // optional
-      minCellWidthInFlexMode: 100,
+      minCellWidthInFlexMode: 80,
       // optional paging
       pager: FreedomTablePager(
         totalCount: 90,
@@ -56,31 +56,32 @@ class _MyHomePageState extends State<MyHomePage> {
       // header
       headers: [
         FreedomTableHeaderCell(
-          // header width is flex
-          flex: 1,
+          fixedWidth: 80,
           // wether the column which the header cell belong is fixed when table is horizontal scroll
           // when the column is fixed, please ensure the column's child cell DON'T have colspan!!!
           isFixedColumn: true,
           child: headerCell('header-1'),
         ),
         FreedomTableHeaderCell(
-          flex: 2,
+          fixedWidth: 120,
           isFixedColumn: true,
           child: headerCell('header-2'),
         ),
         FreedomTableHeaderCell(
           // header width is fixed
-          fixedWidth: 500,
+          fixedWidth: 100,
           child: headerCell('header-3', Alignment.centerLeft),
         ),
         FreedomTableHeaderCell(
+          // header width is flex
           flex: 2,
+          // fixedWidth: 100,
           child: headerCell('header-4'),
         ),
         FreedomTableHeaderCell(
-          flex: 4,
-          child: headerCell(
-              'header-5 长中文测试：中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文'),
+          flex: 1,
+          // fixedWidth: 100,
+          child: headerCell('header-5 长中文测试：中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文'),
         ),
       ],
       initBodyCells: changedTimes++ % 2 == 0 ? getPageData(1, 0) : [],
@@ -96,13 +97,11 @@ class _MyHomePageState extends State<MyHomePage> {
         pagerTextDisabledColor: const Color(0xffcccccc),
         pagerFocusedBackgroundColor: const Color(0xff5078F0),
       ),
-      bodyCellOnTap:
-          (childCell, left, top, width, height, scrollLeft, scrollTop) {
+      bodyCellOnTap: (childCell, left, top, width, height, scrollLeft, scrollTop) {
         print(
             "左键点击的值为 ${childCell.data}，在表中的位置 : left $left, top $top, width $width, height $height, bodyScrollLeft $scrollLeft, bodyScrollTop $scrollTop");
       },
-      bodyCellOnSecondaryTap:
-          (childCell, left, top, width, height, scrollLeft, scrollTop) {
+      bodyCellOnSecondaryTap: (childCell, left, top, width, height, scrollLeft, scrollTop) {
         print(
             "右键点击的值为 ${childCell.data}，在表中的位置 : left $left, top $top, width $width, height $height, bodyScrollLeft $scrollLeft, bodyScrollTop $scrollTop");
       },
@@ -163,8 +162,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 data: ["testdata"],
               ),
               FreedomTableBodyCell(
-                child: rowCell(
-                    'row1-column3 long-english:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'),
+                child: rowCell('row1-column3 long-english:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'),
                 data: {
                   ["testdata"]
                 },
@@ -211,8 +209,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: rowCell('row3-column3'),
               ),
               FreedomTableBodyCell(
-                child: rowCell(
-                    'row3-column4  长中文测试：中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文'),
+                child: rowCell('row3-column4  长中文测试：中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文'),
               ),
               FreedomTableBodyCell(
                 child: rowCell('row3-column4'),
@@ -377,8 +374,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: rowCell('row2-column3'),
               ),
               FreedomTableBodyCell(
-                child: rowCell(
-                    'row2-column4  long-english: long long long long long end'),
+                child: rowCell('row2-column4  long-english: long long long long long end'),
               ),
               FreedomTableBodyCell(
                 child: rowCell('row2-column5'),
