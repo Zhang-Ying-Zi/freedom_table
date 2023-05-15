@@ -17,6 +17,9 @@ class MeasureSizeRenderObject extends RenderProxyBox {
     // if (oldSize == newSize) return;
 
     oldSize = newSize;
+
+    // print("newSize $newSize");
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       onChange(newSize);
     });
@@ -38,24 +41,21 @@ class MeasureSize extends SingleChildRenderObjectWidget {
   }
 
   @override
-  void updateRenderObject(
-      BuildContext context, covariant MeasureSizeRenderObject renderObject) {
+  void updateRenderObject(BuildContext context, covariant MeasureSizeRenderObject renderObject) {
     renderObject.onChange = onChange;
   }
 }
 
 class WidgetPosition {
   static getSizes(GlobalKey key) {
-    final RenderBox? renderBox =
-        key.currentContext?.findRenderObject() as RenderBox?;
+    final RenderBox? renderBox = key.currentContext?.findRenderObject() as RenderBox?;
     final size = renderBox?.size;
     // print("SIZE: $size");
     return [size?.width, size?.height];
   }
 
   static getPositions(GlobalKey key) {
-    final RenderBox? renderBox =
-        key.currentContext?.findRenderObject() as RenderBox?;
+    final RenderBox? renderBox = key.currentContext?.findRenderObject() as RenderBox?;
     final position = renderBox?.localToGlobal(Offset.zero);
     // print("POSITION: $position ");
     return [position?.dx, position?.dy];

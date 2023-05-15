@@ -11,24 +11,11 @@ class FreedomTableBodyCells extends StatefulWidget {
   final List<List<FreedomTableBodyCell>> rows;
   final ScrollController verticalScrollController;
   final ScrollController horizontalScrollController;
-  final void Function(
-      FreedomTableBodyCell childCell,
-      double left,
-      double top,
-      double width,
-      double height,
-      double scrollLeft,
-      double scrollTop)? bodyCellOnTap;
-  final void Function(
-      FreedomTableBodyCell childCell,
-      double left,
-      double top,
-      double width,
-      double height,
-      double scrollLeft,
-      double scrollTop)? bodyCellOnSecondaryTap;
-  final void Function(List<Widget> fixedBodyCellWidgets)
-      getFixedBodyCellWidgets;
+  final void Function(FreedomTableBodyCell childCell, double left, double top, double width, double height, double scrollLeft, double scrollTop)?
+      bodyCellOnTap;
+  final void Function(FreedomTableBodyCell childCell, double left, double top, double width, double height, double scrollLeft, double scrollTop)?
+      bodyCellOnSecondaryTap;
+  final void Function(List<Widget> fixedBodyCellWidgets) getFixedBodyCellWidgets;
 
   const FreedomTableBodyCells({
     super.key,
@@ -54,8 +41,7 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
     super.initState();
 
     if (kIsWeb) {
-      html.document.body!
-          .addEventListener('contextmenu', (event) => event.preventDefault());
+      html.document.body!.addEventListener('contextmenu', (event) => event.preventDefault());
     }
   }
 
@@ -75,13 +61,12 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
     for (var bodyRow in widget.rows) {
       int rownumber = widget.rows.indexOf(bodyRow);
       Map<int, bool> updatedOccupiedRow = {};
-      for (var headerWidth in headerCellWidths) {
-        int index = headerCellWidths.indexOf(headerWidth);
-        updatedOccupiedRow.addEntries({index: false}.entries);
+      for (int i = 0; i < headerCellWidths.length; i++) {
+        updatedOccupiedRow.addEntries({i: false}.entries);
       }
-      Map<int, bool> occupiedRow =
-          occupiedTable.putIfAbsent(rownumber, () => {});
-      occupiedRow.addAll(updatedOccupiedRow);
+      // Map<int, bool> occupiedRow = occupiedTable.putIfAbsent(rownumber, () => {});
+      // occupiedRow.addAll(updatedOccupiedRow);
+      occupiedTable.putIfAbsent(rownumber, () => updatedOccupiedRow);
     }
 
     // ** 每行 **
@@ -91,8 +76,7 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
 
       int columnDelayIndex = 0;
       for (var i = 0; i < bodyRow.length; i++) {
-        if (occupiedTable[rownumber]?[colnumber + i] == true &&
-            i <= colnumber) {
+        if (occupiedTable[rownumber]?[colnumber + i] == true && i <= colnumber) {
           columnDelayIndex++;
         }
       }
@@ -108,21 +92,24 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
         if (cell.rowspan > 1) {
           // 跨行
           for (int j = 1; j < cell.rowspan; j++) {
-            occupiedTable[rownumber + j]![colnumber + columnDelayIndex] = true;
+            if (occupiedTable[rownumber + j] != null) {
+              occupiedTable[rownumber + j]![colnumber + columnDelayIndex] = true;
+            }
           }
         }
         if (cell.colspan > 1 && cell.rowspan > 1) {
           // 双跨
           for (int i = 1; i < cell.colspan; i++) {
             for (int j = 1; j < cell.rowspan; j++) {
-              occupiedTable[rownumber + j]![colnumber + i + columnDelayIndex] =
-                  true;
+              if (occupiedTable[rownumber + j] != null) {
+                occupiedTable[rownumber + j]![colnumber + i + columnDelayIndex] = true;
+              }
             }
           }
         }
         colnumber++;
       }
-
+      // print(occupiedTable);
       tableModel.updateOccupiedTable(occupiedTable);
     }
   }
@@ -135,8 +122,7 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
     return top;
   }
 
-  double getCellLeft(FreedomTableBodyCell cell, Map<int, bool> occupiedTableRow,
-      List<double> headerCellWidths, int rownumber, int colnumber) {
+  double getCellLeft(FreedomTableBodyCell cell, Map<int, bool> occupiedTableRow, List<double> headerCellWidths, int rownumber, int colnumber) {
     double left = 0;
     for (var i = 0; i < colnumber; i++) {
       if (i > headerCellWidths.length - 1) break;
@@ -146,12 +132,7 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
   }
 
   // 计算 body cell 宽度
-  double getCellWidth(
-      FreedomTableBodyCell cell,
-      Map<int, bool> occupiedTableRow,
-      List<double> headerCellWidths,
-      int rownumber,
-      int colnumber) {
+  double getCellWidth(FreedomTableBodyCell cell, Map<int, bool> occupiedTableRow, List<double> headerCellWidths, int rownumber, int colnumber) {
     double cellWidth = 0;
     for (int i = 0; i < cell.colspan; i++) {
       int index = colnumber + i;
@@ -164,8 +145,7 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
     return cellWidth;
   }
 
-  Widget getCellWidget(FreedomTableBodyCell cell, double top, double left,
-      double cellWidth, double? cellHeight, bool isFirstCellInRow, bool isFixed,
+  Widget getCellWidget(FreedomTableBodyCell cell, double top, double left, double cellWidth, double? cellHeight, bool isFirstCellInRow, bool isFixed,
       [void Function(Size)? onChange]) {
     // TableModel tableModel = Provider.of<TableModel>(context, listen: false);
     TableModel tableModel = TableModel.instance;
@@ -246,18 +226,15 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
         }
 
         double top = getCellTop(rowMaxHeights, rownumber);
-        double left = getCellLeft(cell, occupiedTableRow, headerCellWidths,
-            rownumber, currentColnumber);
-        double cellWidth = getCellWidth(cell, occupiedTableRow,
-            headerCellWidths, rownumber, currentColnumber);
+        double left = getCellLeft(cell, occupiedTableRow, headerCellWidths, rownumber, currentColnumber);
+        double cellWidth = getCellWidth(cell, occupiedTableRow, headerCellWidths, rownumber, currentColnumber);
 
         // 计算跨行高度
         double cellSpanHeight = 0;
         if (cell.rowspan > 1) {
           cellSpanHeight = rowMaxHeights[rownumber] ?? 0;
           for (var i = rownumber + 1; i < widget.rows.length; i++) {
-            if (occupiedTable.keys.contains(i) &&
-                occupiedTable[i]!.keys.contains(currentColnumber)) {
+            if (occupiedTable.keys.contains(i) && occupiedTable[i] != null && occupiedTable[i]!.keys.contains(currentColnumber)) {
               if (occupiedTable[i]![currentColnumber] == false) {
                 break;
               } else {
@@ -283,13 +260,11 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
           fixedColumnNumber < tableModel.fixedColumnCount,
           cellSpanHeight == 0
               ? (size) {
-                  // if (rownumber == 7)
-                  // print("** $rownumber $currentColnumber ${size} **");
+                  // if (rownumber == 1) print("** $rownumber $currentColnumber ${size} **");
                   // print(rowMaxHeights);
                   if (size.width > 0 && size.height > 0) {
                     // print(rowMaxHeights);
-                    if (rowMaxHeights[rownumber] == null ||
-                        rowMaxHeights[rownumber]! < size.height) {
+                    if (rowMaxHeights[rownumber] == null || rowMaxHeights[rownumber]! < size.height) {
                       setState(() {
                         rowMaxHeights[rownumber] = size.height;
                         tableModel.addRowMaxHeight(rownumber, size.height);
@@ -303,6 +278,7 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
         if (fixedColumnNumber < tableModel.fixedColumnCount) {
           // 目前会执行2次 setCells(), 第一次setCells()中，rowMaxHeights为空
           if (rowMaxHeights.isNotEmpty) fixedBodyCellWidgets.add(cellWidget);
+          // UNDO 计算fixedBodyCellWidgets正确的高度
         } else {
           scrollableBodyCellWidgets.add(cellWidget);
         }
@@ -325,8 +301,7 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
     setCells();
     // TableModel tableModel = Provider.of<TableModel>(context);
     TableModel tableModel = TableModel.instance;
-    double tableWidth =
-        tableModel.headerCellWidths.reduce((value, element) => value + element);
+    double tableWidth = tableModel.headerCellWidths.reduce((value, element) => value + element);
     tableWidth -= tableModel.fixedColumnWidth;
     double tableBodyHeight = 0;
     tableModel.rowMaxHeights.forEach(

@@ -56,15 +56,15 @@ class _MyHomePageState extends State<MyHomePage> {
       // header
       headers: [
         FreedomTableHeaderCell(
-          fixedWidth: 80,
           // wether the column which the header cell belong is fixed when table is horizontal scroll
           // when the column is fixed, please ensure the column's child cell DON'T have colspan!!!
-          isFixedColumn: true,
+          // isFixedColumn: true,
+          fixedWidth: 100,
           child: headerCell('header-1'),
         ),
         FreedomTableHeaderCell(
+          // isFixedColumn: true,
           fixedWidth: 120,
-          isFixedColumn: true,
           child: headerCell('header-2'),
         ),
         FreedomTableHeaderCell(
@@ -74,13 +74,13 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         FreedomTableHeaderCell(
           // header width is flex
-          flex: 2,
+          flex: 1,
           // fixedWidth: 100,
           child: headerCell('header-4'),
         ),
         FreedomTableHeaderCell(
-          flex: 1,
-          // fixedWidth: 100,
+          // flex: 1,
+          fixedWidth: 400,
           child: headerCell('header-5 长中文测试：中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文'),
         ),
       ],
@@ -152,20 +152,20 @@ class _MyHomePageState extends State<MyHomePage> {
         ? [
             [
               FreedomTableBodyCell(
-                child: rowCell('row1-column1'),
                 data: "testdata",
+                child: rowCell('row1-column1'),
               ),
               FreedomTableBodyCell(
-                rowspan: 2,
-                // colspan: 2,
-                child: rowCell('row1-column2'),
                 data: ["testdata"],
+                child: rowCell('row1-column2'),
               ),
               FreedomTableBodyCell(
-                child: rowCell('row1-column3 long-english:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'),
                 data: {
                   ["testdata"]
                 },
+                rowspan: 2,
+                colspan: 2,
+                child: rowCell('row1-column3 long-english:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'),
               ),
               FreedomTableBodyCell(
                 child: rowCell('row1-column4'),
@@ -183,8 +183,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: rowCell('row2-column1'),
               ),
               FreedomTableBodyCell(
-                child: rowCell('row2-column2'),
                 data: 'row2-column2',
+                child: rowCell('row2-column2'),
               ),
               FreedomTableBodyCell(
                 child: rowCell('row2-column3'),
@@ -225,7 +225,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               FreedomTableBodyCell(
                 colspan: 2,
-                rowspan: 3,
+                rowspan: 2,
                 child: rowCell('row4-column3'),
               ),
               FreedomTableBodyCell(
