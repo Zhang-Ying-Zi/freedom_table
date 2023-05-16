@@ -24,8 +24,8 @@ class FreedomTableBodyCells extends StatefulWidget {
   /// bodyCellOnSecondaryTap
   final void Function(FreedomTableBodyCell childCell, double left, double top, double width, double height, double scrollLeft, double scrollTop)? bodyCellOnSecondaryTap;
 
-  /// getFixedBodyCellWidgets
-  final void Function(List<Widget> fixedBodyCellWidgets) getFixedBodyCellWidgets;
+  // /// getFixedBodyCellWidgets
+  // final void Function(List<Widget> fixedBodyCellWidgets) getFixedBodyCellWidgets;
 
   const FreedomTableBodyCells({
     super.key,
@@ -34,7 +34,7 @@ class FreedomTableBodyCells extends StatefulWidget {
     this.bodyCellOnSecondaryTap,
     required this.verticalScrollController,
     required this.horizontalScrollController,
-    required this.getFixedBodyCellWidgets,
+    // required this.getFixedBodyCellWidgets,
   });
 
   @override
@@ -77,7 +77,7 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
     });
 
     tableModel.addListener(() {
-      // print("** body : height change **");
+      // print("** body : height complete **");
       tableBodyHeight = 0;
       tableModel.rowMaxHeights.forEach(
         (key, value) => tableBodyHeight += value ?? 0,
@@ -149,7 +149,7 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
         colnumber++;
       }
       // print(occupiedTable);
-      tableModel.setOccupiedTable(occupiedTable);
+      tableModel.occupiedTable = occupiedTable;
     }
   }
 
@@ -240,6 +240,10 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
     TableModel tableModel = Provider.of<TableModel>(context, listen: false);
     Map<int, Map<int, bool>> occupiedTable = tableModel.occupiedTable;
 
+    if (tableModel.rowMaxHeights.isEmpty) {
+      rowMaxHeights = {};
+    }
+
     computeSpan();
 
     fixedBodyCellWidgets = [];
@@ -252,13 +256,13 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
       Map<int, bool> occupiedTableRow = occupiedTable[rownumber]!;
 
       int colnumber = 0;
-      int fixedColumnCount = 0;
+      // int fixedColumnCount = 0;
 
       // 每列
       for (var cell in bodyRow) {
         while (occupiedTable[rownumber]![colnumber] == true) {
           colnumber++;
-          fixedColumnCount++;
+          // fixedColumnCount++;
         }
 
         double top = getCellTop(rowMaxHeights, rownumber);
@@ -280,11 +284,11 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
           }
         }
 
-        if (fixedColumnCount < headerModel.fixedColumnCount) {
-          // top += headerModel.headerMaxHeight;
-        } else {
-          left -= headerModel.fixedColumnWidth;
-        }
+        // if (fixedColumnCount < headerModel.fixedColumnCount) {
+        //   // top += headerModel.headerMaxHeight;
+        // } else {
+        //   left -= headerModel.fixedColumnWidth;
+        // }
 
         Widget cellWidget = getCellWidget(
           cell,
@@ -293,14 +297,13 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
           cellWidth,
           cellSpanHeight == 0 ? rowMaxHeights[rownumber] : cellSpanHeight,
           occupiedTableRow[0] == false && colnumber == 0,
-          fixedColumnCount < headerModel.fixedColumnCount,
+          // fixedColumnCount < headerModel.fixedColumnCount,
+          colnumber == 0,
           cellSpanHeight == 0
               ? (size) {
                   // print(size);
                   // if (rownumber == 1) print("** $rownumber $colnumber ${size} **");
-                  // print(rowMaxHeights);
                   if (size.width > 0 && size.height > 0) {
-                    // print(rowMaxHeights);
                     if (rowMaxHeights[rownumber] == null || rowMaxHeights[rownumber]! < size.height) {
                       rowMaxHeights[rownumber] = size.height;
                       tableModel.addRowMaxHeight(rownumber, size.height);
@@ -310,26 +313,25 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
               : null,
         );
 
-        // print("$top $left $cellWidth ${cellSpanHeight == 0 ? rowMaxHeights[rownumber] : cellSpanHeight}");
+        // if (fixedColumnCount < headerModel.fixedColumnCount) {
+        //   fixedBodyCellWidgets.add(cellWidget);
+        // }
+        if (colnumber < headerModel.fixedColumnCount) {
+          fixedBodyCellWidgets.add(cellWidget);
+        }
+        scrollableBodyCellWidgets.add(cellWidget);
 
-        if (fixedColumnCount < headerModel.fixedColumnCount) {
-          // 目前会执行2次 setCells(), 第一次setCells()中，rowMaxHeights为空
-          if (rowMaxHeights.isNotEmpty) fixedBodyCellWidgets.add(cellWidget);
-          // UNDO 计算fixedBodyCellWidgets正确的高度
-        } else {
-          scrollableBodyCellWidgets.add(cellWidget);
-        }
-        // print('$rownumber $colnumber');
         colnumber++;
-        if (fixedColumnCount < headerModel.fixedColumnCount) {
-          fixedColumnCount++;
-        }
+        // if (fixedColumnCount < headerModel.fixedColumnCount) {
+        //   fixedColumnCount++;
+        // }
       }
     }
 
-    // print(scrollableBodyCellWidgets);
+    tableModel.fixedBodyCellWidgets = fixedBodyCellWidgets;
+    tableModel.scrollableBodyCellWidgets = scrollableBodyCellWidgets;
 
-    widget.getFixedBodyCellWidgets(fixedBodyCellWidgets);
+    // widget.getFixedBodyCellWidgets(fixedBodyCellWidgets);
   }
 
   @override

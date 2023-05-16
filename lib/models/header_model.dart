@@ -18,6 +18,9 @@ class HeaderModel extends ChangeNotifier {
   /// 固定的header cell widgets
   List<Widget> fixedHeaderCellWidgets = [];
 
+  /// 固定的scrollable cell widgets
+  List<Widget> scrollableHeaderCellWidgets = [];
+
   /// 固定的header cell 个数
   int fixedColumnCount = 0;
 
@@ -28,21 +31,5 @@ class HeaderModel extends ChangeNotifier {
   void setHeaderCellWidths(List<double> headerCellWidths) {
     this.headerCellWidths = headerCellWidths;
     notifyListeners();
-  }
-
-  void setHeaderMaxHeight(double headerMaxHeight) {
-    this.headerMaxHeight = headerMaxHeight;
-  }
-
-  void setFixedHeaderCellWidgets(List<Widget> fixedHeaderCellWidgets) {
-    this.fixedHeaderCellWidgets = fixedHeaderCellWidgets;
-  }
-
-  void setFixedColumnWidth(double fixedColumnWidth) {
-    this.fixedColumnWidth = fixedColumnWidth;
-  }
-
-  void setFixedColumnCount(int fixedColumnCount) {
-    this.fixedColumnCount = fixedColumnCount;
   }
 }

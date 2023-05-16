@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -21,6 +23,14 @@ class TableModel extends ChangeNotifier {
   /// header中的列数
   int columnCount = 0;
 
+  Timer? waitBodyCellHeightChange;
+
+  /// fixed Body Cell Widgets
+  List<Widget> fixedBodyCellWidgets = [];
+
+  /// scrollable Body Cell Widgets
+  List<Widget> scrollableBodyCellWidgets = [];
+
   void reset(int rowCount, int columnCount) {
     this.rowCount = rowCount;
     this.columnCount = columnCount;
@@ -30,14 +40,13 @@ class TableModel extends ChangeNotifier {
 
   void addRowMaxHeight(int linenumber, double? rowMaxHeight) {
     rowMaxHeights.addAll({linenumber: rowMaxHeight});
-    if (rowMaxHeights.length >= rowCount) {
-      notifyListeners();
-    }
-  }
-
-  void setOccupiedTable(Map<int, Map<int, bool>> occupiedTable) {
-    this.occupiedTable = occupiedTable;
-    // notifyListeners();
+    // 等等 body cell height 是否有新的改变，目前只能等待看看，无法主动判断是否已全部resize完
+    waitBodyCellHeightChange?.cancel();
+    waitBodyCellHeightChange = Timer(const Duration(milliseconds: 100), () {
+      if (rowMaxHeights.length >= rowCount) {
+        notifyListeners();
+      }
+    });
   }
 
   // void updateOccupiedRow(int rownumber, Map<int, bool> updatedOccupiedRow) {

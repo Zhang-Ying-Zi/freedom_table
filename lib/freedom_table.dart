@@ -48,7 +48,7 @@ class FreedomTable extends StatefulWidget {
   )? bodyCellOnSecondaryTap;
 
   /// when body data is empty, this can't be called.
-  final void Function()? bodyDataUpdateFinished;
+  final void Function()? bodyUpdateFinished;
 
   final ScrollController horizontalScrollController = ScrollController();
   final ScrollController verticalScrollController = ScrollController();
@@ -63,7 +63,7 @@ class FreedomTable extends StatefulWidget {
     this.pager,
     this.bodyCellOnTap,
     this.bodyCellOnSecondaryTap,
-    this.bodyDataUpdateFinished,
+    this.bodyUpdateFinished,
     this.minCellWidthInFlexMode,
     this.initBodyCells = const [],
   });
@@ -92,7 +92,7 @@ class _FreedomTableState extends State<FreedomTable> {
   List<List<FreedomTableBodyCell>> rows = [];
   late FreedomTableTheme theme;
 
-  List<Widget> fixedBodyCellWidgets = [];
+  // List<Widget> fixedBodyCellWidgets = [];
 
   @override
   void initState() {
@@ -101,31 +101,43 @@ class _FreedomTableState extends State<FreedomTable> {
     TableModel tableModel = TableModel.instance;
     HeaderModel headerModel = HeaderModel.instance;
 
-    rows = widget.initBodyCells;
-    theme = widget.theme ?? FreedomTableTheme();
-    tableModel.reset(widget.initBodyCells.length, widget.headers.length);
-
     widget.freedomTableData.addListener(() {
       WidgetsBinding.instance.addPostFrameCallback(
         (timeStamp) {
           setState(() {
             rows = widget.freedomTableData.rows;
-            tableModel.reset(widget.freedomTableData.rows.length, widget.headers.length);
+            tableModel.reset(rows.length, widget.headers.length);
           });
         },
       );
     });
 
     tableModel.addListener(() {
-      // print("finished");
-      if (widget.bodyDataUpdateFinished != null) {
-        widget.bodyDataUpdateFinished!();
-      }
-    });
+      print("** table : body complete **");
 
-    headerModel.addListener(() {
-      // print("** table : header complete **");
-      // setState(() {});
+      // fixed header
+      double fixedColumnWidth = 0;
+      int fixedColumnCount = 0;
+      for (int i = 0; i < widget.headers.length; i++) {
+        FreedomTableHeaderCell header = widget.headers[i];
+        if (header.isFixedColumn) {
+          fixedColumnWidth += headerModel.headerCellWidths[i];
+          fixedColumnCount++;
+          double left = 0;
+          for (var j = 0; j < i; j++) {
+            left += headerModel.headerCellWidths[i];
+          }
+          headerModel.fixedHeaderCellWidgets.add(Positioned(left: left, child: headerModel.scrollableHeaderCellWidgets[i]));
+        }
+      }
+      headerModel.fixedColumnWidth = fixedColumnWidth;
+      headerModel.fixedColumnCount = fixedColumnCount;
+
+      setState(() {});
+
+      if (widget.bodyUpdateFinished != null) {
+        widget.bodyUpdateFinished!();
+      }
     });
 
     init();
@@ -138,6 +150,12 @@ class _FreedomTableState extends State<FreedomTable> {
   }
 
   void init() {
+    TableModel tableModel = TableModel.instance;
+
+    rows = widget.initBodyCells;
+    theme = widget.theme ?? FreedomTableTheme();
+    tableModel.reset(rows.length, widget.headers.length);
+
     widget.verticalScrollController.addListener(() {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (widget.verticalScrollController.hasClients) {
@@ -195,7 +213,6 @@ class _FreedomTableState extends State<FreedomTable> {
                   // 固定列
                   LayoutBuilder(builder: (BuildContext context, BoxConstraints constrains) {
                     double tableBodyHeight = 0;
-                    // print("table ${tableModel.rowMaxHeights}");
                     tableModel.rowMaxHeights.forEach(
                       (key, value) => tableBodyHeight += value ?? 0,
                     );
@@ -217,7 +234,7 @@ class _FreedomTableState extends State<FreedomTable> {
                               width: headerModel.fixedColumnWidth,
                               height: tableBodyHeight,
                               child: Stack(
-                                children: fixedBodyCellWidgets,
+                                children: tableModel.fixedBodyCellWidgets,
                               ),
                             ),
                           ),
@@ -256,17 +273,17 @@ class _FreedomTableState extends State<FreedomTable> {
                                     bodyCellOnSecondaryTap: widget.bodyCellOnSecondaryTap,
                                     verticalScrollController: widget.verticalScrollController,
                                     horizontalScrollController: widget.horizontalScrollController,
-                                    getFixedBodyCellWidgets: ((widgets) {
-                                      WidgetsBinding.instance.addPostFrameCallback(
-                                        (timeStamp) {
-                                          if (fixedBodyCellWidgets.length != widgets.length) {
-                                            // setState(() {
-                                            fixedBodyCellWidgets = widgets;
-                                            // });
-                                          }
-                                        },
-                                      );
-                                    }),
+                                    // getFixedBodyCellWidgets: ((widgets) {
+                                    //   WidgetsBinding.instance.addPostFrameCallback(
+                                    //     (timeStamp) {
+                                    //       if (fixedBodyCellWidgets.length != widgets.length) {
+                                    //         // setState(() {
+                                    //         fixedBodyCellWidgets = widgets;
+                                    //         // });
+                                    //       }
+                                    //     },
+                                    //   );
+                                    // }),
                                   ),
                                 ),
                               ],

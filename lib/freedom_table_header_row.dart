@@ -48,17 +48,17 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
   /// cell widths
   List<double> cellWidths = [];
 
-  /// fixed Header Cell Widgets
-  List<Widget> fixedHeaderCellWidgets = [];
+  // /// fixed Header Cell Widgets
+  // List<Widget> fixedHeaderCellWidgets = [];
 
   /// scrollable Heade Cell Widgets
   List<Widget> scrollableHeaderCellWidgets = [];
 
-  /// fixed Column Width
-  double fixedColumnWidth = 0;
+  // /// fixed Column Width
+  // double fixedColumnWidth = 0;
 
-  /// fixed Column Count
-  int fixedColumnCount = 0;
+  // /// fixed Column Count
+  // int fixedColumnCount = 0;
 
   @override
   void initState() {
@@ -78,10 +78,10 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
     totalFlex = 0;
     cellFlexCount = 0;
     finalRowWidth = 0;
-    fixedHeaderCellWidgets = [];
+    // fixedHeaderCellWidgets = [];
     scrollableHeaderCellWidgets = [];
-    fixedColumnWidth = 0;
-    fixedColumnCount = 0;
+    // fixedColumnWidth = 0;
+    // fixedColumnCount = 0;
     cellWidths = [];
 
     for (var cell in widget.headerCells) {
@@ -116,8 +116,8 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
           if (maxCellHeight == null || maxCellHeight! < size.height) {
             setState(() {
               maxCellHeight = size.height;
+              headerModel.headerMaxHeight = maxCellHeight ?? 0;
             });
-            headerModel.setHeaderMaxHeight(maxCellHeight ?? 0);
           }
         },
         child: FreedomTableCell(
@@ -140,16 +140,9 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
       //   scrollableHeaderCellWidgets.add(cellWidget);
       // }
       scrollableHeaderCellWidgets.add(cellWidget);
-      // if (cell.isFixedColumn) {
-      //   fixedColumnWidth += cellWidth;
-      //   fixedColumnCount++;
-      //   double left = 0;
-      //   for (var i = 0; i < colnumber; i++) {
-      //     left += cellWidths[i];
-      //   }
-      //   fixedHeaderCellWidgets.add(Positioned(left: left, child: cellWidget));
-      // }
     }
+
+    headerModel.scrollableHeaderCellWidgets = scrollableHeaderCellWidgets;
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       headerModel.setHeaderCellWidths(cellWidths);
