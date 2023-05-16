@@ -4,14 +4,23 @@ import 'package:flutter/material.dart';
 import 'package:freedom_table/freedom_table_pager.dart';
 import 'package:provider/provider.dart';
 import './models/theme_model.dart';
+import './models/header_model.dart';
 import './models/table_model.dart';
 import "types.dart";
+import "utils.dart";
 import 'freedom_table_header_row.dart';
 import 'freedom_table_body_cells.dart';
 export "types.dart";
 export 'freedom_table_pager.dart';
 
-FreedomTableData freedomTableData = FreedomTableData();
+class FreedomTableData extends ChangeNotifier {
+  List<List<FreedomTableBodyCell>> rows = [];
+
+  void updateBody(List<List<FreedomTableBodyCell>> rows) {
+    this.rows = rows;
+    notifyListeners();
+  }
+}
 
 class FreedomTable extends StatefulWidget {
   final List<FreedomTableHeaderCell> headers;
@@ -45,6 +54,8 @@ class FreedomTable extends StatefulWidget {
   final ScrollController verticalScrollController = ScrollController();
   final ScrollController fixedVerticalScrollController = ScrollController();
 
+  final FreedomTableData freedomTableData = FreedomTableData();
+
   FreedomTable({
     super.key,
     required this.headers,
@@ -58,12 +69,7 @@ class FreedomTable extends StatefulWidget {
   });
 
   updateBody(List<List<FreedomTableBodyCell>> rows) {
-    freedomTableData.updateData(rows);
-    // // 目前切换表格数据时，需要与前一次数据不同，才能获取正确的表格高度
-    // freedomTableData.updateData([]);
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   freedomTableData.updateData(rows);
-    // });
+    freedomTableData.updateBody(rows);
   }
 
   scrollToTheFarRight() {
@@ -91,18 +97,23 @@ class _FreedomTableState extends State<FreedomTable> {
   @override
   void initState() {
     super.initState();
-    // theme = widget.theme ?? FreedomTableTheme();
-    // if (rows.isEmpty) rows = widget.initBodyCells;
 
     TableModel tableModel = TableModel.instance;
+    HeaderModel headerModel = HeaderModel.instance;
 
-    freedomTableData.addListener(() {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        setState(() {
-          rows = freedomTableData.rows;
-          tableModel.reset(rows.length);
-        });
-      });
+    rows = widget.initBodyCells;
+    theme = widget.theme ?? FreedomTableTheme();
+    tableModel.reset(widget.initBodyCells.length, widget.headers.length);
+
+    widget.freedomTableData.addListener(() {
+      WidgetsBinding.instance.addPostFrameCallback(
+        (timeStamp) {
+          setState(() {
+            rows = widget.freedomTableData.rows;
+            tableModel.reset(widget.freedomTableData.rows.length, widget.headers.length);
+          });
+        },
+      );
     });
 
     tableModel.addListener(() {
@@ -110,6 +121,11 @@ class _FreedomTableState extends State<FreedomTable> {
       if (widget.bodyDataUpdateFinished != null) {
         widget.bodyDataUpdateFinished!();
       }
+    });
+
+    headerModel.addListener(() {
+      // print("** table : header complete **");
+      // setState(() {});
     });
 
     init();
@@ -122,13 +138,6 @@ class _FreedomTableState extends State<FreedomTable> {
   }
 
   void init() {
-    setState(() {
-      TableModel tableModel = TableModel.instance;
-      theme = widget.theme ?? FreedomTableTheme();
-      rows = widget.initBodyCells;
-      tableModel.reset(rows.length);
-    });
-
     widget.verticalScrollController.addListener(() {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (widget.verticalScrollController.hasClients) {
@@ -167,11 +176,13 @@ class _FreedomTableState extends State<FreedomTable> {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => ThemeModel(theme)),
-        // ChangeNotifierProvider(create: (context) => TableModel()),
+        ChangeNotifierProvider(create: (context) => TableModel.instance),
+        ChangeNotifierProvider(create: (context) => HeaderModel.instance),
       ],
       builder: (context, child) {
-        // TableModel tableModel = Provider.of<TableModel>(context, listen: false);
-        TableModel tableModel = TableModel.instance;
+        HeaderModel headerModel = Provider.of<HeaderModel>(context, listen: false);
+        TableModel tableModel = Provider.of<TableModel>(context, listen: false);
+        // TableModel tableModel = TableModel.instance;
         return Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -191,10 +202,10 @@ class _FreedomTableState extends State<FreedomTable> {
                     return Column(
                       children: [
                         SizedBox(
-                          width: tableModel.fixedColumnWidth,
-                          height: tableModel.headerMaxHeight,
+                          width: headerModel.fixedColumnWidth,
+                          height: headerModel.headerMaxHeight,
                           child: Stack(
-                            children: tableModel.fixedHeaderCellWidgets,
+                            children: headerModel.fixedHeaderCellWidgets,
                           ),
                         ),
                         Expanded(
@@ -203,7 +214,7 @@ class _FreedomTableState extends State<FreedomTable> {
                             scrollDirection: Axis.vertical,
                             child: Container(
                               color: theme.backgroundColor,
-                              width: tableModel.fixedColumnWidth,
+                              width: headerModel.fixedColumnWidth,
                               height: tableBodyHeight,
                               child: Stack(
                                 children: fixedBodyCellWidgets,
@@ -241,21 +252,21 @@ class _FreedomTableState extends State<FreedomTable> {
                                 Expanded(
                                   child: FreedomTableBodyCells(
                                     rows: rows,
-                                    getFixedBodyCellWidgets: ((widgets) {
-                                      WidgetsBinding.instance.addPostFrameCallback(
-                                        (timeStamp) {
-                                          if (fixedBodyCellWidgets.length != widgets.length) {
-                                            setState(() {
-                                              fixedBodyCellWidgets = widgets;
-                                            });
-                                          }
-                                        },
-                                      );
-                                    }),
                                     bodyCellOnTap: widget.bodyCellOnTap,
                                     bodyCellOnSecondaryTap: widget.bodyCellOnSecondaryTap,
                                     verticalScrollController: widget.verticalScrollController,
                                     horizontalScrollController: widget.horizontalScrollController,
+                                    getFixedBodyCellWidgets: ((widgets) {
+                                      WidgetsBinding.instance.addPostFrameCallback(
+                                        (timeStamp) {
+                                          if (fixedBodyCellWidgets.length != widgets.length) {
+                                            // setState(() {
+                                            fixedBodyCellWidgets = widgets;
+                                            // });
+                                          }
+                                        },
+                                      );
+                                    }),
                                   ),
                                 ),
                               ],
@@ -268,7 +279,7 @@ class _FreedomTableState extends State<FreedomTable> {
                         );
                       },
                     ),
-                  ),
+                  )
                 ],
               ),
             ),
@@ -277,9 +288,5 @@ class _FreedomTableState extends State<FreedomTable> {
         );
       },
     );
-  }
-
-  Widget outline(Widget child) {
-    return Container(decoration: BoxDecoration(border: Border.all()), child: child);
   }
 }

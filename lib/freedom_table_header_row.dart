@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import './models/table_model.dart';
+import './models/header_model.dart';
 import "types.dart";
 import 'cell.dart';
 import 'utils.dart';
 
 class FreedomTableHeaderRow extends StatefulWidget {
+  /// header constrains
   final BoxConstraints constrains;
+
+  /// header cells
   final List<FreedomTableHeaderCell> headerCells;
+
+  /// min Cell Width In Flex Mode
   final double? minCellWidthInFlexMode;
 
   const FreedomTableHeaderRow({
@@ -39,39 +44,40 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
 
   /// cells最高高度
   double? maxCellHeight;
+
+  /// cell widths
   List<double> cellWidths = [];
 
+  /// fixed Header Cell Widgets
   List<Widget> fixedHeaderCellWidgets = [];
+
+  /// scrollable Heade Cell Widgets
   List<Widget> scrollableHeaderCellWidgets = [];
+
+  /// fixed Column Width
   double fixedColumnWidth = 0;
+
+  /// fixed Column Count
   int fixedColumnCount = 0;
 
   @override
   void initState() {
     super.initState();
-    constrainRowWidth = widget.constrains.maxWidth;
-
-    // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-    //   TableModel tableModel = Provider.of<TableModel>(context, listen: false);
-    //   tableModel.initCellWidths(cellWidths);
-    //   tableModel.updateFixedHeaderCellWidgets(fixedHeaderCellWidgets);
-    //   tableModel.updateFixedColumnWidth(fixedColumnWidth);
-    //   tableModel.updateFixedColumnCount(fixedColumnCount);
-    // });
   }
 
   void setCells() {
-    // TableModel tableModel = Provider.of<TableModel>(context, listen: false);
-    TableModel tableModel = TableModel.instance;
+    // print("** set header cell **");
 
-    double minCellWidthInFlexMode =
-        widget.minCellWidthInFlexMode ?? minCellWidth;
+    constrainRowWidth = widget.constrains.maxWidth;
+
+    HeaderModel headerModel = Provider.of<HeaderModel>(context, listen: false);
+
+    double minCellWidthInFlexMode = widget.minCellWidthInFlexMode ?? minCellWidth;
 
     totalFixedWidth = 0;
     totalFlex = 0;
     cellFlexCount = 0;
     finalRowWidth = 0;
-
     fixedHeaderCellWidgets = [];
     scrollableHeaderCellWidgets = [];
     fixedColumnWidth = 0;
@@ -86,8 +92,7 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
         totalFixedWidth += cell.fixedWidth ?? 0;
       }
     }
-    if (totalFixedWidth + totalFlex * minCellWidthInFlexMode >=
-        constrainRowWidth) {
+    if (totalFixedWidth + totalFlex * minCellWidthInFlexMode >= constrainRowWidth) {
       // 超过限制，需要滚动
       finalRowWidth = totalFixedWidth + totalFlex * minCellWidthInFlexMode;
     } else {
@@ -101,20 +106,18 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
         cellWidth = cell.fixedWidth ?? minCellWidthInFlexMode;
       } else {
         cell.flex ??= 1;
-        cellWidth =
-            ((finalRowWidth - totalFixedWidth) / totalFlex) * cell.flex!;
+        cellWidth = ((finalRowWidth - totalFixedWidth) / totalFlex) * cell.flex!;
       }
       cellWidths.add(cellWidth);
 
       Widget cellWidget = MeasureSize(
         onChange: (size) {
-          // print("** size **");
           // print(size);
           if (maxCellHeight == null || maxCellHeight! < size.height) {
             setState(() {
               maxCellHeight = size.height;
-              tableModel.updateHeaderMaxHeight(maxCellHeight ?? 0);
             });
+            headerModel.setHeaderMaxHeight(maxCellHeight ?? 0);
           }
         },
         child: FreedomTableCell(
@@ -125,23 +128,35 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
           child: cell.child,
         ),
       );
-      if (cell.isFixedColumn) {
-        fixedColumnWidth += cellWidth;
-        fixedColumnCount++;
-        double left = 0;
-        for (var i = 0; i < colnumber; i++) {
-          left += cellWidths[i];
-        }
-        fixedHeaderCellWidgets.add(Positioned(left: left, child: cellWidget));
-      } else {
-        scrollableHeaderCellWidgets.add(cellWidget);
-      }
+      // if (cell.isFixedColumn) {
+      //   fixedColumnWidth += cellWidth;
+      //   fixedColumnCount++;
+      //   double left = 0;
+      //   for (var i = 0; i < colnumber; i++) {
+      //     left += cellWidths[i];
+      //   }
+      //   fixedHeaderCellWidgets.add(Positioned(left: left, child: cellWidget));
+      // } else {
+      //   scrollableHeaderCellWidgets.add(cellWidget);
+      // }
+      scrollableHeaderCellWidgets.add(cellWidget);
+      // if (cell.isFixedColumn) {
+      //   fixedColumnWidth += cellWidth;
+      //   fixedColumnCount++;
+      //   double left = 0;
+      //   for (var i = 0; i < colnumber; i++) {
+      //     left += cellWidths[i];
+      //   }
+      //   fixedHeaderCellWidgets.add(Positioned(left: left, child: cellWidget));
+      // }
     }
 
-    tableModel.initCellWidths(cellWidths);
-    tableModel.updateFixedHeaderCellWidgets(fixedHeaderCellWidgets);
-    tableModel.updateFixedColumnWidth(fixedColumnWidth);
-    tableModel.updateFixedColumnCount(fixedColumnCount);
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      headerModel.setHeaderCellWidths(cellWidths);
+      // headerModel.setFixedHeaderCellWidgets(fixedHeaderCellWidgets);
+      // headerModel.setFixedColumnWidth(fixedColumnWidth);
+      // headerModel.setFixedColumnCount(fixedColumnCount);
+    });
   }
 
   @override

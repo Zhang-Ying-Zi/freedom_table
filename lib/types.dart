@@ -4,21 +4,36 @@ enum CellWidthType { flex, fixed }
 
 enum CellType { header, body }
 
-const double minCellWidth = 80;
+const double minCellWidth = 100;
 
 class FreedomTableTheme {
   /// table divider color
   final Color dividerColor;
+
+  /// body cell background color
   final Color backgroundColor;
 
   /// body cell hover color
   final Color hoverColor;
+
+  /// body cell hover color getter, this priority is higher than hoverColor
   final Color Function()? hoverColorGetter;
+
+  /// pager Border Color
   final Color pagerBorderColor;
+
+  /// pager Text Color
   final Color pagerTextColor;
+
+  /// pager Text Focused Color
   final Color pagerTextFocusedColor;
+
+  /// pager Text Disabled Color
   final Color pagerTextDisabledColor;
+
+  /// pager Focused Background Color
   final Color pagerFocusedBackgroundColor;
+
   FreedomTableTheme({
     this.dividerColor = const Color(0xffe6e6e6),
     this.backgroundColor = const Color(0xfff2f2f2),
@@ -42,12 +57,12 @@ class FreedomTableHeaderCell {
   /// child widget
   Widget child;
 
-  /// wether the column which the header cell belong is fixed when table is horizontal scroll
-  /// when the column is fixed, please ensure the column's child cell DON'T have colspan!!!
+  /// when the column is fixed when scroll horizontal, please ensure the column's child cell DON'T have colspan!!!
   bool isFixedColumn;
 
   /// header cell width type is flex width or fixed width
   late CellWidthType widthType;
+
   FreedomTableHeaderCell({
     this.flex,
     this.fixedWidth,
@@ -61,34 +76,35 @@ class FreedomTableHeaderCell {
       flex ??= 1;
     }
   }
+
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return "(widthType: $widthType, flex: $flex, fixedWidth: $fixedWidth, child: $child)";
+    return "FreedomTableHeaderCell( widthType:$widthType, flex:$flex, fixedWidth:$fixedWidth, child:$child, isFixedColumn:$isFixedColumn)";
   }
 }
 
 class FreedomTableBodyCell {
+  /// colspan
   final int colspan;
+
+  /// rowspan
   final int rowspan;
+
+  /// child widget
   Widget child;
+
+  /// passed data
   dynamic data;
+
   FreedomTableBodyCell({
-    required this.child,
     this.colspan = 1,
     this.rowspan = 1,
+    required this.child,
     this.data,
   });
+
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return "(colspan: $colspan, rowspan: $rowspan, child: $child, data: $data)";
-  }
-}
-
-class FreedomTableData extends ChangeNotifier {
-  List<List<FreedomTableBodyCell>> rows = [];
-
-  void updateData(List<List<FreedomTableBodyCell>> rows) {
-    this.rows = rows;
-    notifyListeners();
+    return "FreedomTableBodyCell( colspan:$colspan, rowspan:$rowspan, child:$child, data:$data )";
   }
 }

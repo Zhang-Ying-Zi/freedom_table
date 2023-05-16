@@ -3,80 +3,41 @@ import 'package:flutter/material.dart';
 
 class TableModel extends ChangeNotifier {
   static TableModel? _instance;
-  static get instance {
+
+  static TableModel get instance {
     _instance ??= TableModel();
-    return _instance;
+    return _instance!;
   }
 
-  // header每行cell宽度
-  List<double> headerCellWidths = [];
-  // header最大高度
-  double headerMaxHeight = 0;
-  // body每行最大高度，行号从0开始
+  /// body每行最大高度，行号从0开始
   Map<int, double?> rowMaxHeights = {};
-  // 占用表 Map<rownumber, Map<colnumber, isOccupied>>
+
+  /// 占用表 Map<rownumber, Map<colnumber, isOccupied>>
   Map<int, Map<int, bool>> occupiedTable = {};
-  Map<int, Map<int, bool>> preOccupiedTable = {};
 
-  // 固定的 header cell widgets
-  List<Widget> fixedHeaderCellWidgets = [];
-  int fixedColumnCount = 0;
-  double fixedColumnWidth = 0;
-
-  // 每页中的行数
+  /// 每页中的行数
   int rowCount = 0;
 
-  void reset(int rowCount) {
+  /// header中的列数
+  int columnCount = 0;
+
+  void reset(int rowCount, int columnCount) {
     this.rowCount = rowCount;
-    occupiedTable = {};
+    this.columnCount = columnCount;
     rowMaxHeights = {};
-  }
-
-  void initCellWidths(List<double> headerCellWidths) {
-    this.headerCellWidths = headerCellWidths;
-    // print(headerCellWidths);
-  }
-
-  void updateHeaderMaxHeight(double headerMaxHeight) {
-    this.headerMaxHeight = headerMaxHeight;
-    // print(headerMaxHeight);
+    occupiedTable = {};
   }
 
   void addRowMaxHeight(int linenumber, double? rowMaxHeight) {
     rowMaxHeights.addAll({linenumber: rowMaxHeight});
-    // print(rowMaxHeights);
     if (rowMaxHeights.length >= rowCount) {
       notifyListeners();
     }
   }
 
-  void updateOccupiedTable(Map<int, Map<int, bool>> occupiedTable) {
+  void setOccupiedTable(Map<int, Map<int, bool>> occupiedTable) {
     this.occupiedTable = occupiedTable;
-
-    // bool isSameAsPre = true;
-    // occupiedTable.forEach(
-    //   (rownumber, occupiedRow) {
-    //     occupiedRow.forEach((columnnumber, occupied) {
-    //       try {
-    //         if (occupied != preOccupiedTable[rownumber]![columnnumber]) {
-    //           isSameAsPre = false;
-    //         }
-    //       } catch (e) {
-    //         isSameAsPre = false;
-    //       }
-    //     });
-    //   },
-    // );
-    // // print(isSameAsPre);
-    // // print(occupiedTable);
-    // if (isSameAsPre &&
-    //     rowCount > 0 &&
-    //     occupiedTable.length >= rowCount &&
-    //     occupiedTable[occupiedTable.length - 1]!.length >=
-    //         headerCellWidths.length - fixedColumnCount) {
-    //   notifyListeners();
-    // }
-    // preOccupiedTable = occupiedTable;
+    // notifyListeners();
   }
 
   // void updateOccupiedRow(int rownumber, Map<int, bool> updatedOccupiedRow) {
@@ -86,18 +47,4 @@ class TableModel extends ChangeNotifier {
   //   // notifyListeners();
   // }
 
-  void updateFixedHeaderCellWidgets(List<Widget> fixedHeaderCellWidgets) {
-    this.fixedHeaderCellWidgets = fixedHeaderCellWidgets;
-    // print(fixedHeaderCellWidgets);
-  }
-
-  void updateFixedColumnWidth(double fixedColumnWidth) {
-    this.fixedColumnWidth = fixedColumnWidth;
-    // print(fixedColumnWidth);
-  }
-
-  void updateFixedColumnCount(int fixedColumnCount) {
-    this.fixedColumnCount = fixedColumnCount;
-    // print(fixedColumnCount);
-  }
 }

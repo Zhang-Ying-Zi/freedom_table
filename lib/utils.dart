@@ -61,3 +61,7 @@ class WidgetPosition {
     return [position?.dx, position?.dy];
   }
 }
+
+Widget outline(Widget child) {
+  return Container(decoration: BoxDecoration(border: Border.all()), child: child);
+}

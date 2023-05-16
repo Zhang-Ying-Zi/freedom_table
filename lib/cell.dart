@@ -4,12 +4,25 @@ import './models/theme_model.dart';
 import "types.dart";
 
 class FreedomTableCell extends StatefulWidget {
+  /// width
   final double width;
+
+  /// height
   final double? height;
+
+  /// cell type is header or body
   final CellType type;
+
+  /// colspan
   final int colspan;
+
+  /// rowspan
   final int rowspan;
+
+  /// isFirstCellInRow
   final bool isFirstCellInRow;
+
+  /// child widget
   final Widget? child;
 
   const FreedomTableCell({
@@ -28,19 +41,20 @@ class FreedomTableCell extends StatefulWidget {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return "(width: $width, height: $height, type: $type, colspan: $colspan, rowspan: $rowspan, isFirstCellInRow: $isFirstCellInRow, child: $child)";
+    return "FreedomTableCell( width:$width, height:$height, type:$type, colspan:$colspan, rowspan:$rowspan, isFirstCellInRow:$isFirstCellInRow, child:$child )";
   }
 }
 
 class _FreedomTableCellState extends State<FreedomTableCell> {
+  /// whether the cell is hovered
   bool isCellHovering = false;
 
+  /// cell key
   GlobalKey cellKey = GlobalKey();
 
   @override
   void didUpdateWidget(covariant FreedomTableCell oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // WidgetPosition.getSizes(cellKey);
   }
 
   @override
@@ -51,9 +65,7 @@ class _FreedomTableCellState extends State<FreedomTableCell> {
           width: widget.width,
           height: widget.height,
           child: MouseRegion(
-            cursor: widget.type == CellType.header
-                ? SystemMouseCursors.basic
-                : SystemMouseCursors.click,
+            cursor: widget.type == CellType.header ? SystemMouseCursors.basic : SystemMouseCursors.click,
             onEnter: (event) {
               setState(() {
                 isCellHovering = true;
@@ -68,13 +80,9 @@ class _FreedomTableCellState extends State<FreedomTableCell> {
               key: cellKey,
               decoration: BoxDecoration(
                 border: Border(
-                  top: widget.type == CellType.header
-                      ? BorderSide(color: themeModel.theme.dividerColor)
-                      : BorderSide.none,
+                  top: widget.type == CellType.header ? BorderSide(color: themeModel.theme.dividerColor) : BorderSide.none,
                   bottom: BorderSide(color: themeModel.theme.dividerColor),
-                  left: widget.isFirstCellInRow == true
-                      ? BorderSide(color: themeModel.theme.dividerColor)
-                      : BorderSide.none,
+                  left: widget.isFirstCellInRow == true ? BorderSide(color: themeModel.theme.dividerColor) : BorderSide.none,
                   right: BorderSide(color: themeModel.theme.dividerColor),
                 ),
                 color: widget.type == CellType.header
@@ -85,9 +93,6 @@ class _FreedomTableCellState extends State<FreedomTableCell> {
                             : themeModel.theme.hoverColor
                         : null,
               ),
-              // child: IntrinsicHeight(
-              //   child: widget.child,
-              // ),
               child: widget.child,
             ),
           ),

@@ -11,11 +11,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Freedom Table Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Freedom Table Demo Home Page'),
       debugShowCheckedModeBanner: false,
     );
   }
@@ -41,51 +41,22 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void setTable() {
+    changedTimes++;
     table = FreedomTable(
       // optional
-      minCellWidthInFlexMode: 80,
+      minCellWidthInFlexMode: 200,
       // optional paging
       pager: FreedomTablePager(
         totalCount: 90,
         pageEach: 10,
         callback: (totalPages, currentPageIndex) {
-          print("($currentPageIndex, $totalPages)");
+          print("(currentPageIndex : $currentPageIndex, totalPages : $totalPages)");
           table.updateBody(getPageData(totalPages, currentPageIndex));
         },
       ),
       // header
-      headers: [
-        FreedomTableHeaderCell(
-          // wether the column which the header cell belong is fixed when table is horizontal scroll
-          // when the column is fixed, please ensure the column's child cell DON'T have colspan!!!
-          isFixedColumn: true,
-          fixedWidth: 100,
-          child: headerCell('header-1'),
-        ),
-        FreedomTableHeaderCell(
-          isFixedColumn: true,
-          fixedWidth: 120,
-          child: headerCell('header-2'),
-        ),
-        FreedomTableHeaderCell(
-          // header width is fixed
-          fixedWidth: 80,
-          // flex: 1,
-          child: headerCell('header-3', Alignment.centerLeft),
-        ),
-        FreedomTableHeaderCell(
-          // header width is flex
-          flex: 1,
-          // fixedWidth: 80,
-          child: headerCell('header-4'),
-        ),
-        FreedomTableHeaderCell(
-          flex: 1,
-          // fixedWidth: 80,
-          child: headerCell('header-5 长中文测试：中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文'),
-        ),
-      ],
-      initBodyCells: changedTimes++ % 2 == 0 ? getPageData(1, 0) : [],
+      headers: getHeaders(),
+      initBodyCells: changedTimes % 2 == 1 ? getPageData(10, 0) : getPageData(10, 1),
       // theme
       theme: FreedomTableTheme(
         dividerColor: const Color(0xffe6e6e6),
@@ -99,52 +70,47 @@ class _MyHomePageState extends State<MyHomePage> {
         pagerFocusedBackgroundColor: const Color(0xff5078F0),
       ),
       bodyCellOnTap: (childCell, left, top, width, height, scrollLeft, scrollTop) {
-        print(
-            "左键点击的值为 ${childCell.data}，在表中的位置 : left $left, top $top, width $width, height $height, bodyScrollLeft $scrollLeft, bodyScrollTop $scrollTop");
+        print("左键点击的值为 ${childCell.data}，在表中的位置 : left $left, top $top, width $width, height $height, bodyScrollLeft $scrollLeft, bodyScrollTop $scrollTop");
       },
       bodyCellOnSecondaryTap: (childCell, left, top, width, height, scrollLeft, scrollTop) {
-        print(
-            "右键点击的值为 ${childCell.data}，在表中的位置 : left $left, top $top, width $width, height $height, bodyScrollLeft $scrollLeft, bodyScrollTop $scrollTop");
+        print("右键点击的值为 ${childCell.data}，在表中的位置 : left $left, top $top, width $width, height $height, bodyScrollLeft $scrollLeft, bodyScrollTop $scrollTop");
       },
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        padding: const EdgeInsets.all(20),
-        child: Column(children: [
-          Row(
-            children: [
-              Container(
-                margin: const EdgeInsets.only(bottom: 10, right: 10),
-                child: ElevatedButton(
-                  child: const Text('滚动到表格最右边'),
-                  onPressed: () {
-                    table.scrollToTheFarRight();
-                  },
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.only(bottom: 10, right: 10),
-                child: ElevatedButton(
-                  child: const Text('替换表格'),
-                  onPressed: () {
-                    setState(() {
-                      setTable();
-                    });
-                  },
-                ),
-              ),
-            ],
-          ),
-          Expanded(
-            child: table,
-          ),
-        ]),
+  List<FreedomTableHeaderCell> getHeaders() {
+    List<FreedomTableHeaderCell> headers = [
+      FreedomTableHeaderCell(
+        // wether the column which the header cell belong is fixed when table is horizontal scroll
+        // when the column is fixed, please ensure the column's child cell DON'T have colspan!!!
+        isFixedColumn: true,
+        fixedWidth: 200,
+        child: headerCell('header-1'),
       ),
-    );
+      FreedomTableHeaderCell(
+        // isFixedColumn: true,
+        fixedWidth: 200,
+        child: headerCell('header-2'),
+      ),
+      FreedomTableHeaderCell(
+        // flex: 1,
+        fixedWidth: 200,
+        child: headerCell('header-3', Alignment.centerLeft),
+      ),
+      FreedomTableHeaderCell(
+        flex: 1,
+        // fixedWidth: 200,
+        child: headerCell('header-4'),
+      ),
+    ];
+    if (changedTimes % 2 == 1) {
+      headers.add(FreedomTableHeaderCell(
+        flex: 1,
+        // fixedWidth: 200,
+        child: headerCell('header-5 长中文测试：中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文 中文'),
+      ));
+    }
+    return headers;
   }
 
   // 获取分页数据
@@ -382,6 +348,44 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ],
           ];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        padding: const EdgeInsets.all(20),
+        child: Column(children: [
+          Row(
+            children: [
+              Container(
+                margin: const EdgeInsets.only(bottom: 10, right: 10),
+                child: ElevatedButton(
+                  child: const Text('滚动到表格最右边'),
+                  onPressed: () {
+                    table.scrollToTheFarRight();
+                  },
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.only(bottom: 10, right: 10),
+                child: ElevatedButton(
+                  child: const Text('替换表格'),
+                  onPressed: () {
+                    setState(() {
+                      setTable();
+                    });
+                  },
+                ),
+              ),
+            ],
+          ),
+          Expanded(
+            child: table,
+          ),
+        ]),
+      ),
+    );
   }
 
   // header单元格，请设置fontFamily,否则中文高度显示不正确
