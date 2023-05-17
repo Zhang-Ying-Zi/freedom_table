@@ -24,9 +24,6 @@ class FreedomTableBodyCells extends StatefulWidget {
   /// bodyCellOnSecondaryTap
   final void Function(FreedomTableBodyCell childCell, double left, double top, double width, double height, double scrollLeft, double scrollTop)? bodyCellOnSecondaryTap;
 
-  // /// getFixedBodyCellWidgets
-  // final void Function(List<Widget> fixedBodyCellWidgets) getFixedBodyCellWidgets;
-
   const FreedomTableBodyCells({
     super.key,
     required this.rows,
@@ -34,7 +31,6 @@ class FreedomTableBodyCells extends StatefulWidget {
     this.bodyCellOnSecondaryTap,
     required this.verticalScrollController,
     required this.horizontalScrollController,
-    // required this.getFixedBodyCellWidgets,
   });
 
   @override
@@ -42,12 +38,6 @@ class FreedomTableBodyCells extends StatefulWidget {
 }
 
 class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
-  /// fixed Body Cell Widgets
-  List<Widget> fixedBodyCellWidgets = [];
-
-  /// scrollable Body Cell Widgets
-  List<Widget> scrollableBodyCellWidgets = [];
-
   Map<int, double?> rowMaxHeights = {};
 
   double tableWidth = 0;
@@ -66,18 +56,21 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
 
     headerModel.addListener(() {
       // print("** body : header complete **");
+      // if (tableModel.fixedBodyCellWidgets.isEmpty) {
       tableWidth = 0;
       if (headerModel.headerCellWidths.isNotEmpty) {
         tableWidth = headerModel.headerCellWidths.reduce((value, element) => value + element);
-        tableWidth -= headerModel.fixedColumnWidth;
+        // tableWidth -= headerModel.fixedColumnWidth;
       }
       setState(() {
         setCells();
       });
+      // }
     });
 
     tableModel.addListener(() {
       // print("** body : height complete **");
+      // if (tableModel.fixedBodyCellWidgets.isEmpty) {
       tableBodyHeight = 0;
       tableModel.rowMaxHeights.forEach(
         (key, value) => tableBodyHeight += value ?? 0,
@@ -85,6 +78,7 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
       setState(() {
         setCells();
       });
+      // }
     });
   }
 
@@ -246,8 +240,8 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
 
     computeSpan();
 
-    fixedBodyCellWidgets = [];
-    scrollableBodyCellWidgets = [];
+    List<Widget> fixedBodyCellWidgets = [];
+    List<Widget> scrollableBodyCellWidgets = [];
 
     // 每行
     for (var bodyRow in widget.rows) {
@@ -330,12 +324,11 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
 
     tableModel.fixedBodyCellWidgets = fixedBodyCellWidgets;
     tableModel.scrollableBodyCellWidgets = scrollableBodyCellWidgets;
-
-    // widget.getFixedBodyCellWidgets(fixedBodyCellWidgets);
   }
 
   @override
   Widget build(BuildContext context) {
+    TableModel tableModel = Provider.of<TableModel>(context, listen: false);
     return SizedBox(
       width: tableWidth,
       // a Stack widget must have at least one item which can have a static size at build time
@@ -346,7 +339,7 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
             Container(
               height: tableBodyHeight,
             ),
-            ...scrollableBodyCellWidgets,
+            ...tableModel.scrollableBodyCellWidgets,
           ],
         ),
       ),

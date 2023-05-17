@@ -48,18 +48,6 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
   /// cell widths
   List<double> cellWidths = [];
 
-  // /// fixed Header Cell Widgets
-  // List<Widget> fixedHeaderCellWidgets = [];
-
-  /// scrollable Heade Cell Widgets
-  List<Widget> scrollableHeaderCellWidgets = [];
-
-  // /// fixed Column Width
-  // double fixedColumnWidth = 0;
-
-  // /// fixed Column Count
-  // int fixedColumnCount = 0;
-
   @override
   void initState() {
     super.initState();
@@ -74,14 +62,12 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
 
     double minCellWidthInFlexMode = widget.minCellWidthInFlexMode ?? minCellWidth;
 
+    List<Widget> scrollableHeaderCellWidgets = [];
+
     totalFixedWidth = 0;
     totalFlex = 0;
     cellFlexCount = 0;
     finalRowWidth = 0;
-    // fixedHeaderCellWidgets = [];
-    scrollableHeaderCellWidgets = [];
-    // fixedColumnWidth = 0;
-    // fixedColumnCount = 0;
     cellWidths = [];
 
     for (var cell in widget.headerCells) {
@@ -128,17 +114,6 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
           child: cell.child,
         ),
       );
-      // if (cell.isFixedColumn) {
-      //   fixedColumnWidth += cellWidth;
-      //   fixedColumnCount++;
-      //   double left = 0;
-      //   for (var i = 0; i < colnumber; i++) {
-      //     left += cellWidths[i];
-      //   }
-      //   fixedHeaderCellWidgets.add(Positioned(left: left, child: cellWidget));
-      // } else {
-      //   scrollableHeaderCellWidgets.add(cellWidget);
-      // }
       scrollableHeaderCellWidgets.add(cellWidget);
     }
 
@@ -146,17 +121,16 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
 
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       headerModel.setHeaderCellWidths(cellWidths);
-      // headerModel.setFixedHeaderCellWidgets(fixedHeaderCellWidgets);
-      // headerModel.setFixedColumnWidth(fixedColumnWidth);
-      // headerModel.setFixedColumnCount(fixedColumnCount);
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    HeaderModel headerModel = Provider.of<HeaderModel>(context, listen: false);
+    // if (headerModel.fixedHeaderCellWidgets.isEmpty) setCells();
     setCells();
     return Row(
-      children: [...scrollableHeaderCellWidgets],
+      children: [...headerModel.scrollableHeaderCellWidgets],
     );
   }
 }

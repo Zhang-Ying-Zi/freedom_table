@@ -36,6 +36,8 @@ class TableModel extends ChangeNotifier {
     this.columnCount = columnCount;
     rowMaxHeights = {};
     occupiedTable = {};
+    fixedBodyCellWidgets = [];
+    scrollableBodyCellWidgets = [];
   }
 
   void addRowMaxHeight(int linenumber, double? rowMaxHeight) {

@@ -92,26 +92,15 @@ class _FreedomTableState extends State<FreedomTable> {
   List<List<FreedomTableBodyCell>> rows = [];
   late FreedomTableTheme theme;
 
-  // List<Widget> fixedBodyCellWidgets = [];
-
   @override
   void initState() {
+    print("** initState **");
     super.initState();
+    init();
 
     TableModel tableModel = TableModel.instance;
     HeaderModel headerModel = HeaderModel.instance;
-
-    widget.freedomTableData.addListener(() {
-      WidgetsBinding.instance.addPostFrameCallback(
-        (timeStamp) {
-          setState(() {
-            rows = widget.freedomTableData.rows;
-            tableModel.reset(rows.length, widget.headers.length);
-          });
-        },
-      );
-    });
-
+    // table update complete
     tableModel.addListener(() {
       print("** table : body complete **");
 
@@ -128,10 +117,23 @@ class _FreedomTableState extends State<FreedomTable> {
             left += headerModel.headerCellWidths[i];
           }
           headerModel.fixedHeaderCellWidgets.add(Positioned(left: left, child: headerModel.scrollableHeaderCellWidgets[i]));
+          // headerModel.fixedHeaderCellWidgets.add(Positioned(left: left, child: headerModel.scrollableHeaderCellWidgets[0]));
+          // headerModel.scrollableHeaderCellWidgets.removeAt(0);
         }
       }
       headerModel.fixedColumnWidth = fixedColumnWidth;
       headerModel.fixedColumnCount = fixedColumnCount;
+
+      // fixed body
+      // print(tableModel.fixedBodyCellWidgets);
+      // List<Widget> newScrollableBodyCellWidgets = [];
+      // for (var widget in tableModel.scrollableBodyCellWidgets) {
+      //   // print(tableModel.fixedBodyCellWidgets.where((fixedWidget) => fixedWidget == widget).length);
+      //   if (tableModel.fixedBodyCellWidgets.where((fixedWidget) => fixedWidget == widget).isEmpty) {
+      //     newScrollableBodyCellWidgets.add(widget);
+      //   }
+      // }
+      // tableModel.scrollableBodyCellWidgets = newScrollableBodyCellWidgets;
 
       setState(() {});
 
@@ -139,22 +141,35 @@ class _FreedomTableState extends State<FreedomTable> {
         widget.bodyUpdateFinished!();
       }
     });
-
-    init();
   }
 
   @override
   void didUpdateWidget(covariant FreedomTable oldWidget) {
-    init();
+    print("** didUpdateWidget **");
     super.didUpdateWidget(oldWidget);
+    init();
   }
 
   void init() {
     TableModel tableModel = TableModel.instance;
 
-    rows = widget.initBodyCells;
     theme = widget.theme ?? FreedomTableTheme();
+    rows = widget.initBodyCells;
+    print("** reset init **");
     tableModel.reset(rows.length, widget.headers.length);
+
+    // pager | update table
+    widget.freedomTableData.addListener(() {
+      WidgetsBinding.instance.addPostFrameCallback(
+        (timeStamp) {
+          setState(() {
+            rows = widget.freedomTableData.rows;
+            print("** reset update **");
+            tableModel.reset(rows.length, widget.headers.length);
+          });
+        },
+      );
+    });
 
     widget.verticalScrollController.addListener(() {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -200,7 +215,7 @@ class _FreedomTableState extends State<FreedomTable> {
       builder: (context, child) {
         HeaderModel headerModel = Provider.of<HeaderModel>(context, listen: false);
         TableModel tableModel = Provider.of<TableModel>(context, listen: false);
-        // TableModel tableModel = TableModel.instance;
+
         return Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -273,17 +288,6 @@ class _FreedomTableState extends State<FreedomTable> {
                                     bodyCellOnSecondaryTap: widget.bodyCellOnSecondaryTap,
                                     verticalScrollController: widget.verticalScrollController,
                                     horizontalScrollController: widget.horizontalScrollController,
-                                    // getFixedBodyCellWidgets: ((widgets) {
-                                    //   WidgetsBinding.instance.addPostFrameCallback(
-                                    //     (timeStamp) {
-                                    //       if (fixedBodyCellWidgets.length != widgets.length) {
-                                    //         // setState(() {
-                                    //         fixedBodyCellWidgets = widgets;
-                                    //         // });
-                                    //       }
-                                    //     },
-                                    //   );
-                                    // }),
                                   ),
                                 ),
                               ],

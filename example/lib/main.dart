@@ -45,6 +45,8 @@ class _MyHomePageState extends State<MyHomePage> {
     table = FreedomTable(
       // optional
       minCellWidthInFlexMode: 200,
+      // header
+      headers: getHeaders(),
       // optional paging
       pager: FreedomTablePager(
         totalCount: 90,
@@ -54,8 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
           table.updateBody(getPageData(totalPages, currentPageIndex));
         },
       ),
-      // header
-      headers: getHeaders(),
+      // when pager is not provide, initBodyCells must provide
       initBodyCells: changedTimes % 2 == 1 ? getPageData(10, 0) : getPageData(10, 1),
       // theme
       theme: FreedomTableTheme(
