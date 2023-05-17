@@ -94,46 +94,39 @@ class _FreedomTableState extends State<FreedomTable> {
 
   @override
   void initState() {
-    print("** initState **");
+    // print("** initState **");
     super.initState();
     init();
 
     TableModel tableModel = TableModel.instance;
     HeaderModel headerModel = HeaderModel.instance;
+
     // table update complete
     tableModel.addListener(() {
-      print("** table : body complete **");
+      // print("** table : body complete **");
 
       // fixed header
-      double fixedColumnWidth = 0;
-      int fixedColumnCount = 0;
-      for (int i = 0; i < widget.headers.length; i++) {
-        FreedomTableHeaderCell header = widget.headers[i];
-        if (header.isFixedColumn) {
-          fixedColumnWidth += headerModel.headerCellWidths[i];
-          fixedColumnCount++;
-          double left = 0;
-          for (var j = 0; j < i; j++) {
-            left += headerModel.headerCellWidths[i];
+      if (headerModel.fixedHeaderCellWidgets.isEmpty) {
+        double fixedColumnWidth = 0;
+        int fixedColumnCount = 0;
+        for (int i = 0; i < headerModel.headerCellWidths.length; i++) {
+          FreedomTableHeaderCell header = widget.headers[i];
+          if (header.isFixedColumn) {
+            fixedColumnWidth += headerModel.headerCellWidths[i];
+            fixedColumnCount++;
+            double left = 0;
+            for (var j = 0; j < i; j++) {
+              left += headerModel.headerCellWidths[i];
+            }
+            if (headerModel.scrollableHeaderCellWidgets.isNotEmpty) {
+              headerModel.fixedHeaderCellWidgets.add(Positioned(left: left, child: headerModel.scrollableHeaderCellWidgets.first));
+              headerModel.scrollableHeaderCellWidgets.removeAt(0);
+            }
           }
-          headerModel.fixedHeaderCellWidgets.add(Positioned(left: left, child: headerModel.scrollableHeaderCellWidgets[i]));
-          // headerModel.fixedHeaderCellWidgets.add(Positioned(left: left, child: headerModel.scrollableHeaderCellWidgets[0]));
-          // headerModel.scrollableHeaderCellWidgets.removeAt(0);
         }
+        headerModel.fixedColumnWidth = fixedColumnWidth;
+        headerModel.fixedColumnCount = fixedColumnCount;
       }
-      headerModel.fixedColumnWidth = fixedColumnWidth;
-      headerModel.fixedColumnCount = fixedColumnCount;
-
-      // fixed body
-      // print(tableModel.fixedBodyCellWidgets);
-      // List<Widget> newScrollableBodyCellWidgets = [];
-      // for (var widget in tableModel.scrollableBodyCellWidgets) {
-      //   // print(tableModel.fixedBodyCellWidgets.where((fixedWidget) => fixedWidget == widget).length);
-      //   if (tableModel.fixedBodyCellWidgets.where((fixedWidget) => fixedWidget == widget).isEmpty) {
-      //     newScrollableBodyCellWidgets.add(widget);
-      //   }
-      // }
-      // tableModel.scrollableBodyCellWidgets = newScrollableBodyCellWidgets;
 
       setState(() {});
 
@@ -145,7 +138,7 @@ class _FreedomTableState extends State<FreedomTable> {
 
   @override
   void didUpdateWidget(covariant FreedomTable oldWidget) {
-    print("** didUpdateWidget **");
+    // print("** didUpdateWidget **");
     super.didUpdateWidget(oldWidget);
     init();
   }
@@ -154,8 +147,9 @@ class _FreedomTableState extends State<FreedomTable> {
     TableModel tableModel = TableModel.instance;
 
     theme = widget.theme ?? FreedomTableTheme();
+
     rows = widget.initBodyCells;
-    print("** reset init **");
+    // print("** reset init **");
     tableModel.reset(rows.length, widget.headers.length);
 
     // pager | update table
@@ -164,7 +158,7 @@ class _FreedomTableState extends State<FreedomTable> {
         (timeStamp) {
           setState(() {
             rows = widget.freedomTableData.rows;
-            print("** reset update **");
+            // print("** reset update **");
             tableModel.reset(rows.length, widget.headers.length);
           });
         },
@@ -231,30 +225,46 @@ class _FreedomTableState extends State<FreedomTable> {
                     tableModel.rowMaxHeights.forEach(
                       (key, value) => tableBodyHeight += value ?? 0,
                     );
-                    return Column(
-                      children: [
-                        SizedBox(
-                          width: headerModel.fixedColumnWidth,
-                          height: headerModel.headerMaxHeight,
-                          child: Stack(
-                            children: headerModel.fixedHeaderCellWidgets,
+                    return Container(
+                      decoration: const BoxDecoration(
+                          // border: Border(
+                          //   right: BorderSide(width: 2, color: Color.fromRGBO(217, 217, 217, 1)),
+                          // ),
+                          // color: Colors.white,
+                          // boxShadow: [
+                          //   BoxShadow(
+                          //     color: Color.fromRGBO(217, 217, 217, 1),
+                          //     blurStyle: BlurStyle.outer,
+                          //     spreadRadius: 2,
+                          //     blurRadius: 2,
+                          //     offset: Offset(2, 0),
+                          //   ),
+                          // ],
                           ),
-                        ),
-                        Expanded(
-                          child: SingleChildScrollView(
-                            controller: widget.fixedVerticalScrollController,
-                            scrollDirection: Axis.vertical,
-                            child: Container(
-                              color: theme.backgroundColor,
-                              width: headerModel.fixedColumnWidth,
-                              height: tableBodyHeight,
-                              child: Stack(
-                                children: tableModel.fixedBodyCellWidgets,
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            width: headerModel.fixedColumnWidth,
+                            height: headerModel.headerMaxHeight,
+                            child: Stack(
+                              children: headerModel.fixedHeaderCellWidgets,
+                            ),
+                          ),
+                          Expanded(
+                            child: SingleChildScrollView(
+                              controller: widget.fixedVerticalScrollController,
+                              scrollDirection: Axis.vertical,
+                              child: SizedBox(
+                                width: headerModel.fixedColumnWidth,
+                                height: tableBodyHeight,
+                                child: Stack(
+                                  children: tableModel.fixedBodyCellWidgets,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     );
                   }),
                   // 自由表格

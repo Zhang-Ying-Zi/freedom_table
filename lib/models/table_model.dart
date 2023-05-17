@@ -31,6 +31,10 @@ class TableModel extends ChangeNotifier {
   /// scrollable Body Cell Widgets
   List<Widget> scrollableBodyCellWidgets = [];
 
+  void notify() {
+    notifyListeners();
+  }
+
   void reset(int rowCount, int columnCount) {
     this.rowCount = rowCount;
     this.columnCount = columnCount;
@@ -44,7 +48,7 @@ class TableModel extends ChangeNotifier {
     rowMaxHeights.addAll({linenumber: rowMaxHeight});
     // 等等 body cell height 是否有新的改变，目前只能等待看看，无法主动判断是否已全部resize完
     waitBodyCellHeightChange?.cancel();
-    waitBodyCellHeightChange = Timer(const Duration(milliseconds: 100), () {
+    waitBodyCellHeightChange = Timer(const Duration(milliseconds: 0), () {
       if (rowMaxHeights.length >= rowCount) {
         notifyListeners();
       }

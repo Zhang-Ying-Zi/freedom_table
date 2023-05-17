@@ -127,8 +127,7 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
   @override
   Widget build(BuildContext context) {
     HeaderModel headerModel = Provider.of<HeaderModel>(context, listen: false);
-    // if (headerModel.fixedHeaderCellWidgets.isEmpty) setCells();
-    setCells();
+    if (headerModel.fixedHeaderCellWidgets.isEmpty) setCells();
     return Row(
       children: [...headerModel.scrollableHeaderCellWidgets],
     );

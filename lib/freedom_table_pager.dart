@@ -5,8 +5,7 @@ import 'dart:math';
 
 enum PagerItemTypes { prev, next, ellipsis, number }
 
-typedef PagerClickCallback = void Function(
-    int totalPages, int currentPageIndex)?;
+typedef PagerClickCallback = void Function(int totalPages, int currentPageIndex)?;
 
 class PagerItem extends StatefulWidget {
   final PagerItemTypes type;
@@ -43,24 +42,14 @@ class _PagerItemState extends State<PagerItem> {
         break;
     }
     return MouseRegion(
-      cursor: widget.index == null
-          ? SystemMouseCursors.basic
-          : SystemMouseCursors.click,
+      cursor: widget.index == null ? SystemMouseCursors.basic : SystemMouseCursors.click,
       child: Container(
         height: 32,
-        padding: EdgeInsets.symmetric(
-            horizontal: widget.type == PagerItemTypes.ellipsis ? 0 : 12),
+        padding: EdgeInsets.symmetric(horizontal: widget.type == PagerItemTypes.ellipsis ? 0 : 12),
         decoration: BoxDecoration(
-          border: widget.type == PagerItemTypes.ellipsis
-              ? null
-              : Border.all(
-                  color: widget.isFocused
-                      ? themeModel.theme.pagerFocusedBackgroundColor
-                      : themeModel.theme.pagerBorderColor),
+          border: widget.type == PagerItemTypes.ellipsis ? null : Border.all(color: widget.isFocused ? themeModel.theme.pagerFocusedBackgroundColor : themeModel.theme.pagerBorderColor),
           borderRadius: const BorderRadius.all(Radius.circular(2)),
-          color: widget.isFocused
-              ? themeModel.theme.pagerFocusedBackgroundColor
-              : null,
+          color: widget.isFocused ? themeModel.theme.pagerFocusedBackgroundColor : null,
         ),
         child: Center(
           child: Text(
@@ -120,9 +109,7 @@ class _FreedomTablePagerState extends State<FreedomTablePager> {
 
   executeCallback() {
     if (widget.callback != null) {
-      if ((lastTotalPages == null || lastCurrentPageIndex == null) ||
-          (lastTotalPages != totalPages ||
-              lastCurrentPageIndex != currentPageIndex)) {
+      if ((lastTotalPages == null || lastCurrentPageIndex == null) || (lastTotalPages != totalPages || lastCurrentPageIndex != currentPageIndex)) {
         lastTotalPages = totalPages;
         lastCurrentPageIndex = currentPageIndex;
         widget.callback!(totalPages, currentPageIndex);
@@ -221,17 +208,13 @@ class _FreedomTablePagerState extends State<FreedomTablePager> {
       index: currentPageIndex < totalPages - 1 ? currentPageIndex + 1 : null,
     )));
     // ...
-    if (!isReachStart &&
-        indexesBetweenEllipses.length >= pagesBetweenEllipsesCount) {
+    if (!isReachStart && indexesBetweenEllipses.length >= pagesBetweenEllipsesCount) {
       // 前
-      pageItems.insert(
-          2, pageItem(const PagerItem(type: PagerItemTypes.ellipsis)));
+      pageItems.insert(2, pageItem(const PagerItem(type: PagerItemTypes.ellipsis)));
     }
-    if (!isReachEnd &&
-        indexesBetweenEllipses.length >= pagesBetweenEllipsesCount) {
+    if (!isReachEnd && indexesBetweenEllipses.length >= pagesBetweenEllipsesCount) {
       // 后
-      pageItems.insert(pageItems.length - 2,
-          pageItem(const PagerItem(type: PagerItemTypes.ellipsis)));
+      pageItems.insert(pageItems.length - 2, pageItem(const PagerItem(type: PagerItemTypes.ellipsis)));
     }
     executeCallback();
     return pageItems;
@@ -245,8 +228,7 @@ class _FreedomTablePagerState extends State<FreedomTablePager> {
       child: Center(
         child: Text(
           text,
-          style:
-              TextStyle(fontSize: 14, color: themeModel.theme.pagerTextColor),
+          style: TextStyle(fontSize: 14, color: themeModel.theme.pagerTextColor),
         ),
       ),
     );
@@ -300,11 +282,9 @@ class _FreedomTablePagerState extends State<FreedomTablePager> {
                         int goto = int.parse(gotoControl.text);
                         setState(() {
                           currentPageIndex = max(0, goto - 1);
-                          currentPageIndex =
-                              min(currentPageIndex, totalPages - 1);
+                          currentPageIndex = min(currentPageIndex, totalPages - 1);
                           gotoControl.text = (currentPageIndex + 1).toString();
-                          gotoControl.selection = TextSelection.fromPosition(
-                              TextPosition(offset: gotoControl.text.length));
+                          gotoControl.selection = TextSelection.fromPosition(TextPosition(offset: gotoControl.text.length));
                         });
                       } on FormatException catch (e) {
                         print("unvalid number : $e");
@@ -337,8 +317,7 @@ class _FreedomTablePagerState extends State<FreedomTablePager> {
                         initData();
                       });
                     },
-                    items: ["5", "10", "15", "20", "30"]
-                        .map<DropdownMenuItem<String>>((String value) {
+                    items: ["5", "10", "15", "20", "30"].map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Text(value),

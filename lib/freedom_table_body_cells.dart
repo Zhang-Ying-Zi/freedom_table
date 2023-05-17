@@ -40,9 +40,6 @@ class FreedomTableBodyCells extends StatefulWidget {
 class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
   Map<int, double?> rowMaxHeights = {};
 
-  double tableWidth = 0;
-  double tableBodyHeight = 0;
-
   @override
   void initState() {
     super.initState();
@@ -56,35 +53,23 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
 
     headerModel.addListener(() {
       // print("** body : header complete **");
-      // if (tableModel.fixedBodyCellWidgets.isEmpty) {
-      tableWidth = 0;
-      if (headerModel.headerCellWidths.isNotEmpty) {
-        tableWidth = headerModel.headerCellWidths.reduce((value, element) => value + element);
-        // tableWidth -= headerModel.fixedColumnWidth;
-      }
       setState(() {
         setCells();
       });
-      // }
     });
 
     tableModel.addListener(() {
       // print("** body : height complete **");
-      // if (tableModel.fixedBodyCellWidgets.isEmpty) {
-      tableBodyHeight = 0;
-      tableModel.rowMaxHeights.forEach(
-        (key, value) => tableBodyHeight += value ?? 0,
-      );
       setState(() {
         setCells();
       });
-      // }
     });
   }
 
   @override
-  void didUpdateWidget(oldWidget) {
+  void didUpdateWidget(covariant FreedomTableBodyCells oldWidget) {
     super.didUpdateWidget(oldWidget);
+    setCells();
   }
 
   void computeSpan() {
@@ -250,13 +235,11 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
       Map<int, bool> occupiedTableRow = occupiedTable[rownumber]!;
 
       int colnumber = 0;
-      // int fixedColumnCount = 0;
 
       // 每列
       for (var cell in bodyRow) {
         while (occupiedTable[rownumber]![colnumber] == true) {
           colnumber++;
-          // fixedColumnCount++;
         }
 
         double top = getCellTop(rowMaxHeights, rownumber);
@@ -278,11 +261,11 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
           }
         }
 
-        // if (fixedColumnCount < headerModel.fixedColumnCount) {
-        //   // top += headerModel.headerMaxHeight;
-        // } else {
-        //   left -= headerModel.fixedColumnWidth;
-        // }
+        if (headerModel.fixedHeaderCellWidgets.isNotEmpty) {
+          if (colnumber >= headerModel.fixedColumnCount) {
+            left -= headerModel.fixedColumnWidth;
+          }
+        }
 
         Widget cellWidget = getCellWidget(
           cell,
@@ -291,7 +274,6 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
           cellWidth,
           cellSpanHeight == 0 ? rowMaxHeights[rownumber] : cellSpanHeight,
           occupiedTableRow[0] == false && colnumber == 0,
-          // fixedColumnCount < headerModel.fixedColumnCount,
           colnumber == 0,
           cellSpanHeight == 0
               ? (size) {
@@ -307,18 +289,14 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
               : null,
         );
 
-        // if (fixedColumnCount < headerModel.fixedColumnCount) {
-        //   fixedBodyCellWidgets.add(cellWidget);
-        // }
         if (colnumber < headerModel.fixedColumnCount) {
           fixedBodyCellWidgets.add(cellWidget);
         }
-        scrollableBodyCellWidgets.add(cellWidget);
+        if (colnumber >= headerModel.fixedColumnCount) {
+          scrollableBodyCellWidgets.add(cellWidget);
+        }
 
         colnumber++;
-        // if (fixedColumnCount < headerModel.fixedColumnCount) {
-        //   fixedColumnCount++;
-        // }
       }
     }
 
@@ -329,6 +307,19 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
   @override
   Widget build(BuildContext context) {
     TableModel tableModel = Provider.of<TableModel>(context, listen: false);
+    HeaderModel headerModel = Provider.of<HeaderModel>(context, listen: false);
+
+    double tableWidth = 0;
+    if (headerModel.headerCellWidths.isNotEmpty) {
+      tableWidth = headerModel.headerCellWidths.reduce((value, element) => value + element);
+      tableWidth -= headerModel.fixedColumnWidth;
+    }
+
+    double tableBodyHeight = 0;
+    tableModel.rowMaxHeights.forEach(
+      (key, value) => tableBodyHeight += value ?? 0,
+    );
+
     return SizedBox(
       width: tableWidth,
       // a Stack widget must have at least one item which can have a static size at build time
