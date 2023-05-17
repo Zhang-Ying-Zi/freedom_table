@@ -95,12 +95,12 @@ class _MyHomePageState extends State<MyHomePage> {
       FreedomTableHeaderCell(
         // flex: 1,
         fixedWidth: 200,
-        child: headerCell('header-3', Alignment.centerLeft),
+        child: headerCell('header-3'),
       ),
       FreedomTableHeaderCell(
         flex: 1,
         // fixedWidth: 200,
-        child: headerCell('header-4'),
+        child: headerCell('header-4', Alignment.centerLeft),
       ),
     ];
     if (changedTimes % 2 == 1) {

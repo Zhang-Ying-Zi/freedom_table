@@ -225,46 +225,36 @@ class _FreedomTableState extends State<FreedomTable> {
                     tableModel.rowMaxHeights.forEach(
                       (key, value) => tableBodyHeight += value ?? 0,
                     );
-                    return Container(
-                      decoration: const BoxDecoration(
-                          // border: Border(
-                          //   right: BorderSide(width: 2, color: Color.fromRGBO(217, 217, 217, 1)),
-                          // ),
-                          // color: Colors.white,
-                          // boxShadow: [
-                          //   BoxShadow(
-                          //     color: Color.fromRGBO(217, 217, 217, 1),
-                          //     blurStyle: BlurStyle.outer,
-                          //     spreadRadius: 2,
-                          //     blurRadius: 2,
-                          //     offset: Offset(2, 0),
-                          //   ),
-                          // ],
+                    return Column(
+                      children: [
+                        // CustomGradientContainer(
+                        //   child:
+                        SizedBox(
+                          width: headerModel.fixedColumnWidth,
+                          height: headerModel.headerMaxHeight,
+                          child: Stack(
+                            children: headerModel.fixedHeaderCellWidgets,
                           ),
-                      child: Column(
-                        children: [
-                          SizedBox(
-                            width: headerModel.fixedColumnWidth,
-                            height: headerModel.headerMaxHeight,
-                            child: Stack(
-                              children: headerModel.fixedHeaderCellWidgets,
-                            ),
-                          ),
-                          Expanded(
-                            child: SingleChildScrollView(
-                              controller: widget.fixedVerticalScrollController,
-                              scrollDirection: Axis.vertical,
-                              child: SizedBox(
-                                width: headerModel.fixedColumnWidth,
-                                height: tableBodyHeight,
-                                child: Stack(
-                                  children: tableModel.fixedBodyCellWidgets,
-                                ),
+                        ),
+                        // ),
+                        Expanded(
+                          child: SingleChildScrollView(
+                            controller: widget.fixedVerticalScrollController,
+                            scrollDirection: Axis.vertical,
+                            child:
+                                // CustomGradientContainer(
+                                //   child:
+                                SizedBox(
+                              width: headerModel.fixedColumnWidth,
+                              height: tableBodyHeight,
+                              child: Stack(
+                                children: tableModel.fixedBodyCellWidgets,
                               ),
                             ),
+                            // ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     );
                   }),
                   // 自由表格
