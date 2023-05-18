@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freedom_table/freedom_table.dart';
+import 'schedule/schedule_manage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -69,11 +70,13 @@ class _MyHomePageState extends State<MyHomePage> {
         pagerTextDisabledColor: const Color(0xffcccccc),
         pagerFocusedBackgroundColor: const Color(0xff5078F0),
       ),
-      bodyCellOnTap: (childCell, left, top, width, height, scrollLeft, scrollTop) {
-        print("左键点击的值为 ${childCell.data}，在表中的位置 : left $left, top $top, width $width, height $height, bodyScrollLeft $scrollLeft, bodyScrollTop $scrollTop");
+      bodyCellOnTap: (childCell, left, top, width, height, scrollLeft, scrollTop, totalScrollWidth, totalScrollHeight) {
+        print(
+            "左键点击的值为 ${childCell.data}，在表中的位置 : left $left, top $top, width $width, height $height, bodyScrollLeft $scrollLeft, bodyScrollTop $scrollTop totalScrollWidth $totalScrollWidth totalScrollHeight $totalScrollHeight");
       },
-      bodyCellOnSecondaryTap: (childCell, left, top, width, height, scrollLeft, scrollTop) {
-        print("右键点击的值为 ${childCell.data}，在表中的位置 : left $left, top $top, width $width, height $height, bodyScrollLeft $scrollLeft, bodyScrollTop $scrollTop");
+      bodyCellOnSecondaryTap: (childCell, left, top, width, height, scrollLeft, scrollTop, totalScrollWidth, totalScrollHeight) {
+        print(
+            "右键点击的值为 ${childCell.data}，在表中的位置 : left $left, top $top, width $width, height $height, bodyScrollLeft $scrollLeft, bodyScrollTop $scrollTop totalScrollWidth $totalScrollWidth totalScrollHeight $totalScrollHeight");
       },
     );
   }
@@ -94,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       FreedomTableHeaderCell(
         // flex: 1,
-        fixedWidth: 200,
+        // fixedWidth: 200,
         child: headerCell('header-3'),
       ),
       FreedomTableHeaderCell(

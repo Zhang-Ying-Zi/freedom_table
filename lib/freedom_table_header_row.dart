@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+// import 'package:provider/provider.dart';
 import './models/header_model.dart';
 import "types.dart";
 import 'cell.dart';
@@ -27,6 +27,8 @@ class FreedomTableHeaderRow extends StatefulWidget {
 }
 
 class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
+  List<FreedomTableHeaderCell>? preHeaderCells;
+
   /// 原始总宽度
   double constrainRowWidth = 0;
 
@@ -50,7 +52,19 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
 
   @override
   void initState() {
+    // print("** header initState **");
     super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant FreedomTableHeaderRow oldWidget) {
+    // print("** header didUpdateWidget **");
+    super.didUpdateWidget(oldWidget);
+    if (preHeaderCells != null && preHeaderCells != widget.headerCells) {
+      setState(() {
+        setCells();
+      });
+    }
   }
 
   void setCells() {
@@ -58,7 +72,7 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
 
     constrainRowWidth = widget.constrains.maxWidth;
 
-    HeaderModel headerModel = Provider.of<HeaderModel>(context, listen: false);
+    HeaderModel headerModel = HeaderModel.instance;
 
     double minCellWidthInFlexMode = widget.minCellWidthInFlexMode ?? minCellWidth;
 
@@ -114,7 +128,10 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
           child: cell.child,
         ),
       );
-      scrollableHeaderCellWidgets.add(cellWidget);
+
+      if (colnumber >= HeaderModel.instance.fixedHeaderCellWidgets.length) {
+        scrollableHeaderCellWidgets.add(cellWidget);
+      }
     }
 
     headerModel.scrollableHeaderCellWidgets = scrollableHeaderCellWidgets;
@@ -122,14 +139,15 @@ class _FreedomTableHeaderRowState extends State<FreedomTableHeaderRow> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       headerModel.setHeaderCellWidths(cellWidths);
     });
+
+    preHeaderCells = widget.headerCells;
   }
 
   @override
   Widget build(BuildContext context) {
-    HeaderModel headerModel = Provider.of<HeaderModel>(context, listen: false);
-    if (headerModel.fixedHeaderCellWidgets.isEmpty) setCells();
+    if (HeaderModel.instance.fixedHeaderCellWidgets.isEmpty) setCells();
     return Row(
-      children: [...headerModel.scrollableHeaderCellWidgets],
+      children: [...HeaderModel.instance.scrollableHeaderCellWidgets],
     );
   }
 }

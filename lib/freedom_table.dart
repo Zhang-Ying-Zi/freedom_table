@@ -36,6 +36,8 @@ class FreedomTable extends StatefulWidget {
     double height,
     double scrollLeft,
     double scrollTop,
+    double totalScrollWidth,
+    double totalScrollHeight,
   )? bodyCellOnTap;
   final void Function(
     FreedomTableBodyCell childCell,
@@ -45,6 +47,8 @@ class FreedomTable extends StatefulWidget {
     double height,
     double scrollLeft,
     double scrollTop,
+    double totalScrollWidth,
+    double totalScrollHeight,
   )? bodyCellOnSecondaryTap;
 
   /// when body data is empty, this can't be called.
@@ -96,44 +100,17 @@ class _FreedomTableState extends State<FreedomTable> {
   void initState() {
     // print("** initState **");
     super.initState();
-    init();
 
     TableModel tableModel = TableModel.instance;
     HeaderModel headerModel = HeaderModel.instance;
 
+    // pager | update | replace
+    headerModel.reset();
+
+    init();
+
     // table update complete
-    tableModel.addListener(() {
-      // print("** table : body complete **");
-
-      // fixed header
-      if (headerModel.fixedHeaderCellWidgets.isEmpty) {
-        double fixedColumnWidth = 0;
-        int fixedColumnCount = 0;
-        for (int i = 0; i < headerModel.headerCellWidths.length; i++) {
-          FreedomTableHeaderCell header = widget.headers[i];
-          if (header.isFixedColumn) {
-            fixedColumnWidth += headerModel.headerCellWidths[i];
-            fixedColumnCount++;
-            double left = 0;
-            for (var j = 0; j < i; j++) {
-              left += headerModel.headerCellWidths[i];
-            }
-            if (headerModel.scrollableHeaderCellWidgets.isNotEmpty) {
-              headerModel.fixedHeaderCellWidgets.add(Positioned(left: left, child: headerModel.scrollableHeaderCellWidgets.first));
-              headerModel.scrollableHeaderCellWidgets.removeAt(0);
-            }
-          }
-        }
-        headerModel.fixedColumnWidth = fixedColumnWidth;
-        headerModel.fixedColumnCount = fixedColumnCount;
-      }
-
-      setState(() {});
-
-      if (widget.bodyUpdateFinished != null) {
-        widget.bodyUpdateFinished!();
-      }
-    });
+    tableModel.addListener(tableBodyComplete);
   }
 
   @override
@@ -143,22 +120,36 @@ class _FreedomTableState extends State<FreedomTable> {
     init();
   }
 
+  @override
+  void dispose() {
+    // print("** dispose **");
+    widget.horizontalScrollController.dispose();
+    widget.verticalScrollController.dispose();
+    widget.fixedVerticalScrollController.dispose();
+
+    TableModel.instance.removeListener(tableBodyComplete);
+
+    super.dispose();
+  }
+
   void init() {
     TableModel tableModel = TableModel.instance;
+    HeaderModel headerModel = HeaderModel.instance;
 
     theme = widget.theme ?? FreedomTableTheme();
 
-    rows = widget.initBodyCells;
-    // print("** reset init **");
-    tableModel.reset(rows.length, widget.headers.length);
+    setState(() {
+      rows = widget.initBodyCells;
+      tableModel.reset(rows.length, widget.headers.length);
+    });
 
-    // pager | update table
+    /// pager
     widget.freedomTableData.addListener(() {
       WidgetsBinding.instance.addPostFrameCallback(
         (timeStamp) {
           setState(() {
-            rows = widget.freedomTableData.rows;
             // print("** reset update **");
+            rows = widget.freedomTableData.rows;
             tableModel.reset(rows.length, widget.headers.length);
           });
         },
@@ -190,12 +181,41 @@ class _FreedomTableState extends State<FreedomTable> {
     });
   }
 
-  @override
-  void dispose() {
-    widget.horizontalScrollController.dispose();
-    widget.verticalScrollController.dispose();
-    widget.fixedVerticalScrollController.dispose();
-    super.dispose();
+  void tableBodyComplete() {
+    // print("** table : body complete **");
+
+    HeaderModel headerModel = HeaderModel.instance;
+
+    // fixed header
+    if (headerModel.fixedHeaderCellWidgets.isEmpty) {
+      double fixedColumnWidth = 0;
+      int fixedColumnCount = 0;
+      for (int i = 0; i < headerModel.headerCellWidths.length; i++) {
+        FreedomTableHeaderCell header = widget.headers[i];
+        if (header.isFixedColumn) {
+          fixedColumnWidth += headerModel.headerCellWidths[i];
+          fixedColumnCount++;
+          double left = 0;
+          for (var j = 0; j < i; j++) {
+            left += headerModel.headerCellWidths[j];
+          }
+          if (headerModel.scrollableHeaderCellWidgets.isNotEmpty) {
+            headerModel.fixedHeaderCellWidgets.add(Positioned(left: left, child: headerModel.scrollableHeaderCellWidgets.first));
+            headerModel.scrollableHeaderCellWidgets.removeAt(0);
+          }
+        }
+      }
+      headerModel.fixedColumnWidth = fixedColumnWidth;
+      headerModel.fixedColumnCount = fixedColumnCount;
+    }
+
+    if (mounted) {
+      setState(() {});
+    }
+
+    if (widget.bodyUpdateFinished != null) {
+      widget.bodyUpdateFinished!();
+    }
   }
 
   @override
@@ -207,8 +227,10 @@ class _FreedomTableState extends State<FreedomTable> {
         ChangeNotifierProvider(create: (context) => HeaderModel.instance),
       ],
       builder: (context, child) {
-        HeaderModel headerModel = Provider.of<HeaderModel>(context, listen: false);
-        TableModel tableModel = Provider.of<TableModel>(context, listen: false);
+        // HeaderModel headerModel = Provider.of<HeaderModel>(context, listen: false);
+        // TableModel tableModel = Provider.of<TableModel>(context, listen: false);
+        HeaderModel headerModel = HeaderModel.instance;
+        TableModel tableModel = TableModel.instance;
 
         return Column(
           mainAxisAlignment: MainAxisAlignment.start,

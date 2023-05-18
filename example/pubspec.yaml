@@ -91,5 +91,8 @@ flutter:
     - family: Noto_Sans_SC
       fonts:
         - asset: assets/Noto_Sans_SC/NotoSansSC-Regular.otf
+    - family: "YaHei"
+      fonts:
+        - asset: assets/MicrosoftYaHei.ttf
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

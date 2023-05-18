@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+// import 'package:provider/provider.dart';
 import './models/table_model.dart';
 import './models/header_model.dart';
 import "types.dart";
@@ -19,10 +19,12 @@ class FreedomTableBodyCells extends StatefulWidget {
   final ScrollController horizontalScrollController;
 
   /// bodyCellOnTap
-  final void Function(FreedomTableBodyCell childCell, double left, double top, double width, double height, double scrollLeft, double scrollTop)? bodyCellOnTap;
+  final void Function(FreedomTableBodyCell childCell, double left, double top, double width, double height, double scrollLeft, double scrollTop, double totalScrollWidth, double totalScrollHeight)?
+      bodyCellOnTap;
 
   /// bodyCellOnSecondaryTap
-  final void Function(FreedomTableBodyCell childCell, double left, double top, double width, double height, double scrollLeft, double scrollTop)? bodyCellOnSecondaryTap;
+  final void Function(FreedomTableBodyCell childCell, double left, double top, double width, double height, double scrollLeft, double scrollTop, double totalScrollWidth, double totalScrollHeight)?
+      bodyCellOnSecondaryTap;
 
   const FreedomTableBodyCells({
     super.key,
@@ -40,6 +42,9 @@ class FreedomTableBodyCells extends StatefulWidget {
 class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
   Map<int, double?> rowMaxHeights = {};
 
+  double tableWidth = 0;
+  double tableBodyHeight = 0;
+
   @override
   void initState() {
     super.initState();
@@ -48,33 +53,42 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
       html.document.body!.addEventListener('contextmenu', (event) => event.preventDefault());
     }
 
-    HeaderModel headerModel = Provider.of<HeaderModel>(context, listen: false);
-    TableModel tableModel = Provider.of<TableModel>(context, listen: false);
+    HeaderModel headerModel = HeaderModel.instance;
+    TableModel tableModel = TableModel.instance;
 
     headerModel.addListener(() {
       // print("** body : header complete **");
-      setState(() {
-        setCells();
-      });
+      if (mounted) {
+        setState(() {
+          setCells();
+        });
+      }
     });
 
     tableModel.addListener(() {
       // print("** body : height complete **");
-      setState(() {
-        setCells();
-      });
+      if (mounted) {
+        setState(() {
+          setCells();
+        });
+      }
     });
   }
 
   @override
   void didUpdateWidget(covariant FreedomTableBodyCells oldWidget) {
+    // print("** body didUpdateWidget **");
     super.didUpdateWidget(oldWidget);
-    setCells();
+    if (mounted) {
+      setState(() {
+        setCells();
+      });
+    }
   }
 
   void computeSpan() {
-    HeaderModel headerModel = Provider.of<HeaderModel>(context, listen: false);
-    TableModel tableModel = Provider.of<TableModel>(context, listen: false);
+    HeaderModel headerModel = HeaderModel.instance;
+    TableModel tableModel = TableModel.instance;
     Map<int, Map<int, bool>> occupiedTable = tableModel.occupiedTable;
 
     // init occupiedTable
@@ -165,7 +179,8 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
   }
 
   Widget getCellWidget(FreedomTableBodyCell cell, double top, double left, double cellWidth, double? cellHeight, bool isFirstCellInRow, bool isFixed, [void Function(Size)? onChange]) {
-    HeaderModel headerModel = Provider.of<HeaderModel>(context, listen: false);
+    // HeaderModel headerModel = Provider.of<HeaderModel>(context, listen: false);
+    HeaderModel headerModel = HeaderModel.instance;
     return Positioned(
       top: top,
       left: left,
@@ -183,6 +198,8 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
                 cellHeight ?? 0,
                 widget.horizontalScrollController.offset,
                 widget.verticalScrollController.offset,
+                tableWidth,
+                tableBodyHeight,
               );
             }
           },
@@ -197,6 +214,8 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
                 cellHeight ?? 0,
                 widget.horizontalScrollController.offset,
                 widget.verticalScrollController.offset,
+                tableWidth,
+                tableBodyHeight,
               );
             }
           },
@@ -213,10 +232,10 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
 
   void setCells() {
     // print("** set body cell **");
-    HeaderModel headerModel = Provider.of<HeaderModel>(context, listen: false);
+    HeaderModel headerModel = HeaderModel.instance;
     List<double> headerCellWidths = headerModel.headerCellWidths;
 
-    TableModel tableModel = Provider.of<TableModel>(context, listen: false);
+    TableModel tableModel = TableModel.instance;
     Map<int, Map<int, bool>> occupiedTable = tableModel.occupiedTable;
 
     if (tableModel.rowMaxHeights.isEmpty) {
@@ -267,6 +286,9 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
           }
         }
 
+        // print(rowMaxHeights);
+        // print("$top $left");
+
         Widget cellWidget = getCellWidget(
           cell,
           top,
@@ -278,13 +300,13 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
           cellSpanHeight == 0
               ? (size) {
                   // print(size);
-                  // if (rownumber == 1) print("** $rownumber $colnumber ${size} **");
                   if (size.width > 0 && size.height > 0) {
                     if (rowMaxHeights[rownumber] == null || rowMaxHeights[rownumber]! < size.height) {
                       rowMaxHeights[rownumber] = size.height;
                       tableModel.addRowMaxHeight(rownumber, size.height);
                     }
                   }
+                  // print(rowMaxHeights);
                 }
               : null,
         );
@@ -306,16 +328,16 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
 
   @override
   Widget build(BuildContext context) {
-    TableModel tableModel = Provider.of<TableModel>(context, listen: false);
-    HeaderModel headerModel = Provider.of<HeaderModel>(context, listen: false);
+    TableModel tableModel = TableModel.instance;
+    HeaderModel headerModel = HeaderModel.instance;
 
-    double tableWidth = 0;
+    tableWidth = 0;
     if (headerModel.headerCellWidths.isNotEmpty) {
       tableWidth = headerModel.headerCellWidths.reduce((value, element) => value + element);
       tableWidth -= headerModel.fixedColumnWidth;
     }
 
-    double tableBodyHeight = 0;
+    tableBodyHeight = 0;
     tableModel.rowMaxHeights.forEach(
       (key, value) => tableBodyHeight += value ?? 0,
     );
