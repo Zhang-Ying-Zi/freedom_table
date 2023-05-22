@@ -387,8 +387,8 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
           Expanded(
-            // child: table,
-            child: changedTimes % 2 == 1 ? table : ScheduleOrder(),
+            child: table,
+            // child: changedTimes % 2 == 1 ? table : ScheduleOrder(),
           ),
         ]),
       ),

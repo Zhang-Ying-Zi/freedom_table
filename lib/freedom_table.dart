@@ -169,27 +169,27 @@ class _FreedomTableState extends State<FreedomTable> {
   }
 
   void runFixedVertical() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (widget.verticalScrollController.hasClients) {
-        widget.fixedVerticalScrollController.animateTo(
-          widget.verticalScrollController.offset,
-          duration: const Duration(microseconds: 1),
-          curve: Curves.linear,
-        );
-      }
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    if (widget.verticalScrollController.hasClients) {
+      widget.fixedVerticalScrollController.animateTo(
+        widget.verticalScrollController.offset,
+        duration: const Duration(microseconds: 1),
+        curve: Curves.linear,
+      );
+    }
+    // });
   }
 
   void runScrollVertical() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (widget.fixedVerticalScrollController.hasClients) {
-        widget.verticalScrollController.animateTo(
-          widget.fixedVerticalScrollController.offset,
-          duration: const Duration(microseconds: 1),
-          curve: Curves.linear,
-        );
-      }
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    if (widget.fixedVerticalScrollController.hasClients) {
+      widget.verticalScrollController.animateTo(
+        widget.fixedVerticalScrollController.offset,
+        duration: const Duration(microseconds: 1),
+        curve: Curves.linear,
+      );
+    }
+    // });
   }
 
   void tableBodyComplete() {
@@ -258,6 +258,7 @@ class _FreedomTableState extends State<FreedomTable> {
                     tableModel.rowMaxHeights.forEach(
                       (key, value) => tableBodyHeight += value ?? 0,
                     );
+                    // print(tableBodyHeight);
                     return Column(
                       children: [
                         // CustomGradientContainer(

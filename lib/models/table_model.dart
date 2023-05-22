@@ -67,7 +67,7 @@ class TableModel extends ChangeNotifier {
     rowMaxHeights.addAll({linenumber: rowMaxHeight});
     // 等等 body cell height 是否有新的改变，目前只能等待看看，无法主动判断是否已全部resize完
     waitBodyCellHeightChange?.cancel();
-    waitBodyCellHeightChange = Timer(const Duration(milliseconds: 0), () {
+    waitBodyCellHeightChange = Timer(const Duration(milliseconds: 300), () {
       // print("${rowMaxHeights.length}  $rowCount");
       if (rowMaxHeights.length >= rowCount) {
         notifyListeners();

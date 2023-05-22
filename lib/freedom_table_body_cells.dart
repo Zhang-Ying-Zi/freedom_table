@@ -302,11 +302,15 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
             colnumber == 0,
             cellSpanHeight == 0
                 ? (size) {
-                    // print(size);
+                    // print("rownumber: $rownumber $size");
+                    if (rowMaxHeights[rownumber] == null) {
+                      rowMaxHeights[rownumber] = size.height;
+                      tableModel.addRowMaxHeight(rownumber, rowMaxHeights[rownumber]);
+                    }
                     if (size.width > 0 && size.height > 0) {
-                      if (rowMaxHeights[rownumber] == null || rowMaxHeights[rownumber]! < size.height) {
+                      if (rowMaxHeights[rownumber]! < size.height) {
                         rowMaxHeights[rownumber] = size.height;
-                        tableModel.addRowMaxHeight(rownumber, size.height);
+                        tableModel.addRowMaxHeight(rownumber, rowMaxHeights[rownumber]);
                       }
                     }
                     // print(rowMaxHeights);
