@@ -133,6 +133,7 @@ class _FreedomTableState extends State<FreedomTable> {
   }
 
   void init() {
+    // print("** init **");
     TableModel tableModel = TableModel.instance;
     HeaderModel headerModel = HeaderModel.instance;
 
@@ -148,36 +149,46 @@ class _FreedomTableState extends State<FreedomTable> {
       WidgetsBinding.instance.addPostFrameCallback(
         (timeStamp) {
           setState(() {
-            // print("** reset update **");
+            // print("** pager update **");
             rows = widget.freedomTableData.rows;
             tableModel.reset(rows.length, widget.headers.length);
+            runFixedVertical();
+            runScrollVertical();
           });
         },
       );
     });
 
     widget.verticalScrollController.addListener(() {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (widget.verticalScrollController.hasClients) {
-          widget.fixedVerticalScrollController.animateTo(
-            widget.verticalScrollController.offset,
-            duration: const Duration(microseconds: 1),
-            curve: Curves.linear,
-          );
-        }
-      });
+      runFixedVertical();
     });
 
     widget.fixedVerticalScrollController.addListener(() {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (widget.fixedVerticalScrollController.hasClients) {
-          widget.verticalScrollController.animateTo(
-            widget.fixedVerticalScrollController.offset,
-            duration: const Duration(microseconds: 1),
-            curve: Curves.linear,
-          );
-        }
-      });
+      runScrollVertical();
+    });
+  }
+
+  void runFixedVertical() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.verticalScrollController.hasClients) {
+        widget.fixedVerticalScrollController.animateTo(
+          widget.verticalScrollController.offset,
+          duration: const Duration(microseconds: 1),
+          curve: Curves.linear,
+        );
+      }
+    });
+  }
+
+  void runScrollVertical() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.fixedVerticalScrollController.hasClients) {
+        widget.verticalScrollController.animateTo(
+          widget.fixedVerticalScrollController.offset,
+          duration: const Duration(microseconds: 1),
+          curve: Curves.linear,
+        );
+      }
     });
   }
 

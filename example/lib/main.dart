@@ -355,6 +355,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    return ScheduleManage();
     return Scaffold(
       body: Container(
         padding: const EdgeInsets.all(20),
