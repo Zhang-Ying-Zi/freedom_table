@@ -5,6 +5,7 @@ import 'schedule_common.dart';
 import 'package:freedom_table/freedom_table.dart';
 import 'schedule_tab_man.dart';
 import 'schedule_tab_job.dart';
+import 'schedule_order.dart';
 
 class ScheduleManage extends StatefulWidget {
   const ScheduleManage({super.key});

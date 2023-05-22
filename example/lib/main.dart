@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:freedom_table/freedom_table.dart';
 import 'schedule/schedule_manage.dart';
+import 'schedule/schedule_order.dart';
 
 void main() {
   runApp(const MyApp());
@@ -118,7 +119,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // 获取分页数据
   List<List<FreedomTableBodyCell>> getPageData(totalPages, currentPageIndex) {
-    return currentPageIndex % 2 == 0
+    List<List<FreedomTableBodyCell>> datas = currentPageIndex % 2 == 0
         ? [
             [
               FreedomTableBodyCell(
@@ -351,11 +352,12 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ],
           ];
+    return datas;
   }
 
   @override
   Widget build(BuildContext context) {
-    return ScheduleManage();
+    // return ScheduleManage();
     return Scaffold(
       body: Container(
         padding: const EdgeInsets.all(20),
@@ -385,7 +387,8 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
           Expanded(
-            child: table,
+            // child: table,
+            child: changedTimes % 2 == 1 ? table : ScheduleOrder(),
           ),
         ]),
       ),
