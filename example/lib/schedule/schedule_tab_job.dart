@@ -198,7 +198,7 @@ class _JobTabState extends State<JobTab> {
 
   FreedomTable createTable(List<FreedomTableHeaderCell> headers, List<List<FreedomTableBodyCell>> bodys) {
     return FreedomTable(
-      // key: GlobalKey(),
+      key: GlobalKey(),
       minCellWidthInFlexMode: minCellWidthInFlexMode,
       theme: FreedomTableTheme(
         hoverColor: tableBodyCellHoverColor,
@@ -206,12 +206,9 @@ class _JobTabState extends State<JobTab> {
       headers: headers,
       initBodyCells: bodys,
       bodyUpdateFinished: () {
-        // // 避免太快消失
-        // Timer(Duration(milliseconds: 300), () {
         setState(() {
           isTableBodyDataLoading = false;
         });
-        // });
       },
     );
   }
@@ -495,7 +492,6 @@ class _JobTabState extends State<JobTab> {
     return Column(
       children: [
         Padding(padding: EdgeInsets.only(top: 15)),
-        // 操作
 
         // 班次说明
         Container(
@@ -550,7 +546,7 @@ class _JobTabState extends State<JobTab> {
               if (isTableBodyDataLoading)
                 Positioned.fill(
                   child: Container(
-                    color: Colors.black26,
+                    color: Colors.black54,
                     child: Center(
                       child: CircularProgressIndicator(),
                     ),
