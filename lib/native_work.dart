@@ -1,0 +1,3 @@
+void avoidContextMenu() {
+  // DO NOTHING
+}

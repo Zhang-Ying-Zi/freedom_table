@@ -5,8 +5,9 @@ import './models/header_model.dart';
 import "types.dart";
 import 'cell.dart';
 import 'utils.dart';
-import 'package:flutter/foundation.dart';
-import 'dart:html' as html;
+// import 'package:flutter/foundation.dart';
+// import 'dart:html' as html;
+import 'native_work.dart' if (dart.library.html) 'web_work.dart' as worker;
 
 class FreedomTableBodyCells extends StatefulWidget {
   /// rows
@@ -49,9 +50,10 @@ class _FreedomTableBodyCellsState extends State<FreedomTableBodyCells> {
   void initState() {
     super.initState();
 
-    if (kIsWeb) {
-      html.document.body!.addEventListener('contextmenu', (event) => event.preventDefault());
-    }
+    // if (kIsWeb) {
+    //   html.document.body!.addEventListener('contextmenu', (event) => event.preventDefault());
+    // }
+    worker.avoidContextMenu();
 
     HeaderModel headerModel = HeaderModel.instance;
     TableModel tableModel = TableModel.instance;
