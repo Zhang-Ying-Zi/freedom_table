@@ -45,12 +45,13 @@ class _MyHomePageState extends State<MyHomePage> {
   void setTable() {
     changedTimes++;
     table = FreedomTable(
+      key: GlobalKey(),
       // optional
       minCellWidthInFlexMode: 200,
       // header
       headers: getHeaders(),
       initBodyCells: changedTimes % 2 == 1 ? getPageData(10, 0) : getPageData(10, 1),
-      // optional paging
+      // optional
       pager: FreedomTablePager(
         totalCount: 90,
         pageEach: 10,
@@ -59,7 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
           table.updateBody(getPageData(totalPages, currentPageIndex));
         },
       ),
-      // theme
+      // optional
       theme: FreedomTableTheme(
         dividerColor: const Color(0xffe6e6e6),
         backgroundColor: const Color(0xfff2f2f2),
@@ -85,7 +86,6 @@ class _MyHomePageState extends State<MyHomePage> {
   List<FreedomTableHeaderCell> getHeaders() {
     List<FreedomTableHeaderCell> headers = [
       FreedomTableHeaderCell(
-        // wether the column which the header cell belong is fixed when table is horizontal scroll
         // when the column is fixed, please ensure the column's child cell DON'T have colspan!!!
         isFixedColumn: true,
         fixedWidth: 200,
@@ -98,7 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       FreedomTableHeaderCell(
         // flex: 1,
-        // fixedWidth: 200,
+        fixedWidth: 200,
         child: headerCell('header-3'),
       ),
       FreedomTableHeaderCell(
