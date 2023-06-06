@@ -1,10 +1,10 @@
 name: freedom_table
-version: 0.3.6+1
+version: 0.3.6+2
 description: A web table which support colspan and rowspan. And support auto-height rows, and support optional pager.
 homepage: https://github.com/Zhang-Ying-Zi/freedom_table.git
 
 environment:
-  sdk: ">=2.18.5 <3.0.0"
+  sdk: ">=2.18.0 <3.0.0"
   flutter: ">=1.17.0"
 
 dependencies:
