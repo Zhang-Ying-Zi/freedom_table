@@ -123,13 +123,11 @@ class _FreedomTableState extends State<FreedomTable> {
   @override
   void dispose() {
     // print("** dispose **");
-    widget.horizontalScrollController.dispose();
-    widget.verticalScrollController.dispose();
-    widget.fixedVerticalScrollController.dispose();
-
-    TableModel.instance.removeListener(tableBodyComplete);
-
     super.dispose();
+    TableModel.instance.removeListener(tableBodyComplete);
+    // widget.horizontalScrollController.dispose();
+    // widget.verticalScrollController.dispose();
+    // widget.fixedVerticalScrollController.dispose();
   }
 
   void init() {
@@ -159,37 +157,41 @@ class _FreedomTableState extends State<FreedomTable> {
       );
     });
 
+    // if (widget.verticalScrollController.hasClients) {
     widget.verticalScrollController.addListener(() {
       runFixedVertical();
     });
+    // }
 
+    // if (widget.fixedVerticalScrollController.hasClients) {
     widget.fixedVerticalScrollController.addListener(() {
       runScrollVertical();
     });
+    // }
   }
 
   void runFixedVertical() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (widget.verticalScrollController.hasClients) {
-        widget.fixedVerticalScrollController.animateTo(
-          widget.verticalScrollController.offset,
-          duration: const Duration(microseconds: 1),
-          curve: Curves.linear,
-        );
-      }
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    if (widget.verticalScrollController.hasClients) {
+      widget.fixedVerticalScrollController.animateTo(
+        widget.verticalScrollController.offset,
+        duration: const Duration(microseconds: 1),
+        curve: Curves.linear,
+      );
+    }
+    // });
   }
 
   void runScrollVertical() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (widget.fixedVerticalScrollController.hasClients) {
-        widget.verticalScrollController.animateTo(
-          widget.fixedVerticalScrollController.offset,
-          duration: const Duration(microseconds: 1),
-          curve: Curves.linear,
-        );
-      }
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    if (widget.fixedVerticalScrollController.hasClients) {
+      widget.verticalScrollController.animateTo(
+        widget.fixedVerticalScrollController.offset,
+        duration: const Duration(microseconds: 1),
+        curve: Curves.linear,
+      );
+    }
+    // });
   }
 
   void tableBodyComplete() {
