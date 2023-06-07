@@ -55,8 +55,8 @@ class _MyHomePageState extends State<MyHomePage> {
       pager: FreedomTablePager(
         totalCount: 90,
         pageEach: 10,
-        callback: (totalPages, currentPageIndex) {
-          print("(currentPageIndex : $currentPageIndex, totalPages : $totalPages)");
+        callback: (currentPageIndex, totalPages, pageEach) {
+          print("(currentPageIndex : $currentPageIndex, totalPages : $totalPages, pageEach : $pageEach)");
           table.updateBody(getPageData(totalPages, currentPageIndex));
         },
       ),

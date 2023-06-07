@@ -5,7 +5,7 @@ import 'dart:math';
 
 enum PagerItemTypes { prev, next, ellipsis, number }
 
-typedef PagerClickCallback = void Function(int totalPages, int currentPageIndex)?;
+typedef PagerClickCallback = void Function(int currentPageIndex, int totalPages, int pageEach)?;
 
 class PagerItem extends StatefulWidget {
   final PagerItemTypes type;
@@ -112,7 +112,7 @@ class _FreedomTablePagerState extends State<FreedomTablePager> {
       if ((lastTotalPages == null || lastCurrentPageIndex == null) || (lastTotalPages != totalPages || lastCurrentPageIndex != currentPageIndex)) {
         lastTotalPages = totalPages;
         lastCurrentPageIndex = currentPageIndex;
-        widget.callback!(totalPages, currentPageIndex);
+        widget.callback!(currentPageIndex, totalPages, pageEach);
       }
     }
   }
@@ -307,6 +307,7 @@ class _FreedomTablePagerState extends State<FreedomTablePager> {
                     icon: const Icon(Icons.arrow_drop_down),
                     elevation: 16,
                     style: TextStyle(color: themeModel.theme.pagerTextColor),
+                    focusColor: Colors.transparent,
                     underline: Container(
                       height: 2,
                       color: themeModel.theme.pagerBorderColor,
